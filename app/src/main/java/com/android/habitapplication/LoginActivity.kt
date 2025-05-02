@@ -3,6 +3,7 @@ package com.android.habitapplication
 import android.annotation.SuppressLint
 import android.content.Intent
 import android.os.Bundle
+import android.text.InputType
 import android.view.View
 import android.widget.*
 import androidx.activity.enableEdgeToEdge
@@ -40,6 +41,7 @@ class LoginActivity : AppCompatActivity() {
         }
 
         supportActionBar?.hide()
+        window.decorView.systemUiVisibility = View.SYSTEM_UI_FLAG_FULLSCREEN
 
         if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.R) {
             window.insetsController?.hide(android.view.WindowInsets.Type.statusBars())
@@ -59,13 +61,15 @@ class LoginActivity : AppCompatActivity() {
 
         googleSignInClient = GoogleSignIn.getClient(this, gso)
 
-        val googleLoginBtn = findViewById<TextView>(R.id.btnGoogleLogin)
+        val googleLoginBtn = findViewById<Button>(R.id.btnGoogleLogin)
 
         googleLoginBtn.setOnClickListener {
             val signInIntent = googleSignInClient.signInIntent
             startActivityForResult(signInIntent, RC_SIGN_IN)
         }
 
+        var isPasswordVisible = false
+        val toggle = findViewById<ImageView>(R.id.togglePasswordVisibility)
         val etEmail = findViewById<EditText>(R.id.etEmail)
         val etPassword = findViewById<EditText>(R.id.etPassword)
         val loginBtn = findViewById<Button>(R.id.btnLogin)
@@ -73,10 +77,25 @@ class LoginActivity : AppCompatActivity() {
         val backBtn = findViewById<ImageButton>(R.id.btnBack)
         val forgetPassword = findViewById<TextView>(R.id.forget)
 
+        toggle.setOnClickListener {
+            isPasswordVisible = !isPasswordVisible
+            if (isPasswordVisible) {
+                etPassword.inputType = InputType.TYPE_TEXT_VARIATION_VISIBLE_PASSWORD
+                toggle.setImageResource(R.drawable.ic_baseline_eye_24)
+            } else {
+                etPassword.inputType =
+                    InputType.TYPE_CLASS_TEXT or InputType.TYPE_TEXT_VARIATION_PASSWORD
+                toggle.setImageResource(R.drawable.baseline_visibility_off_24)
+            }
+            // Move cursor to end of text
+            etPassword.setSelection(etPassword.text.length)
+        }
+
         // تسجيل الدخول العادي
         loginBtn.setOnClickListener {
             val email = etEmail.text.toString().trim()
             val password = etPassword.text.toString().trim()
+
 
             if (email.isBlank() || password.isBlank()) {
                 Toast.makeText(this, "Please fill all fields", Toast.LENGTH_SHORT).show()

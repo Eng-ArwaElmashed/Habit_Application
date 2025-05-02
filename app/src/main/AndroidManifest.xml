@@ -1,12 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
-    >
+    xmlns:tools="http://schemas.android.com/tools">
 
-    <uses-permission android:name="android.permission.POST_NOTIFICATIONS"
-       />
+    <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
     <uses-permission android:name="android.permission.VIBRATE" />
-
+    <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.SCHEDULE_EXACT_ALARM"/>
 
 
     <application
@@ -65,8 +64,7 @@
             android:exported="false" />
         <activity
             android:name=".MorningSelectionActivity"
-            android:exported="false">
-        </activity>
+            android:exported="false"></activity>
         <activity
             android:name=".MainActivity"
             android:exported="false"
@@ -80,12 +78,14 @@
             </intent-filter>
 
         </activity>
-        <activity android:name=".NotificationActivity"
+        <activity
+            android:name=".NotificationActivity"
             android:exported="false" />
 
         <!-- Receiver for Alarm -->
-        <receiver android:name=".AlarmReceiver" android:exported="false" />
-
+        <receiver
+            android:name=".AlarmReceiver"
+            android:exported="false" />
 
 
     </application>

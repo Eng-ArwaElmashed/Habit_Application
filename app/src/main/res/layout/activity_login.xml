@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/main"
     android:layout_width="match_parent"
@@ -31,7 +32,7 @@
             android:layout_height="wrap_content"
             android:layout_marginBottom="48dp"
             android:gravity="center"
-            android:text="Welcome!"
+            android:text="Welcome Back!"
             android:textColor="@color/black"
             android:textSize="24sp"
             android:textStyle="bold" />
@@ -48,17 +49,40 @@
             android:inputType="textEmailAddress"
             android:padding="16dp" />
 
-        <EditText
-            android:id="@+id/etPassword"
+
+        <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="12dp"
             android:background="@drawable/rounded_edittext"
-            android:drawableLeft="@drawable/ic_baseline_eye_24"
-            android:drawablePadding="12dp"
-            android:hint="Password"
-            android:inputType="textPassword"
-            android:padding="16dp" />
+            android:orientation="horizontal">
+
+            <ImageView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:padding="16dp"
+                android:paddingBottom="16dp"
+                android:src="@drawable/baseline_lock_24" />
+
+            <EditText
+                android:id="@+id/etPassword"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:background="@android:color/transparent"
+                android:hint="Password"
+                android:inputType="textPassword"
+                android:paddingTop="16dp"
+                android:paddingBottom="16dp" />
+
+            <ImageView
+                android:id="@+id/togglePasswordVisibility"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:contentDescription="Toggle password visibility"
+                android:padding="16dp"
+                android:src="@drawable/baseline_visibility_off_24" />
+        </LinearLayout>
+
 
         <TextView
             android:id="@+id/forget"
@@ -89,22 +113,21 @@
             android:gravity="center_vertical"
             android:orientation="horizontal">
 
-            <ImageView
 
-                android:layout_width="20dp"
-                android:layout_height="20dp"
-                android:layout_marginEnd="12dp"
-                android:contentDescription="@string/continue_with_google"
-                android:src="@drawable/google" />
-
-            <TextView
+            <com.google.android.material.button.MaterialButton
                 android:id="@+id/btnGoogleLogin"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
+                android:backgroundTint="@color/light_pink"
+                android:padding="16dp"
                 android:text="CONTINUE WITH GOOGLE"
                 android:textColor="@color/black"
-                android:textSize="14sp" />
+                android:textSize="14sp"
+                app:cornerRadius="12dp"
+                app:icon="@drawable/googleicon"
+                app:iconTint="@color/white"
+                app:iconTintMode="multiply" />
         </LinearLayout>
 
         <LinearLayout
@@ -126,7 +149,7 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Dont have account??"
+                android:text="Dont have account?"
                 android:textColor="@color/gray"
                 android:textSize="12sp" />
 

@@ -2,6 +2,7 @@ package com.android.habitapplication
 
 import android.content.Intent
 import android.os.Bundle
+import android.text.InputType
 import android.view.View
 import android.widget.*
 import androidx.activity.enableEdgeToEdge
@@ -38,6 +39,7 @@ class SignupActivity : AppCompatActivity() {
         }
 
         supportActionBar?.hide()
+        window.decorView.systemUiVisibility = View.SYSTEM_UI_FLAG_FULLSCREEN
 
         if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.R) {
             window.insetsController?.hide(android.view.WindowInsets.Type.statusBars())
@@ -47,6 +49,9 @@ class SignupActivity : AppCompatActivity() {
         }
 
         // UI elements
+        var isPasswordVisible = false
+        val toggle = findViewById<ImageView>(R.id.togglePasswordVisibility)
+        val toggle2 = findViewById<ImageView>(R.id.toggleConfirmPasswordVisibility)
         val backBtn = findViewById<ImageButton>(R.id.btnBack)
         val loginBtn = findViewById<Button>(R.id.btnLogin)
         val alreadyUser = findViewById<TextView>(R.id.tvSignIn)
@@ -55,7 +60,7 @@ class SignupActivity : AppCompatActivity() {
         val etEmail = findViewById<EditText>(R.id.etEmail)
         val etPassword = findViewById<EditText>(R.id.etPassword)
         val confirmPass = findViewById<EditText>(R.id.etConfirmPassword)
-        val googleBtn = findViewById<TextView>(R.id.btnGoogle)
+        val googleBtn = findViewById<Button>(R.id.btnGoogle)
 
         // Google Sign-In setup
         val gso = GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
@@ -70,6 +75,32 @@ class SignupActivity : AppCompatActivity() {
             startActivityForResult(signInIntent, RC_SIGN_IN)
         }
 
+        toggle.setOnClickListener {
+            isPasswordVisible = !isPasswordVisible
+            if (isPasswordVisible) {
+                etPassword.inputType = InputType.TYPE_TEXT_VARIATION_VISIBLE_PASSWORD
+                toggle.setImageResource(R.drawable.ic_baseline_eye_24)
+            } else {
+                etPassword.inputType =
+                    InputType.TYPE_CLASS_TEXT or InputType.TYPE_TEXT_VARIATION_PASSWORD
+                toggle.setImageResource(R.drawable.baseline_visibility_off_24)
+            }
+            // Move cursor to end of text
+            etPassword.setSelection(etPassword.text.length)
+        }
+        toggle2.setOnClickListener {
+            isPasswordVisible = !isPasswordVisible
+            if (isPasswordVisible) {
+                confirmPass.inputType = InputType.TYPE_TEXT_VARIATION_VISIBLE_PASSWORD
+                toggle.setImageResource(R.drawable.ic_baseline_eye_24)
+            } else {
+                confirmPass.inputType =
+                    InputType.TYPE_CLASS_TEXT or InputType.TYPE_TEXT_VARIATION_PASSWORD
+                toggle.setImageResource(R.drawable.baseline_visibility_off_24)
+            }
+            // Move cursor to end of text
+            etPassword.setSelection(etPassword.text.length)
+        }
         loginBtn.setOnClickListener {
             val email = etEmail.text.toString().trim()
             val password = etPassword.text.toString().trim()

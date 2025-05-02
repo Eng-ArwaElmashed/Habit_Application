@@ -35,6 +35,7 @@ class WelcomeActivity : AppCompatActivity() {
         }
 
         supportActionBar?.hide()
+        window.decorView.systemUiVisibility = View.SYSTEM_UI_FLAG_FULLSCREEN
 
         val getStartedBtn = findViewById<Button>(R.id.btnGetStarted)
         getStartedBtn.setOnClickListener {

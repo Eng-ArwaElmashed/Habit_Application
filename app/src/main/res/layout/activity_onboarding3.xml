@@ -6,7 +6,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    android:padding="24dp"
+    android:layout_margin="16dp"
     tools:context=".ui.onboarding.Onboarding3Activity">
 
     <ImageView
@@ -23,6 +23,7 @@
         android:id="@+id/onboardingTitle"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
         android:layout_marginBottom="16dp"
         android:gravity="left"
         android:text="Track Your Goal"
@@ -35,7 +36,6 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginBottom="48dp"
-        android:gravity="center"
         android:text="Don't worry if you have trouble determining your goals, We can help you determine your goals and track your goals"
         android:textColor="@color/black"
         android:textSize="16sp" />
@@ -57,6 +57,7 @@
             android:backgroundTint="@color/white"
             app:icon="@drawable/next_button"
             app:iconTint="@color/white"
+            android:stateListAnimator="@null"
             app:iconTintMode="multiply" />
 
 

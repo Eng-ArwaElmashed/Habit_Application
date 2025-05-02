@@ -7,15 +7,7 @@
     android:layout_height="match_parent"
     tools:context=".HabitActivity">
 
-    <com.google.android.material.button.MaterialButton
-        android:id="@+id/back_btn"
-        android:layout_width="56dp"
-        android:layout_height="56dp"
-        app:icon="@drawable/back_btn"
-        app:iconTint="@color/white"
-        app:iconTintMode="multiply"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+
     <TextView
         android:id="@+id/title_tv"
         android:layout_width="match_parent"
@@ -30,9 +22,20 @@
         app:layout_constraintStart_toEndOf="@id/back_btn"
         app:layout_constraintTop_toTopOf="parent" />
     <!-- Top illustration -->
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/back_btn"
+        android:layout_width="56dp"
+        android:layout_height="56dp"
+        app:icon="@drawable/back_btn"
+        app:iconTint="@color/white"
+        android:stateListAnimator="@null"
+        app:iconTintMode="multiply"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
     <ImageView
         android:id="@+id/banner_image"
         android:layout_width="match_parent"
+        android:stateListAnimator="@null"
         android:layout_height="wrap_content"
         android:background="@color/main_pink"
         android:src="@drawable/large_drinking_water"

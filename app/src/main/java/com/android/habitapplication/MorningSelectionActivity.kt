@@ -1,5 +1,6 @@
 package com.android.habitapplication
 
+import android.annotation.SuppressLint
 import android.app.AlarmManager
 import android.app.NotificationChannel
 import android.app.NotificationManager
@@ -11,6 +12,7 @@ import android.os.Bundle
 import android.widget.TimePicker
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
+import com.android.habitapplication.ui.onboarding.Onboarding2Activity
 import com.google.android.material.button.MaterialButton
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
@@ -39,6 +41,7 @@ class MorningSelectionActivity : AppCompatActivity() {
         }
     }
 
+    @SuppressLint("ScheduleExactAlarm")
     private fun setAlarm() {
         calendar = Calendar.getInstance().apply {
             set(Calendar.HOUR_OF_DAY, timePicker.hour)
