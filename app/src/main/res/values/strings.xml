@@ -1,0 +1,48 @@
+<resources>
+    <string name="_6_month_plan_for_39_99_usd">6-month plan for\n39.99 usd</string>
+    <string-array name="duration">
+        <item>This Week</item>
+        <item>This Month</item>
+        <item>This Year</item>
+        <item>Last Year</item>
+    </string-array>
+
+    <string name="app_name">Habit Application</string>
+    <string name="navigation_drawer_open">Open navigation drawer</string>
+    <string name="navigation_drawer_close">Close navigation drawer</string>
+    <string name="nav_header_title">Android Studio</string>
+    <string name="nav_header_subtitle">android.studio@android.com</string>
+    <string name="nav_header_desc">Navigation header</string>
+    <string name="action_settings">Settings</string>
+
+    <string name="menu_home">Home</string>
+    <string name="menu_gallery">Gallery</string>
+    <string name="menu_slideshow">Slideshow</string>
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="profile">Profile</string>
+    <string name="today">Today</string>
+    <string name="your_states">Your states</string>
+    <string name="challenges">Challenges</string>
+    <string name="all_habits">All Habits</string>
+    <string name="notification">Notification</string>
+    <string name="settings">Settings</string>
+    <string name="try_free">Try Free</string>
+    <string name="add_new_item">add_new_item</string>
+    <string name="menu_button">menu_button</string>
+    <string name="menu_icon_description">menu_icon_description</string>
+    <string name="add_new_habit_title">add_new_habit_title</string>
+    <string name="habit_name_hint">habit_name_hint</string>
+    <string name="description_hint">description_hint</string>
+    <string name="save_habit">save_habit</string>
+    <string name="target_hint">target_hint</string>
+    <string name="frequency_label">frequency_label</string>
+    <string name="pick_date_time_button">pick_date_time_button</string>
+    <string name="start_date_time_label">start_date_time_label</string>
+    <string name="back_button">back_button</string>
+    <string name="continue_with_google">continue_with_google</string>
+    <string name="continue_with_facebook">continue_with_facebook</string>
+    <string name="default_web_client_id">376931397130-kbr32ru0c27bktvfjsngrd73fs50pef7.apps.googleusercontent.com</string>
+
+
+</resources>

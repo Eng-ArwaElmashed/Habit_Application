@@ -1,0 +1,99 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/main"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:gravity="center_horizontal"
+    android:background="@color/light_pink"
+    android:padding="24dp"
+    tools:context=".ui.all_habits.AddHabitActivity">
+
+    <!-- Title -->
+    <TextView
+        android:id="@+id/titleText"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Add New Habit"
+        android:textSize="24sp"
+        android:textStyle="bold"
+        android:layout_marginBottom="24dp" />
+
+    <!-- Habit Name Input -->
+    <EditText
+        android:id="@+id/habitNameEditText"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="Habit Name"
+        android:layout_marginTop="12dp"
+        android:backgroundTint="#D81B60"
+        android:inputType="textCapSentences"
+        android:drawableStart="@android:drawable/ic_input_add"
+        android:paddingStart="12dp"
+        android:textColor="#000000"
+        android:textSize="16sp" />
+
+    <!-- Description Input -->
+    <EditText
+        android:id="@+id/habitDescriptionEditText"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="Description"
+        android:layout_marginTop="12dp"
+        android:backgroundTint="#D81B60"
+        android:inputType="textMultiLine"
+        android:minLines="2"
+        android:drawableStart="@android:drawable/ic_menu_edit"
+        android:paddingStart="12dp"
+        android:textColor="#000000"
+        android:textSize="16sp" />
+
+    <!-- Date Picker Button -->
+    <Button
+        android:id="@+id/startDateTimeButton"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Pick Start Date &amp; Time"
+        android:textColor="#FFFFFF"
+        android:textSize="16sp"
+        android:backgroundTint="@color/main_pink"
+        android:layout_marginTop="16dp"
+        android:paddingVertical="12dp" />
+
+    <!-- Frequency Spinner -->
+    <Spinner
+        android:id="@+id/frequencySpinner"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        android:backgroundTint="#D81B60"
+        android:popupBackground="#FFFFFF" />
+
+    <!-- Habit Goal Input -->
+    <EditText
+        android:id="@+id/habitGoalEditText"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="Target (e.g. 2L Water)"
+        android:layout_marginTop="12dp"
+        android:backgroundTint="#D81B60"
+        android:inputType="text"
+        android:drawableStart="@android:drawable/ic_menu_compass"
+        android:paddingStart="12dp"
+        android:textColor="#000000"
+        android:textSize="16sp" />
+
+    <!-- Save Habit Button -->
+    <Button
+        android:id="@+id/saveHabitButton"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="24dp"
+        android:backgroundTint="@color/main_pink"
+        android:paddingVertical="14dp"
+        android:text="Save Habit"
+        android:textColor="#FFFFFF"
+        android:textSize="18sp" />
+
+</LinearLayout>

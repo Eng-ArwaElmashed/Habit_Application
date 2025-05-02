@@ -1,0 +1,89 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="235dp"
+    android:layout_margin="10dp"
+    android:backgroundTint="@color/main_pink"
+    app:cardCornerRadius="22dp"
+    app:cardElevation="6dp">
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+        <ImageButton
+            android:id="@+id/edit_btn"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:backgroundTint="@color/main_pink"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            android:src="@drawable/edit" />
+
+        <ImageButton
+            android:id="@+id/delete_btn"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            android:backgroundTint="@color/main_pink"
+            android:src="@drawable/baseline_delete_24" />
+    </androidx.constraintlayout.widget.ConstraintLayout>
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        android:gravity="center"
+        android:padding="16dp">
+
+
+        <!-- Progress background with icon in center -->
+        <FrameLayout
+            android:layout_width="100dp"
+            android:layout_height="100dp">
+
+            <!-- Circular Progress Image -->
+            <ImageView
+                android:id="@+id/progress_background"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:src="@drawable/progress"
+                android:scaleType="centerInside"
+                android:contentDescription="Progress"/>
+
+            <!-- Center icon (e.g., water drop) -->
+            <ImageView
+                android:id="@+id/center_icon"
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:src="@drawable/water_cup"
+                android:layout_gravity="center"
+                android:contentDescription="Icon"/>
+        </FrameLayout>
+
+        <!-- Title Text -->
+        <TextView
+            android:id="@+id/habit_title"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Drinking water"
+            android:textSize="16sp"
+            android:textStyle="bold"
+            android:fontFamily="@font/rubik"
+            android:textColor="@color/gray"
+            android:textAlignment="textStart"
+            android:layout_marginTop="12dp"/>
+
+        <!-- Subtitle / progress percentage -->
+        <TextView
+            android:id="@+id/habit_progress_text"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="75%"
+            android:textAlignment="textStart"
+            android:textSize="14sp"
+            android:textColor="@color/gray"
+            android:layout_marginTop="4dp"/>
+
+    </LinearLayout>
+</androidx.cardview.widget.CardView>

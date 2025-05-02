@@ -1,0 +1,158 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/main"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:padding="16dp"
+    tools:context=".ChooseHabitActivity">
+
+    <TextView
+        android:id="@+id/title_tv"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_margin="16dp"
+        android:padding="16dp"
+        android:fontFamily="@font/rubik_semibold"
+        android:text="Choose your first habit"
+        android:textSize="30sp"
+        android:textColor="@color/gray"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <ImageButton
+        android:id="@+id/drinking_water_btn"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_margin="25dp"
+        android:background="@drawable/habit_circle_bg"
+        android:src="@drawable/small_drinking_water"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/title_tv" />
+    <TextView
+        android:id="@+id/drinking_water_tv"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Drinking Water"
+        app:layout_constraintTop_toBottomOf="@id/drinking_water_btn"
+        app:layout_constraintStart_toStartOf="@id/drinking_water_btn"
+        app:layout_constraintEnd_toEndOf="@id/drinking_water_btn"
+        android:fontFamily="@font/rubik_semibold"
+        android:padding="10dp"
+        android:textColor="@color/gray"/>
+    <ImageButton
+        android:id="@+id/morning_walk_btn"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_margin="25dp"
+        android:padding="10dp"
+        android:background="@drawable/habit_circle_bg"
+        android:src="@drawable/morning_walk"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/title_tv" />
+
+    <TextView
+        android:id="@+id/morning_walk_tv"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Morning Walk"
+        app:layout_constraintTop_toBottomOf="@id/morning_walk_btn"
+        app:layout_constraintStart_toStartOf="@id/morning_walk_btn"
+        app:layout_constraintEnd_toEndOf="@id/morning_walk_btn"
+        android:fontFamily="@font/rubik_semibold"
+        android:padding="10dp"
+        android:textColor="@color/gray"/>
+    <ImageButton
+        android:id="@+id/lowerbody_workout_btn"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_margin="25dp"
+        android:padding="25dp"
+        android:background="@drawable/habit_circle_bg"
+        android:src="@drawable/lowebody_workout"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/drinking_water_tv" />
+
+    <TextView
+        android:id="@+id/lowerbody_workout_tv"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Lowerbody Workout"
+        app:layout_constraintTop_toBottomOf="@id/lowerbody_workout_btn"
+        app:layout_constraintStart_toStartOf="@id/lowerbody_workout_btn"
+        app:layout_constraintEnd_toEndOf="@id/lowerbody_workout_btn"
+        android:fontFamily="@font/rubik_semibold"
+        android:padding="10dp"
+        android:textColor="@color/gray"/>
+    <ImageButton
+        android:id="@+id/cycling_btn"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_margin="25dp"
+        android:padding="10dp"
+        android:background="@drawable/habit_circle_bg"
+        android:src="@drawable/cycling_vector"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/morning_walk_tv" />
+
+    <TextView
+        android:id="@+id/cycling_tv"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Cyclying"
+        app:layout_constraintTop_toBottomOf="@id/cycling_btn"
+        app:layout_constraintStart_toStartOf="@id/cycling_btn"
+        app:layout_constraintEnd_toEndOf="@id/cycling_btn"
+        android:fontFamily="@font/rubik_semibold"
+        android:padding="10dp"
+        android:textColor="@color/gray"/>
+
+    <ImageButton
+        android:id="@+id/yoga_btn"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_margin="25dp"
+        android:padding="10dp"
+        android:background="@drawable/habit_circle_bg"
+        android:src="@drawable/yoga"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/lowerbody_workout_tv" />
+
+    <TextView
+        android:id="@+id/yoga_tv"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Yoga"
+        app:layout_constraintTop_toBottomOf="@id/yoga_btn"
+        app:layout_constraintStart_toStartOf="@id/yoga_btn"
+        app:layout_constraintEnd_toEndOf="@id/yoga_btn"
+        android:fontFamily="@font/rubik_semibold"
+        android:padding="10dp"
+        android:textColor="@color/gray"/>
+
+    <ImageButton
+        android:id="@+id/reading_btn"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_margin="25dp"
+        android:padding="22dp"
+        android:background="@drawable/habit_circle_bg"
+        android:src="@drawable/book"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/cycling_tv" />
+
+    <TextView
+        android:id="@+id/reading_tv"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Reading"
+        app:layout_constraintTop_toBottomOf="@id/reading_btn"
+        app:layout_constraintStart_toStartOf="@id/reading_btn"
+        app:layout_constraintEnd_toEndOf="@id/reading_btn"
+        android:fontFamily="@font/rubik_semibold"
+        android:padding="10dp"
+        android:textColor="@color/gray"/>
+
+
+</androidx.constraintlayout.widget.ConstraintLayout>
