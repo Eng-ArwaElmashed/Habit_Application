@@ -89,10 +89,11 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="end"
+            android:layout_marginTop="24dp"
             android:layout_marginBottom="24dp"
             android:text="Forget password ?"
             android:textColor="@color/main_pink"
-            android:textSize="12sp" />
+            android:textSize="16sp" />
 
         <Button
             android:id="@+id/btnLogin"
@@ -151,7 +152,7 @@
                 android:layout_height="wrap_content"
                 android:text="Dont have account?"
                 android:textColor="@color/gray"
-                android:textSize="12sp" />
+                android:textSize="16sp" />
 
             <TextView
                 android:id="@+id/tvSignIn"
@@ -159,7 +160,7 @@
                 android:layout_height="wrap_content"
                 android:text="SIGN Up"
                 android:textColor="@color/main_pink"
-                android:textSize="12sp"
+                android:textSize="16sp"
                 android:textStyle="bold" />
         </LinearLayout>
 

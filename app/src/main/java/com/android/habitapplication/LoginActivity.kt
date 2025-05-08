@@ -1,6 +1,6 @@
 package com.android.habitapplication
-
 import android.annotation.SuppressLint
+import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.text.InputType
@@ -10,7 +10,7 @@ import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
-import com.android.habitapplication.ui.onboarding.Onboarding1Activity
+import com.android.habitapplication.utils.NotificationScheduler
 import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount
 import com.google.android.gms.auth.api.signin.GoogleSignInClient
@@ -20,9 +20,7 @@ import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
 import com.google.firebase.auth.GoogleAuthProvider
 import com.google.firebase.firestore.FirebaseFirestore
-
 class LoginActivity : AppCompatActivity() {
-
     private lateinit var auth: FirebaseAuth
     private lateinit var db: FirebaseFirestore
     private lateinit var googleSignInClient: GoogleSignInClient
@@ -106,12 +104,16 @@ class LoginActivity : AppCompatActivity() {
                 .addOnSuccessListener {
                     val user = auth.currentUser
                     if (user != null && user.isEmailVerified) {
-                        Toast.makeText(this, "Check your email for verification", Toast.LENGTH_SHORT).show()
-                        auth.signOut()
-                    } else {
                         Toast.makeText(this, "Login Successful!", Toast.LENGTH_SHORT).show()
-                        startActivity(Intent(this, Onboarding1Activity::class.java))
+
+                        fetchTimesAndSchedule(user.uid)
+
+                        startActivity(Intent(this, MorningSelectionActivity::class.java))
                         finish()
+
+                    } else {
+                        Toast.makeText(this, "Check your email for verification", Toast.LENGTH_SHORT).show()
+
                     }
                 }
                 .addOnFailureListener {
@@ -167,11 +169,50 @@ class LoginActivity : AppCompatActivity() {
                 if (task.isSuccessful) {
                     val user: FirebaseUser? = auth.currentUser
                     Toast.makeText(this, "Welcome, ${user?.displayName}", Toast.LENGTH_SHORT).show()
-                    startActivity(Intent(this, Onboarding1Activity::class.java))
+                    if (user != null) {
+                        fetchTimesAndSchedule(user.uid)
+                    }
+
+                    startActivity(Intent(this, MorningSelectionActivity::class.java))
                     finish()
                 } else {
                     Toast.makeText(this, "Firebase Auth failed: ${task.exception?.message}", Toast.LENGTH_SHORT).show()
                 }
             }
     }
+
+private fun fetchTimesAndSchedule(userId: String) {
+    val userDocRef = db.collection("Users").document(userId)
+
+    userDocRef.get()
+        .addOnSuccessListener { document ->
+            if (document != null && document.exists()) {
+                val wakeHour = (document.getLong("wakeHour") ?: 8).toInt()
+                val wakeMinute = (document.getLong("wakeMinute") ?: 0).toInt()
+                val sleepHour = (document.getLong("sleepHour") ?: 22).toInt()
+                val sleepMinute = (document.getLong("sleepMinute") ?: 0).toInt()
+
+                val prefs = getSharedPreferences("user_times", Context.MODE_PRIVATE)
+                prefs.edit()
+                    .putInt("wakeHour", wakeHour)
+                    .putInt("wakeMinute", wakeMinute)
+                    .putInt("sleepHour", sleepHour)
+                    .putInt("sleepMinute", sleepMinute)
+                    .apply()
+
+                val intervalMillis = 2 * 60 * 1000L // كل دقيقتين للتجربة
+                NotificationScheduler.scheduleRepeatingNotifications(this, intervalMillis)
+
+                Toast.makeText(this, "Notifications scheduled successfully", Toast.LENGTH_SHORT).show()
+                startActivity(Intent(this, MorningSelectionActivity::class.java))
+                finish()
+            } else {
+                Toast.makeText(this, "User data not found", Toast.LENGTH_SHORT).show()
+            }
+        }
+        .addOnFailureListener { e ->
+            Toast.makeText(this, "Error fetching user data: ${e.message}", Toast.LENGTH_SHORT).show()
+        }
 }
+}
+

@@ -17,13 +17,7 @@ class WelcomeActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        val user = FirebaseAuth.getInstance().currentUser
-        if (user != null && user.isEmailVerified) {
-            // ✅ المستخدم مسجل دخول، نوديه على الصفحة الرئيسية
-            startActivity(Intent(this, TodayFragment::class.java))
-            finish()
-            return
-        }
+
 
         enableEdgeToEdge()
         setContentView(R.layout.activity_welcome)
@@ -39,7 +33,7 @@ class WelcomeActivity : AppCompatActivity() {
 
         val getStartedBtn = findViewById<Button>(R.id.btnGetStarted)
         getStartedBtn.setOnClickListener {
-            startActivity(Intent(this, LoginActivity::class.java))
+            startActivity(Intent(this, Onboarding1Activity::class.java))
             finish()
         }
     }

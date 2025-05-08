@@ -10,6 +10,7 @@ import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
+import com.android.habitapplication.LoginActivity
 import com.android.habitapplication.MainActivity
 import com.android.habitapplication.MorningSelectionActivity
 import com.android.habitapplication.R
@@ -31,7 +32,7 @@ class Onboarding3Activity : AppCompatActivity() {
         val nextBtn = findViewById<Button>(R.id.next_btn)
 
         nextBtn.setOnClickListener {
-            startActivity(Intent(this, MorningSelectionActivity::class.java))
+            startActivity(Intent(this, LoginActivity::class.java))
             finish()
         }
     }

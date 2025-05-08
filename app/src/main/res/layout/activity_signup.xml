@@ -208,7 +208,7 @@
                 android:layout_height="wrap_content"
                 android:text="ALREADY HAVE AN ACCOUNT?"
                 android:textColor="@color/gray"
-                android:textSize="12sp" />
+                android:textSize="16sp" />
 
             <TextView
                 android:id="@+id/tvSignIn"
@@ -216,7 +216,7 @@
                 android:layout_height="wrap_content"
                 android:text="SIGN IN"
                 android:textColor="@color/main_pink"
-                android:textSize="12sp"
+                android:textSize="16sp"
                 android:textStyle="bold" />
         </LinearLayout>
 
