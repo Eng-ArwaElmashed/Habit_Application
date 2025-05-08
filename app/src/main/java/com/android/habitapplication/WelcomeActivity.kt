@@ -1,23 +1,40 @@
 package com.android.habitapplication
 
 import android.content.Intent
+import android.os.Build
 import android.os.Bundle
 import android.view.View
 import android.widget.Button
+import android.widget.Toast
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.app.ActivityCompat
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import com.android.habitapplication.ui.onboarding.Onboarding1Activity
-import com.android.habitapplication.ui.today.TodayFragment
 import com.google.firebase.auth.FirebaseAuth
 
 class WelcomeActivity : AppCompatActivity() {
 
+    // Define the permission request launcher
+    private val notificationPermissionRequest =
+        registerForActivityResult(ActivityResultContracts.RequestPermission()) { isGranted ->
+            if (isGranted) {
+                // Permission granted, proceed to the next screen
+                Toast.makeText(this, "Permission granted!", Toast.LENGTH_SHORT).show()
+                startActivity(Intent(this, Onboarding1Activity::class.java))
+                finish()
+            } else {
+                // Permission denied, show a message or handle accordingly
+                Toast.makeText(this, "Permission denied! Notifications will not work.", Toast.LENGTH_SHORT).show()
+                startActivity(Intent(this, Onboarding1Activity::class.java))
+                finish()
+            }
+        }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-
-
 
         enableEdgeToEdge()
         setContentView(R.layout.activity_welcome)
@@ -30,6 +47,23 @@ class WelcomeActivity : AppCompatActivity() {
 
         supportActionBar?.hide()
         window.decorView.systemUiVisibility = View.SYSTEM_UI_FLAG_FULLSCREEN
+
+        // Check if the app is running on Android 13 or higher
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            // Request notification permission if running on Android 13 or higher
+            if (ActivityCompat.checkSelfPermission(this, android.Manifest.permission.POST_NOTIFICATIONS) !=
+                android.content.pm.PackageManager.PERMISSION_GRANTED) {
+                notificationPermissionRequest.launch(android.Manifest.permission.POST_NOTIFICATIONS)
+            } else {
+                // Permission already granted
+                startActivity(Intent(this, Onboarding1Activity::class.java))
+                finish()
+            }
+        } else {
+            // No need to request permission on lower versions, proceed directly
+            startActivity(Intent(this, Onboarding1Activity::class.java))
+            finish()
+        }
 
         val getStartedBtn = findViewById<Button>(R.id.btnGetStarted)
         getStartedBtn.setOnClickListener {
