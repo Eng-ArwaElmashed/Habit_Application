@@ -1,86 +1,63 @@
 package com.android.habitapplication.ui.notifications
-
 import android.os.Bundle
-import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
+import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.RecyclerView
 import com.android.habitapplication.Notification
 import com.android.habitapplication.NotificationAdapter
 import com.android.habitapplication.R
-import com.android.habitapplication.databinding.FragmentTodayBinding
+import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.firestore.FirebaseFirestore
+import com.google.firebase.firestore.Query
 
-// TODO: Rename parameter arguments, choose names that match
-// the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
-private const val ARG_PARAM1 = "param1"
-private const val ARG_PARAM2 = "param2"
-
-/**
- * A simple [Fragment] subclass.
- * Use the [NotificationsFragment.newInstance] factory method to
- * create an instance of this fragment.
- */
 class NotificationsFragment : Fragment() {
-    // TODO: Rename and change types of parameters
-    private var param1: String? = null
-    private var param2: String? = null
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        arguments?.let {
-            param1 = it.getString(ARG_PARAM1)
-            param2 = it.getString(ARG_PARAM2)
-        }
-    }
-    private var _binding: FragmentTodayBinding? = null
+    private lateinit var recyclerView: RecyclerView
+    private val notificationList = mutableListOf<Notification>()
+    private lateinit var adapter: NotificationAdapter
 
-    // This property is only valid between onCreateView and
-    // onDestroyView.
-    private val binding get() = _binding!!
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-
-        // 1. Inflate the layout
         val rootView = inflater.inflate(R.layout.fragment_notifications, container, false)
+        recyclerView = rootView.findViewById(R.id.rv)
+        adapter = NotificationAdapter(notificationList)
+        recyclerView.adapter = adapter
 
-        // 2. Access RecyclerView from the inflated view
-        val recyclerView = rootView.findViewById<RecyclerView>(R.id.rv)
+        fetchNotificationsFromFirestore()
 
-        // 3. Sample data
-        val sampleList = listOf(
-            Notification(R.drawable.lowebody_workout, "Your habit is on fire! 🔥", "04/19/2025"),
-            Notification(R.drawable.yoga1, "You missed a day! 😬", "04/18/2025"),
-            Notification(R.drawable.book, "Streak resumed. Great job!", "04/17/2025")
-        )
-
-        // 4. Set adapter
-        recyclerView.adapter = NotificationAdapter(sampleList)
-
-        // 5. Return the view
         return rootView
     }
 
+    private fun fetchNotificationsFromFirestore() {
+        val user = FirebaseAuth.getInstance().currentUser ?: return
+        val db = FirebaseFirestore.getInstance()
 
-    companion object {
-        /**
-         * Use this factory method to create a new instance of
-         * this fragment using the provided parameters.
-         *
-         * @param param1 Parameter 1.
-         * @param param2 Parameter 2.
-         * @return A new instance of fragment NotificationsFragment.
-         */
-        // TODO: Rename and change types and number of parameters
-        @JvmStatic
-        fun newInstance(param1: String, param2: String) =
-            NotificationsFragment().apply {
-                arguments = Bundle().apply {
-                    putString(ARG_PARAM1, param1)
-                    putString(ARG_PARAM2, param2)
+        db.collection("userNotifications")
+            .document(user.uid)
+            .collection("notifications")
+            .orderBy("timestamp", Query.Direction.DESCENDING)
+            .get()
+            .addOnSuccessListener { result ->
+                notificationList.clear()
+                for (document in result) {
+                    val title = document.getString("title") ?: ""
+                    val date = document.getString("date") ?: ""
+                    val imageResId = (document.getLong("imageResId") ?: R.drawable.ic_launcher_background).toInt()
+
+                    notificationList.add(Notification(imageResId, title, date))
                 }
+                adapter.notifyDataSetChanged()
             }
+            .addOnFailureListener {
+                Toast.makeText(requireContext(), "Failed to load notifications", Toast.LENGTH_SHORT).show()
+            }
+    }
+    companion object {
+        const val CHANNEL_ID = "habit_reminder_channel"
     }
 }

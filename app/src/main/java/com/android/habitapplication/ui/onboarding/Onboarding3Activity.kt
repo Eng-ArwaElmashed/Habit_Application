@@ -14,6 +14,7 @@ import com.android.habitapplication.LoginActivity
 import com.android.habitapplication.MainActivity
 import com.android.habitapplication.MorningSelectionActivity
 import com.android.habitapplication.R
+import com.android.habitapplication.SignupActivity
 
 class Onboarding3Activity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -32,7 +33,9 @@ class Onboarding3Activity : AppCompatActivity() {
         val nextBtn = findViewById<Button>(R.id.next_btn)
 
         nextBtn.setOnClickListener {
-            startActivity(Intent(this, LoginActivity::class.java))
+            val prefs = getSharedPreferences("AppPrefs", MODE_PRIVATE)
+            prefs.edit().putBoolean("onboardingCompleted", true).apply()
+            startActivity(Intent(this, SignupActivity::class.java))
             finish()
         }
     }

@@ -10,7 +10,7 @@ import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
-import com.android.habitapplication.utils.NotificationScheduler
+import com.android.habitapplication.NotificationScheduler
 import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount
 import com.google.android.gms.auth.api.signin.GoogleSignInClient
@@ -106,7 +106,7 @@ class LoginActivity : AppCompatActivity() {
                     if (user != null && user.isEmailVerified) {
                         Toast.makeText(this, "Login Successful!", Toast.LENGTH_SHORT).show()
 
-                        fetchTimesAndSchedule(user.uid)
+
 
                         startActivity(Intent(this, MorningSelectionActivity::class.java))
                         finish()
@@ -170,7 +170,7 @@ class LoginActivity : AppCompatActivity() {
                     val user: FirebaseUser? = auth.currentUser
                     Toast.makeText(this, "Welcome, ${user?.displayName}", Toast.LENGTH_SHORT).show()
                     if (user != null) {
-                        fetchTimesAndSchedule(user.uid)
+
                     }
 
                     startActivity(Intent(this, MorningSelectionActivity::class.java))
@@ -181,38 +181,6 @@ class LoginActivity : AppCompatActivity() {
             }
     }
 
-private fun fetchTimesAndSchedule(userId: String) {
-    val userDocRef = db.collection("Users").document(userId)
 
-    userDocRef.get()
-        .addOnSuccessListener { document ->
-            if (document != null && document.exists()) {
-                val wakeHour = (document.getLong("wakeHour") ?: 8).toInt()
-                val wakeMinute = (document.getLong("wakeMinute") ?: 0).toInt()
-                val sleepHour = (document.getLong("sleepHour") ?: 22).toInt()
-                val sleepMinute = (document.getLong("sleepMinute") ?: 0).toInt()
-
-                val prefs = getSharedPreferences("user_times", Context.MODE_PRIVATE)
-                prefs.edit()
-                    .putInt("wakeHour", wakeHour)
-                    .putInt("wakeMinute", wakeMinute)
-                    .putInt("sleepHour", sleepHour)
-                    .putInt("sleepMinute", sleepMinute)
-                    .apply()
-
-                val intervalMillis = 2 * 60 * 1000L // كل دقيقتين للتجربة
-                NotificationScheduler.scheduleRepeatingNotifications(this, intervalMillis)
-
-                Toast.makeText(this, "Notifications scheduled successfully", Toast.LENGTH_SHORT).show()
-                startActivity(Intent(this, MorningSelectionActivity::class.java))
-                finish()
-            } else {
-                Toast.makeText(this, "User data not found", Toast.LENGTH_SHORT).show()
-            }
-        }
-        .addOnFailureListener { e ->
-            Toast.makeText(this, "Error fetching user data: ${e.message}", Toast.LENGTH_SHORT).show()
-        }
-}
 }
 

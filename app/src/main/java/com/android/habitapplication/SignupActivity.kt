@@ -140,7 +140,7 @@ class SignupActivity : AppCompatActivity() {
 //                                    val sharedPref = getSharedPreferences("user_data", MODE_PRIVATE)
                                     verifyEmail()
 
-                                    startActivity(Intent(this, LoginActivity::class.java))
+                                    startActivity(Intent(this, MorningSelectionActivity::class.java))
                                     finish()
 
                                 }
@@ -175,6 +175,7 @@ class SignupActivity : AppCompatActivity() {
             ?.addOnCompleteListener { task ->
                 if (task.isSuccessful) {
                     Toast.makeText(this, "Check your email for verification", Toast.LENGTH_SHORT).show()
+
                 } else {
                     Toast.makeText(this, "Failed to send verification email", Toast.LENGTH_SHORT).show()
                 }

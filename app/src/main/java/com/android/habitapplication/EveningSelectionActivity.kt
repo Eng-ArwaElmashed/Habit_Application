@@ -12,6 +12,7 @@ import android.view.View
 import android.widget.TimePicker
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
+import com.android.habitapplication.NotificationScheduler
 import com.google.android.material.button.MaterialButton
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
@@ -23,12 +24,15 @@ class EveningSelectionActivity : AppCompatActivity() {
     private lateinit var pendingIntent: PendingIntent
     private lateinit var calendar: Calendar
     private lateinit var timePicker: TimePicker
+    private lateinit var db: FirebaseFirestore
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         supportActionBar?.hide()
         window.decorView.systemUiVisibility = View.SYSTEM_UI_FLAG_FULLSCREEN
         setContentView(R.layout.activity_evening_selection)
+
+        db = FirebaseFirestore.getInstance()
 
         alarmManager = getSystemService(Context.ALARM_SERVICE) as AlarmManager
         timePicker = findViewById(R.id.time_pk)
@@ -38,7 +42,9 @@ class EveningSelectionActivity : AppCompatActivity() {
 
         getStartedButton.setOnClickListener {
             setSleepAlarm()
-            startActivity(Intent(this, MainActivity::class.java))
+            val prefs = getSharedPreferences("AppPrefs", MODE_PRIVATE)
+            prefs.edit().putBoolean("setupCompleted", true).apply()
+            startActivity(Intent(this, ChooseHabitActivity::class.java))
             finish()
         }
     }
@@ -62,6 +68,7 @@ class EveningSelectionActivity : AppCompatActivity() {
                 .set(sleepTime)
                 .addOnSuccessListener {
                     Toast.makeText(this, "Sleep time saved!", Toast.LENGTH_SHORT).show()
+                    fetchTimesAndSchedule(user.uid)
                 }
                 .addOnFailureListener {
                     Toast.makeText(this, "Failed to save sleep time.", Toast.LENGTH_SHORT).show()
@@ -97,4 +104,38 @@ class EveningSelectionActivity : AppCompatActivity() {
             manager.createNotificationChannel(channel)
         }
     }
+    private fun fetchTimesAndSchedule(userId: String) {
+        val userDocRef = db.collection("Users").document(userId)
+
+        userDocRef.get()
+            .addOnSuccessListener { document ->
+                if (document != null && document.exists()) {
+                    val wakeHour = (document.getLong("wakeHour") ?: 8).toInt()
+                    val wakeMinute = (document.getLong("wakeMinute") ?: 0).toInt()
+                    val sleepHour = (document.getLong("sleepHour") ?: 22).toInt()
+                    val sleepMinute = (document.getLong("sleepMinute") ?: 0).toInt()
+
+                    val prefs = getSharedPreferences("user_times", Context.MODE_PRIVATE)
+                    prefs.edit()
+                        .putInt("wakeHour", wakeHour)
+                        .putInt("wakeMinute", wakeMinute)
+                        .putInt("sleepHour", sleepHour)
+                        .putInt("sleepMinute", sleepMinute)
+                        .apply()
+
+                    val intervalMillis = 2 * 60 * 1000L // كل دقيقتين للتجربة
+                    NotificationScheduler.scheduleRepeatingNotifications(this, intervalMillis)
+
+                    Toast.makeText(this, "Notifications scheduled successfully", Toast.LENGTH_SHORT).show()
+                    startActivity(Intent(this, MorningSelectionActivity::class.java))
+                    finish()
+                } else {
+                    Toast.makeText(this, "User data not found", Toast.LENGTH_SHORT).show()
+                }
+            }
+            .addOnFailureListener { e ->
+                Toast.makeText(this, "Error fetching user data: ${e.message}", Toast.LENGTH_SHORT).show()
+            }
+    }
 }
+

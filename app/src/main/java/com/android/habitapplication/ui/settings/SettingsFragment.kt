@@ -10,12 +10,14 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
+import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
 import com.android.habitapplication.LoginActivity
 import com.android.habitapplication.MainActivity
 import com.android.habitapplication.databinding.FragmentSettingsBinding
 import com.android.habitapplication.ui.profile.HomeViewModel
 import com.android.habitapplication.ui.profile.ProfileFragment
+import com.android.habitapplication.NotificationScheduler
 import com.google.firebase.auth.FirebaseAuth
 
 class SettingsFragment : Fragment() {
@@ -31,10 +33,20 @@ class SettingsFragment : Fragment() {
         val view = binding.root
 
         binding.logoutBtn.setOnClickListener {
+            // Sign out from Firebase
             FirebaseAuth.getInstance().signOut()
-            val intent = Intent(requireContext(), LoginActivity::class.java)
-            intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
+
+            // Clear SharedPreferences flags (if used)
+            val prefs = requireContext().getSharedPreferences("AppPrefs", AppCompatActivity.MODE_PRIVATE)
+            prefs.edit().clear().apply()
+
+            // Redirect to Login and clear back stack
+            val intent = Intent(requireContext(), LoginActivity::class.java).apply {
+                flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
+            }
             startActivity(intent)
+
+            // Finish the current activity
             requireActivity().finish()
         }
 
@@ -42,32 +54,25 @@ class SettingsFragment : Fragment() {
             val intent = Intent(requireContext(), Profile::class.java)
             startActivity(intent)
         }
-        binding.soundSwitch.setOnCheckedChangeListener { _, isChecked ->
-            val audioManager = requireContext().getSystemService(Context.AUDIO_SERVICE) as AudioManager
-            if (isChecked) {
-                // تشغيل الصوت – نرفعه لأقصى درجة
-                val maxVolume = audioManager.getStreamMaxVolume(AudioManager.STREAM_MUSIC)
-                audioManager.setStreamVolume(AudioManager.STREAM_MUSIC, maxVolume, 0)
-                Toast.makeText(requireContext(), "Sound ON", Toast.LENGTH_SHORT).show()
-            } else {
-                // كتم الصوت
-                audioManager.setStreamVolume(AudioManager.STREAM_MUSIC, 0, 0)
-                Toast.makeText(requireContext(), "Sound OFF", Toast.LENGTH_SHORT).show()
-            }
-        }
+
 
         // Vacation Mode Switch logic
         binding.vacationSwitch.setOnCheckedChangeListener { _, isChecked ->
+            val sharedPref = requireContext().getSharedPreferences("AppSettings", Context.MODE_PRIVATE)
+            with(sharedPref.edit()) {
+                putBoolean("isVacationModeOn", isChecked)
+                apply()
+            }
+
             if (isChecked) {
-                Toast.makeText(requireContext(), "Vacation mode enabled", Toast.LENGTH_SHORT).show()
+                NotificationScheduler.cancelNotifications(requireContext())
+                Toast.makeText(requireContext(), "Vacation mode enabled: Notifications disabled", Toast.LENGTH_SHORT).show()
             } else {
-                Toast.makeText(requireContext(), "Vacation mode disabled", Toast.LENGTH_SHORT).show()
+                NotificationScheduler.scheduleRepeatingNotifications(requireContext(), intervalMillis =2 * 60 * 1000L )
+                Toast.makeText(requireContext(), "Vacation mode disabled: Notifications resumed", Toast.LENGTH_SHORT).show()
             }
         }
-        binding.loginWithWebBtn.setOnClickListener {
-            val intent = Intent(requireContext(), LoginActivity::class.java)
-            startActivity(intent)
-        }
+
         binding.rateUsBtn.setOnClickListener {
             val packageName = requireContext().packageName
             try {

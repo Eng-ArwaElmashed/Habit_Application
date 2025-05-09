@@ -7,27 +7,30 @@ import android.widget.ImageView
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 
-class NotificationAdapter(private val items: List<Notification>) :
+class NotificationAdapter(private val notifications: List<Notification>) :
+
     RecyclerView.Adapter<NotificationAdapter.NotificationViewHolder>() {
 
-    inner class NotificationViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
-        val image: ImageView = itemView.findViewById(R.id.image)
-        val tv: TextView = itemView.findViewById(R.id.tv)
-        val tv2: TextView = itemView.findViewById(R.id.tv2)
+    class NotificationViewHolder(view: View) : RecyclerView.ViewHolder(view) {
+        val imageView: ImageView = view.findViewById(R.id.image)
+        val titleView: TextView = view.findViewById(R.id.tv)
+        val dateView: TextView = view.findViewById(R.id.tv2)
     }
 
+
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): NotificationViewHolder {
+
         val view = LayoutInflater.from(parent.context)
             .inflate(R.layout.notification_item_list, parent, false)
         return NotificationViewHolder(view)
     }
 
     override fun onBindViewHolder(holder: NotificationViewHolder, position: Int) {
-        val item = items[position]
-        holder.image.setImageResource(item.imageResId)
-        holder.tv.text = item.message
-        holder.tv2.text = item.date
+        val notification = notifications[position]
+        holder.imageView.setImageResource(notification.imageResId)
+        holder.titleView.text = notification.title
+        holder.dateView.text = notification.date
     }
 
-    override fun getItemCount(): Int = items.size
+    override fun getItemCount(): Int = notifications.size
 }
