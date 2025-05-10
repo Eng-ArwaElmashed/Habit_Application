@@ -5,27 +5,36 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
+import androidx.recyclerview.widget.DiffUtil
+import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
+import com.android.habitapplication.model.AddHabit
+import com.google.android.material.button.MaterialButton
 
 class HabitAdapter(
-    private val habits: List<HabitModel>,
-    private val onHabitClick: (HabitModel) -> Unit
-) : RecyclerView.Adapter<HabitAdapter.HabitViewHolder>() {
+    habits: List<AddHabit>,
+    private val onHabitClick: (AddHabit) -> Unit,
+    private val onDeleteClick: (AddHabit) -> Unit,
+    private val onEditClick: (AddHabit) -> Unit,
+) : ListAdapter<AddHabit, HabitAdapter.HabitViewHolder>(HabitDiffCallback()) {
+
+    class HabitDiffCallback : DiffUtil.ItemCallback<AddHabit>() {
+        override fun areItemsTheSame(oldItem: AddHabit, newItem: AddHabit): Boolean {
+            return oldItem.id == newItem.id
+        }
+
+        override fun areContentsTheSame(oldItem: AddHabit, newItem: AddHabit): Boolean {
+            return oldItem == newItem
+        }
+    }
+
 
     inner class HabitViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
-        private val title: TextView = itemView.findViewById(R.id.habit_title)
-        private val progressText: TextView = itemView.findViewById(R.id.habit_progress_text)
-        private val centerIcon: ImageView = itemView.findViewById(R.id.center_icon)
-
-        fun bind(habit: HabitModel) {
-            title.text = habit.name
-            progressText.text = habit.progress
-            centerIcon.setImageResource(habit.iconResId)
-
-            itemView.setOnClickListener {
-                onHabitClick(habit)
-            }
-        }
+        val title: TextView = itemView.findViewById(R.id.habit_title)
+        val progressText: TextView = itemView.findViewById(R.id.habit_progress_text)
+        val centerIcon: ImageView = itemView.findViewById(R.id.center_icon)
+        val btnEdit: ImageView = itemView.findViewById(R.id.edit_btn)
+        val btnDelete: ImageView = itemView.findViewById(R.id.delete_btn)
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): HabitViewHolder {
@@ -35,8 +44,20 @@ class HabitAdapter(
     }
 
     override fun onBindViewHolder(holder: HabitViewHolder, position: Int) {
-        holder.bind(habits[position])
-    }
+        val habit = getItem(position)
+        holder.title.text = habit.title
+        holder.progressText.text = habit.progress
 
-    override fun getItemCount(): Int = habits.size
+        holder.itemView.setOnClickListener {
+            onHabitClick(habit)
+        }
+
+        holder.btnEdit.setOnClickListener {
+            onEditClick(habit)
+        }
+
+        holder.btnDelete.setOnClickListener {
+            onDeleteClick(habit)
+        }
+    }
 }
