@@ -3,101 +3,117 @@ package com.android.habitapplication.ui.today
 import android.app.Activity
 import android.content.Intent
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Button
+import android.widget.Toast
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager
-import com.android.habitapplication.HabitModel
+import com.android.habitapplication.HabitAdapter
 import com.android.habitapplication.R
 import com.android.habitapplication.databinding.FragmentTodayBinding
+import com.android.habitapplication.model.AddHabit
 import com.android.habitapplication.ui.all_habits.AddHabitActivity
+import com.google.firebase.firestore.FirebaseFirestore
 
 class TodayFragment : Fragment() {
 
     private var _binding: FragmentTodayBinding? = null
     private val binding get() = _binding!!
 
-    private lateinit var adapter: HabitsAdapter
-    private val habitsList = mutableListOf<HabitModel>()
+    private lateinit var adapter: HabitAdapter
+    private lateinit var db: FirebaseFirestore
 
-    companion object {
-        const val ADD_HABIT_REQUEST_CODE = 100
+    private val resultLauncher = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
+        if (result.resultCode == Activity.RESULT_OK) {
+            val updatedHabit = result.data?.getSerializableExtra("updatedHabit") as? AddHabit
+            updatedHabit?.let {
+
+                val habitList = adapter.currentList.toMutableList()
+                val index = habitList.indexOfFirst { it.id == updatedHabit.id }
+                if (index != -1) {
+                    habitList[index] = updatedHabit
+                    adapter.submitList(habitList)
+                }
+            }
+        }
     }
 
     override fun onCreateView(
-        inflater: LayoutInflater,
-        container: ViewGroup?,
+        inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
         _binding = FragmentTodayBinding.inflate(inflater, container, false)
-        val root = binding.root
+        return binding.root
+    }
 
-        setupInitialHabits()
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
 
-        adapter = HabitsAdapter(habitsList)
-        binding.habitsRecyclerView.layoutManager = GridLayoutManager(requireContext(), 2)
+        db = FirebaseFirestore.getInstance()
 
-        binding.habitsRecyclerView.adapter = adapter
+        setupRecyclerView()
+        loadTodayHabits()
 
         binding.addBtn.setOnClickListener {
             val intent = Intent(requireContext(), AddHabitActivity::class.java)
-            startActivityForResult(intent, ADD_HABIT_REQUEST_CODE)
+            resultLauncher.launch(intent)
         }
-
-        return root
     }
 
-    private fun setupInitialHabits() {
-        // عادات ثابتة
-        habitsList.add(
-            HabitModel(
-                name = "Drinking Water",
-                progress = "75%",
-                iconResId = R.drawable.ic_water_glass_filled
-            )
+    private fun setupRecyclerView() {
+        binding.todayRecyclerView.layoutManager = GridLayoutManager(requireContext(), 2)
+
+        adapter = HabitAdapter(
+            onHabitClick = { habit -> editHabit(habit) },
+            onDeleteClick = { habit -> deleteHabit(habit) },
+            onEditClick = { habit -> editHabit(habit) }
         )
-        habitsList.add(
-            HabitModel(
-                name = "Cycling",
-                progress = "40%",
-                iconResId = R.drawable.ic_cycling
-            )
-        )
-        habitsList.add(
-            HabitModel(
-                name = "Water",
-                progress = "40%",
-                iconResId = R.drawable.ic_water_glass
-            )
-        )
-        habitsList.add(
-            HabitModel(
-                name = "Walking",
-                progress = "40%",
-                iconResId = R.drawable.walking_vector
-            )
-        )
+
+        binding.todayRecyclerView.adapter = adapter
     }
 
-    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-        super.onActivityResult(requestCode, resultCode, data)
+    private fun loadTodayHabits() {
+        val habitList = mutableListOf<AddHabit>()
 
-        if (requestCode == ADD_HABIT_REQUEST_CODE && resultCode == Activity.RESULT_OK && data != null) {
-            val name = data.getStringExtra("habit_name") ?: return
-            val progress = data.getStringExtra("habit_progress") ?: "0%"
-            val imageResId = data.getIntExtra("habit_image", R.drawable.create)
+        db.collection("habits")
+            .get()
+            .addOnSuccessListener { result ->
+                for (document in result) {
+                    val habit = document.toObject(AddHabit::class.java)
+                    habitList.add(habit)
+                }
+                adapter.submitList(habitList)
+            }
+            .addOnFailureListener { exception ->
+                Log.w("TodayFragment", "Error getting documents: ", exception)
+            }
+    }
 
-            val newHabit = HabitModel(
-                name = name,
-                progress = progress,
-                iconResId = imageResId
-            )
-
-            habitsList.add(newHabit)
-            adapter.notifyItemInserted(habitsList.size - 1)
+    private fun deleteHabit(habit: AddHabit) {
+        habit.id.let { habitId ->
+            db.collection("habits").document(habitId)
+                .delete()
+                .addOnSuccessListener {
+                    Toast.makeText(requireContext(), "Habit deleted", Toast.LENGTH_SHORT).show()
+                    loadTodayHabits()
+                }
+                .addOnFailureListener {
+                    Toast.makeText(requireContext(), "Failed to delete habit", Toast.LENGTH_SHORT).show()
+                }
         }
+    }
+
+    private fun editHabit(habit: AddHabit) {
+        val intent = Intent(requireContext(), AddHabitActivity::class.java)
+        intent.putExtra("habitId", habit.id)
+        intent.putExtra("habitTitle", habit.title)
+        intent.putExtra("habitDesc", habit.description)
+        resultLauncher.launch(intent)
     }
 
     override fun onDestroyView() {
@@ -105,3 +121,4 @@ class TodayFragment : Fragment() {
         _binding = null
     }
 }
+

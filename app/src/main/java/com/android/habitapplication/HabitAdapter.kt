@@ -9,13 +9,11 @@ import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.android.habitapplication.model.AddHabit
-import com.google.android.material.button.MaterialButton
 
 class HabitAdapter(
-    habits: List<AddHabit>,
     private val onHabitClick: (AddHabit) -> Unit,
     private val onDeleteClick: (AddHabit) -> Unit,
-    private val onEditClick: (AddHabit) -> Unit,
+    private val onEditClick: (AddHabit) -> Unit
 ) : ListAdapter<AddHabit, HabitAdapter.HabitViewHolder>(HabitDiffCallback()) {
 
     class HabitDiffCallback : DiffUtil.ItemCallback<AddHabit>() {
@@ -28,13 +26,13 @@ class HabitAdapter(
         }
     }
 
-
     inner class HabitViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         val title: TextView = itemView.findViewById(R.id.habit_title)
         val progressText: TextView = itemView.findViewById(R.id.habit_progress_text)
         val centerIcon: ImageView = itemView.findViewById(R.id.center_icon)
         val btnEdit: ImageView = itemView.findViewById(R.id.edit_btn)
         val btnDelete: ImageView = itemView.findViewById(R.id.delete_btn)
+
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): HabitViewHolder {
@@ -45,8 +43,14 @@ class HabitAdapter(
 
     override fun onBindViewHolder(holder: HabitViewHolder, position: Int) {
         val habit = getItem(position)
+
         holder.title.text = habit.title
-        holder.progressText.text = habit.progress
+
+        val totalTasks = habit.tasks.size
+        val completedTasks = habit.tasks.count { it.isCompleted }
+        val progressPercentage = if (totalTasks == 0) 0 else (completedTasks * 100) / totalTasks
+
+        holder.progressText.text = "$progressPercentage%"
 
         holder.itemView.setOnClickListener {
             onHabitClick(habit)
@@ -60,4 +64,5 @@ class HabitAdapter(
             onDeleteClick(habit)
         }
     }
+
 }
