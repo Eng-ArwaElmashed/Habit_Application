@@ -40,14 +40,6 @@
                 android:textSize="16sp"
                 app:layout_constraintStart_toEndOf="@id/image"
                 app:layout_constraintTop_toTopOf="@id/image" />
-            <Spinner
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintTop_toTopOf="parent"
-                android:spinnerMode="dropdown"
-                android:entries="@array/duration"/>
-
             <TextView
                 android:id="@+id/tv2"
                 android:layout_width="wrap_content"
@@ -143,11 +135,12 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Longest Streak"
+                android:text="Streak"
                 android:fontFamily="@font/rubik_medium"
                 android:textSize="16dp"
                 android:layout_margin="10dp"/>
             <TextView
+                android:id="@+id/streakTextView"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:fontFamily="@font/rubik_bold"
