@@ -1,45 +1,98 @@
 package com.android.habitapplication.ui.all_habits
 
+import HabitViewModel
+import android.app.Activity
 import android.content.Intent
 import android.os.Bundle
-import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
+import androidx.activity.result.contract.ActivityResultContracts
+import androidx.fragment.app.Fragment
+import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.GridLayoutManager
 import com.android.habitapplication.*
 import com.android.habitapplication.databinding.FragmentAllHabitsBinding
+import com.android.habitapplication.model.AddHabit
+import com.android.habitapplication.ui.all_habits.AddHabitActivity
+import com.google.firebase.firestore.FirebaseFirestore
 
 class AllHabitsFragment : Fragment() {
-
     private var _binding: FragmentAllHabitsBinding? = null
     private val binding get() = _binding!!
+
+    private lateinit var adapter: HabitAdapter
+    private lateinit var habitViewModel: HabitViewModel
+
+    private val resultLauncher = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
+        if (result.resultCode == Activity.RESULT_OK) {
+            val updatedHabit = result.data?.getSerializableExtra("updatedHabit") as? AddHabit
+            updatedHabit?.let {
+                habitViewModel.loadTodayHabits()
+
+            }
+        }
+    }
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
         _binding = FragmentAllHabitsBinding.inflate(inflater, container, false)
+        return binding.root
+    }
 
-        val habits = listOf(
-            HabitModel("Drink Water",R.drawable.water_cup, "75%"),
-            HabitModel("Morning Walk", R.drawable.walking_vector,"40%"),
-            HabitModel("Cycling", R.drawable.cycling_vector_small,"90%" ),
-            HabitModel("Reading",R.drawable.book, "60%")
-        )
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
 
-        binding.rv.layoutManager = GridLayoutManager(requireContext(), 2)
-        binding.rv.adapter = HabitAdapter(habits) { habit ->
-            Toast.makeText(requireContext(), "Clicked: ${habit.name}", Toast.LENGTH_SHORT).show()
+        habitViewModel = ViewModelProvider(this).get(HabitViewModel::class.java)
+
+        habitViewModel = ViewModelProvider(this).get(HabitViewModel::class.java)
+
+        setupRecyclerView()
+        habitViewModel.habitList.observe(viewLifecycleOwner) { habits ->
+            adapter.submitList(habits)
         }
+
+        habitViewModel.loadTodayHabits()
 
         binding.addBtn.setOnClickListener {
             val intent = Intent(requireContext(), AddHabitActivity::class.java)
-            startActivity(intent)
+            resultLauncher.launch(intent)
         }
+    }
 
-        return binding.root
+    private fun setupRecyclerView() {
+        binding.rv.layoutManager = GridLayoutManager(requireContext(), 2)
+
+        adapter = HabitAdapter(
+            onHabitClick = { habit -> editHabit(habit) },
+            onDeleteClick = { habit -> deleteHabit(habit) },
+            onEditClick = { habit -> editHabit(habit) }
+        )
+
+        binding.rv.adapter = adapter
+    }
+
+    private fun deleteHabit(habit: AddHabit) {
+        FirebaseFirestore.getInstance().collection("habits").document(habit.id)
+            .delete()
+            .addOnSuccessListener {
+                Toast.makeText(requireContext(), "Habit deleted", Toast.LENGTH_SHORT).show()
+                habitViewModel.loadAllHabits() // إعادة تحميل العادات بعد الحذف
+            }
+            .addOnFailureListener {
+                Toast.makeText(requireContext(), "Failed to delete habit", Toast.LENGTH_SHORT).show()
+            }
+    }
+
+    private fun editHabit(habit: AddHabit) {
+        val intent = Intent(requireContext(), AddHabitActivity::class.java)
+        intent.putExtra("habitId", habit.id)
+        intent.putExtra("habitTitle", habit.title)
+        intent.putExtra("habitDesc", habit.description)
+        resultLauncher.launch(intent)
     }
 
     override fun onDestroyView() {

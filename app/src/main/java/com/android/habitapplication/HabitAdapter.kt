@@ -1,5 +1,6 @@
 package com.android.habitapplication
 
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -32,25 +33,28 @@ class HabitAdapter(
         val centerIcon: ImageView = itemView.findViewById(R.id.center_icon)
         val btnEdit: ImageView = itemView.findViewById(R.id.edit_btn)
         val btnDelete: ImageView = itemView.findViewById(R.id.delete_btn)
-
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): HabitViewHolder {
         val view = LayoutInflater.from(parent.context)
-            .inflate(R.layout.habit_item_list, parent, false)
+            .inflate(R.layout.today_item_list, parent, false)
         return HabitViewHolder(view)
     }
 
     override fun onBindViewHolder(holder: HabitViewHolder, position: Int) {
         val habit = getItem(position)
 
+        val progress = if (habit.totalTasks > 0) {
+            (habit.completedTasks.toDouble() / habit.totalTasks) * 100
+        } else {
+            0.0
+        }
+        holder.progressText.text = "${progress.toInt()}%"
+
+        val progressIndicator = holder.itemView.findViewById<com.google.android.material.progressindicator.CircularProgressIndicator>(R.id.habit_progress_indicator)
+        progressIndicator.progress = progress.toInt()
+
         holder.title.text = habit.title
-
-        val totalTasks = habit.tasks.size
-        val completedTasks = habit.tasks.count { it.isCompleted }
-        val progressPercentage = if (totalTasks == 0) 0 else (completedTasks * 100) / totalTasks
-
-        holder.progressText.text = "$progressPercentage%"
 
         holder.itemView.setOnClickListener {
             onHabitClick(habit)
@@ -63,6 +67,17 @@ class HabitAdapter(
         holder.btnDelete.setOnClickListener {
             onDeleteClick(habit)
         }
+
+        Log.d("HabitAdapter", "onBindViewHolder: ${habit.title} progress: $progress")
     }
 
+
+    fun updateHabitProgress(updatedHabit: AddHabit) {
+        val currentList = currentList.toMutableList()
+        val index = currentList.indexOfFirst { it.id == updatedHabit.id }
+        if (index != -1) {
+            currentList[index] = updatedHabit
+            submitList(currentList)
+        }
+    }
 }

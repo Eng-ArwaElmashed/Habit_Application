@@ -3,56 +3,195 @@ package com.android.habitapplication.ui.all_habits
 import android.app.Activity
 import android.content.Intent
 import android.os.Bundle
+import android.view.ViewGroup
 import android.widget.Button
+import android.widget.CheckBox
 import android.widget.EditText
+import android.widget.LinearLayout
 import android.widget.Toast
-import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
-import androidx.core.view.ViewCompat
-import androidx.core.view.WindowInsetsCompat
 import com.android.habitapplication.R
+import com.android.habitapplication.model.AddHabit
+import com.google.firebase.firestore.FirebaseFirestore
 
 class AddHabitActivity : AppCompatActivity() {
 
-    private lateinit var habitNameEditText: EditText
-    private lateinit var saveHabitButton: Button
+    private lateinit var db: FirebaseFirestore
+    private lateinit var habitId: String
+    private lateinit var habitTitle: String
+    private lateinit var habitDesc: String
+    private lateinit var taskInput: EditText
+    private lateinit var addTaskBtn: Button
+    private lateinit var tasksContainer: LinearLayout
+    private val tasksList = mutableListOf<String>()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        enableEdgeToEdge()
         setContentView(R.layout.activity_add_habit)
 
-        ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main)) { v, insets ->
-            val systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
-            v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom)
-            insets
+        db = FirebaseFirestore.getInstance()
+
+        habitId = intent.getStringExtra("habitId") ?: ""
+        habitTitle = intent.getStringExtra("habitTitle") ?: ""
+        habitDesc = intent.getStringExtra("habitDesc") ?: ""
+        taskInput = findViewById(R.id.taskInput)
+        addTaskBtn = findViewById(R.id.addTaskBtn)
+        tasksContainer = findViewById(R.id.tasksContainer)
+
+        val titleEditText: EditText = findViewById(R.id.habitNameEditText)
+        val descEditText: EditText = findViewById(R.id.habitDescriptionEditText)
+
+        if (habitId.isEmpty()) {
+            titleEditText.setText("")
+            descEditText.setText("")
+        } else {
+            titleEditText.setText(habitTitle)
+            descEditText.setText(habitDesc)
+        }
+        if (habitId.isNotEmpty()) {
+            val tasksCollection = db.collection("habits").document(habitId).collection("tasks")
+            tasksCollection.get()
+                .addOnSuccessListener { querySnapshot ->
+                    for (document in querySnapshot) {
+                        val taskName = document.getString("name") ?: continue
+                        val isChecked = document.getBoolean("done") ?: false
+                        tasksList.add(taskName)
+                        addTaskToView(taskName, document.id, isChecked)
+                    }
+                }
+                .addOnFailureListener {
+                    Toast.makeText(this, "Failed loading the tasks", Toast.LENGTH_SHORT).show()
+                }
         }
 
-        habitNameEditText = findViewById(R.id.habitNameEditText)
-        saveHabitButton = findViewById(R.id.saveHabitButton)
+        val saveButton: Button = findViewById(R.id.saveHabitButton)
 
-        saveHabitButton.setOnClickListener {
-            saveHabit()
+        // Add new task when the "Add Task" button is clicked
+        addTaskBtn.setOnClickListener {
+            val taskName = taskInput.text.toString().trim()
+            if (taskName.isNotEmpty()) {
+                tasksList.add(taskName)
+                addTaskToView(taskName, "", false)  // No taskId for new tasks
+                taskInput.text.clear()
+            }
+        }
+
+        saveButton.setOnClickListener {
+            val title = titleEditText.text.toString()
+            val desc = descEditText.text.toString()
+
+            if (habitId.isEmpty()) {
+                // Adding a new habit
+                habitId = db.collection("habits").document().id  // Generate new ID
+                val newHabit = AddHabit(habitId, title, desc)
+
+                val habitDocRef = db.collection("habits").document(habitId)
+                habitDocRef.set(newHabit)
+                    .addOnSuccessListener {
+                        val tasksCollection = habitDocRef.collection("tasks")
+                        val batch = db.batch()
+
+                        // Add tasks for the new habit
+                        tasksList.forEach { taskName ->
+                            val taskMap = hashMapOf("name" to taskName, "done" to false)
+                            tasksCollection.add(taskMap)
+                        }
+
+                        batch.commit().addOnSuccessListener {
+                            val updatedHabit = AddHabit(habitId, title, desc)
+                            val resultIntent = Intent()
+                            resultIntent.putExtra("updatedHabit", updatedHabit)
+                            setResult(Activity.RESULT_OK, resultIntent)
+                            finish()
+                        }.addOnFailureListener {
+                            Toast.makeText(this, "Failed to add tasks", Toast.LENGTH_SHORT).show()
+                        }
+                    }
+                    .addOnFailureListener {
+                        Toast.makeText(this, "Failed to add habit", Toast.LENGTH_SHORT).show()
+                    }
+            } else {
+                // Updating an existing habit
+                val habitDocRef = db.collection("habits").document(habitId)
+
+                // Fetch existing tasks from Firestore
+                val tasksCollection = habitDocRef.collection("tasks")
+                tasksCollection.get().addOnSuccessListener { snapshot ->
+                    val oldTasks = snapshot.documents.map { it.id to (it.getString("name") ?: "") }.toMap()
+
+                    val newTaskSet = tasksList.toSet()
+                    val oldTaskSet = oldTasks.values.toSet()
+
+                    val tasksToDelete = oldTasks.filterValues { it !in newTaskSet }
+                    val tasksToAdd = newTaskSet.filter { it !in oldTaskSet }
+
+                    val batch = db.batch()
+
+                    // Delete the tasks that were removed
+                    for ((docId, _) in tasksToDelete) {
+                        val docRef = tasksCollection.document(docId)
+                        batch.delete(docRef)
+                    }
+
+                    // Add new tasks
+                    for (task in tasksToAdd) {
+                        val taskMap = hashMapOf("name" to task, "done" to false)
+                        tasksCollection.add(taskMap)
+                    }
+
+                    batch.commit().addOnSuccessListener {
+                        val updatedHabit = AddHabit(habitId, title, desc)
+                        habitDocRef.set(updatedHabit)
+                            .addOnSuccessListener {
+                                val resultIntent = Intent()
+                                resultIntent.putExtra("updatedHabit", updatedHabit)
+                                setResult(Activity.RESULT_OK, resultIntent)
+                                finish()
+                            }
+                            .addOnFailureListener {
+                                Toast.makeText(this, "Failed to update habit", Toast.LENGTH_SHORT).show()
+                            }
+                    }.addOnFailureListener {
+                        Toast.makeText(this, "Failed to update tasks", Toast.LENGTH_SHORT).show()
+                    }
+                }
+            }
         }
     }
 
-    private fun saveHabit() {
-        val habitName = habitNameEditText.text.toString().trim()
+    private fun addTaskToView(taskName: String, taskId: String, isChecked: Boolean) {
+        val checkBox = CheckBox(this)
+        checkBox.text = taskName
+        checkBox.isChecked = isChecked
 
-        if (habitName.isNotBlank()) {
-            val habitProgress = "0%" // بداية مبدئية
-            val habitImage = R.drawable.ic_add // صورة افتراضية (ممكن تغيريها لاحقاً)
-
-            val resultIntent = Intent().apply {
-                putExtra("habit_name", habitName)
-                putExtra("habit_progress", habitProgress)
-                putExtra("habit_image", habitImage)
-            }
-
-            setResult(Activity.RESULT_OK, resultIntent)
-            finish()
-        } else {
-            Toast.makeText(this, "Please enter a habit name", Toast.LENGTH_SHORT).show()
+        if (checkBox.parent != null) {
+            (checkBox.parent as ViewGroup).removeView(checkBox)
         }
+
+        checkBox.setOnCheckedChangeListener { _, isChecked ->
+            if (taskId.isNotEmpty()) {
+                val taskRef = db.collection("habits").document(habitId).collection("tasks").document(taskId)
+                taskRef.update("done", isChecked)
+            }
+        }
+
+        checkBox.setOnLongClickListener {
+            android.app.AlertDialog.Builder(this)
+                .setTitle("Delete task")
+                .setMessage("Are you sure you want to delete this task?")
+                .setPositiveButton("Yes") { _, _ ->
+                    tasksContainer.removeView(checkBox)
+                    tasksList.remove(taskName)
+                    if (taskId.isNotEmpty()) {
+                        val taskRef = db.collection("habits").document(habitId).collection("tasks").document(taskId)
+                        taskRef.delete()
+                    }
+                }
+                .setNegativeButton("Cancel", null)
+                .show()
+            true
+        }
+
+        tasksContainer.addView(checkBox)
     }
 }

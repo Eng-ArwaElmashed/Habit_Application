@@ -1,5 +1,6 @@
 package com.android.habitapplication.ui.today
 
+import HabitViewModel
 import android.app.Activity
 import android.content.Intent
 import android.os.Bundle
@@ -7,17 +8,17 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Button
 import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.GridLayoutManager
-import androidx.recyclerview.widget.LinearLayoutManager
 import com.android.habitapplication.HabitAdapter
 import com.android.habitapplication.R
 import com.android.habitapplication.databinding.FragmentTodayBinding
 import com.android.habitapplication.model.AddHabit
 import com.android.habitapplication.ui.all_habits.AddHabitActivity
+import com.google.android.material.progressindicator.CircularProgressIndicator
 import com.google.firebase.firestore.FirebaseFirestore
 
 class TodayFragment : Fragment() {
@@ -26,23 +27,15 @@ class TodayFragment : Fragment() {
     private val binding get() = _binding!!
 
     private lateinit var adapter: HabitAdapter
-    private lateinit var db: FirebaseFirestore
-
+    private lateinit var habitViewModel: HabitViewModel
     private val resultLauncher = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
         if (result.resultCode == Activity.RESULT_OK) {
             val updatedHabit = result.data?.getSerializableExtra("updatedHabit") as? AddHabit
             updatedHabit?.let {
-
-                val habitList = adapter.currentList.toMutableList()
-                val index = habitList.indexOfFirst { it.id == updatedHabit.id }
-                if (index != -1) {
-                    habitList[index] = updatedHabit
-                    adapter.submitList(habitList)
-                }
+                habitViewModel.loadTodayHabits()
             }
         }
     }
-
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
@@ -54,10 +47,14 @@ class TodayFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        db = FirebaseFirestore.getInstance()
+        habitViewModel = ViewModelProvider(this).get(HabitViewModel::class.java)
 
         setupRecyclerView()
-        loadTodayHabits()
+        habitViewModel.habitList.observe(viewLifecycleOwner) { habits ->
+            adapter.submitList(habits)
+        }
+
+        habitViewModel.loadTodayHabits()
 
         binding.addBtn.setOnClickListener {
             val intent = Intent(requireContext(), AddHabitActivity::class.java)
@@ -77,35 +74,16 @@ class TodayFragment : Fragment() {
         binding.todayRecyclerView.adapter = adapter
     }
 
-    private fun loadTodayHabits() {
-        val habitList = mutableListOf<AddHabit>()
-
-        db.collection("habits")
-            .get()
-            .addOnSuccessListener { result ->
-                for (document in result) {
-                    val habit = document.toObject(AddHabit::class.java)
-                    habitList.add(habit)
-                }
-                adapter.submitList(habitList)
-            }
-            .addOnFailureListener { exception ->
-                Log.w("TodayFragment", "Error getting documents: ", exception)
-            }
-    }
-
     private fun deleteHabit(habit: AddHabit) {
-        habit.id.let { habitId ->
-            db.collection("habits").document(habitId)
-                .delete()
-                .addOnSuccessListener {
-                    Toast.makeText(requireContext(), "Habit deleted", Toast.LENGTH_SHORT).show()
-                    loadTodayHabits()
-                }
-                .addOnFailureListener {
-                    Toast.makeText(requireContext(), "Failed to delete habit", Toast.LENGTH_SHORT).show()
-                }
-        }
+        FirebaseFirestore.getInstance().collection("habits").document(habit.id)
+            .delete()
+            .addOnSuccessListener {
+                Toast.makeText(requireContext(), "Habit deleted", Toast.LENGTH_SHORT).show()
+                habitViewModel.loadTodayHabits()
+            }
+            .addOnFailureListener {
+                Toast.makeText(requireContext(), "Failed to delete habit", Toast.LENGTH_SHORT).show()
+            }
     }
 
     private fun editHabit(habit: AddHabit) {

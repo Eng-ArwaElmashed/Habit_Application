@@ -5,15 +5,12 @@ import java.io.Serializable
 
 data class AddHabit(
     var id: String = "",
-    var title: String = "",
-    var description: String = "",
-    var progress: String = "0%",
-    var iconResId: Int = R.drawable.edit,
-   var iconName : String="",
-    val tasks: List<Task> = listOf()
-): Serializable
+    val title: String = "",
+    val description: String = "",
+    val progrees : Int =0,
+    var completedTasks: Int = 0,
+    var totalTasks: Int = 0
+) : Serializable
 
-data class Task(
-    val name: String,
-    val isCompleted: Boolean
-)
+
+

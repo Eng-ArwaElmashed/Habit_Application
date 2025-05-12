@@ -6,7 +6,6 @@
     android:background="@color/light_pink"
     android:padding="16dp"
     tools:context=".ui.today.TodayFragment">
-
     <!-- Today Text (Top Left) -->
     <TextView
         android:id="@+id/todayText"
@@ -48,7 +47,8 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent">
 
-        <TextView
+        <Button
+            android:id="@+id/Mon_btn"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
@@ -56,9 +56,11 @@
             android:gravity="center"
             android:text="Mon"
             android:textSize="14sp"
-            android:textColor="@android:color/black" />
+            android:textColor="@android:color/black"
+            android:background="?android:attr/selectableItemBackground" />
 
-        <TextView
+        <Button
+            android:id="@+id/Tue_btn"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
@@ -66,9 +68,11 @@
             android:gravity="center"
             android:text="Tue"
             android:textSize="14sp"
-            android:textColor="@android:color/darker_gray" />
+            android:textColor="@android:color/darker_gray"
+            android:background="?android:attr/selectableItemBackground" />
 
-        <TextView
+        <Button
+            android:id="@+id/Wed_btn"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
@@ -76,9 +80,11 @@
             android:gravity="center"
             android:text="Wed"
             android:textSize="14sp"
-            android:textColor="@android:color/darker_gray" />
+            android:textColor="@android:color/darker_gray"
+            android:background="?android:attr/selectableItemBackground" />
 
-        <TextView
+        <Button
+            android:id="@+id/Thu_btn"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
@@ -86,9 +92,11 @@
             android:gravity="center"
             android:text="Thu"
             android:textSize="14sp"
-            android:textColor="@android:color/darker_gray" />
+            android:textColor="@android:color/darker_gray"
+            android:background="?android:attr/selectableItemBackground" />
 
-        <TextView
+        <Button
+            android:id="@+id/Fir_btn"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
@@ -96,9 +104,11 @@
             android:gravity="center"
             android:text="Fri"
             android:textSize="14sp"
-            android:textColor="@android:color/darker_gray" />
+            android:textColor="@android:color/darker_gray"
+            android:background="?android:attr/selectableItemBackground" />
 
-        <TextView
+        <Button
+            android:id="@+id/forward_btn"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:minHeight="48dp"
@@ -107,7 +117,8 @@
             android:paddingEnd="16dp"
             android:text=">>>"
             android:textSize="16sp"
-            android:textColor="@android:color/darker_gray" />
+            android:textColor="@android:color/darker_gray"
+            android:background="?android:attr/selectableItemBackground" />
 
     </LinearLayout>
 
