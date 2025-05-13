@@ -10,7 +10,7 @@ import android.widget.TextView
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
-
+import com.google.android.material.progressindicator.CircularProgressIndicator
 
 class HabitAdapter(
     private val onHabitClick: (AddHabit) -> Unit,
@@ -31,9 +31,10 @@ class HabitAdapter(
     inner class HabitViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         val title: TextView = itemView.findViewById(R.id.habit_title)
         val progressText: TextView = itemView.findViewById(R.id.habit_progress_text)
+        val progressIndicator: CircularProgressIndicator = itemView.findViewById(R.id.habit_progress_indicator)
         val btnEdit: ImageView = itemView.findViewById(R.id.edit_btn)
         val btnDelete: ImageView = itemView.findViewById(R.id.delete_btn)
-        val habit_Icon: ImageView = itemView.findViewById(R.id.habit_Icon)
+        val habitIcon: ImageView = itemView.findViewById(R.id.habit_Icon)
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): HabitViewHolder {
@@ -45,39 +46,33 @@ class HabitAdapter(
     override fun onBindViewHolder(holder: HabitViewHolder, position: Int) {
         val habit = getItem(position)
 
+        // Set habit title
+        holder.title.text = habit.title
+
+        // Calculate progress percentage for today's tasks
+        val progress = if (habit.totalTasks > 0) {
+            (habit.completedTasks.toFloat() / habit.totalTasks.toFloat() * 100).toInt()
+        } else {
+            0
+        }
+
+        // Update progress text and indicator
+        holder.progressText.text = "$progress%"
+        holder.progressIndicator.progress = progress
+
+        // Set habit icon
         val iconResId = holder.itemView.context.resources.getIdentifier(
             habit.icon, "drawable", holder.itemView.context.packageName
         )
-        holder.habit_Icon.setImageResource(
+        holder.habitIcon.setImageResource(
             if (iconResId != 0) iconResId else R.drawable.image
         )
 
-        val progress = if (habit.totalTasks > 0) {
-            (habit.completedTasks.toDouble() / habit.totalTasks) * 100
-        } else {
-            0.0
-        }
-        holder.progressText.text = "${progress.toInt()}%"
+        // Set click listeners
+        holder.itemView.setOnClickListener { onHabitClick(habit) }
+        holder.btnEdit.setOnClickListener { onEditClick(habit) }
+        holder.btnDelete.setOnClickListener { onDeleteClick(habit) }
 
-        val progressIndicator = holder.itemView.findViewById<com.google.android.material.progressindicator.CircularProgressIndicator>(R.id.habit_progress_indicator)
-        progressIndicator.progress = progress.toInt()
-
-        holder.title.text = habit.title
-
-        holder.itemView.setOnClickListener {
-            onHabitClick(habit)
-        }
-
-        holder.btnEdit.setOnClickListener {
-            onEditClick(habit)
-        }
-
-        holder.btnDelete.setOnClickListener {
-            onDeleteClick(habit)
-        }
-
-        Log.d("HabitAdapter", "onBindViewHolder: ${habit.title} progress: $progress")
+        Log.d("HabitAdapter", "Habit: ${habit.title}, Progress: $progress%, Tasks: ${habit.completedTasks}/${habit.totalTasks}")
     }
-
-
 }

@@ -18,11 +18,16 @@ import com.android.habitapplication.model.AddHabit
 import com.android.habitapplication.ui.all_habits.AddHabitActivity
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
+import java.text.SimpleDateFormat
+import java.util.*
 
 class TodayFragment : Fragment() {
 
     private var _binding: FragmentTodayBinding? = null
     private val binding get() = _binding!!
+    private val calendar = Calendar.getInstance()
+    private val dateFormat = SimpleDateFormat("MMMM d, yyyy", Locale.getDefault())
+    private val dayFormat = SimpleDateFormat("EEE", Locale.getDefault())
 
     private lateinit var adapter: HabitAdapter
     private lateinit var habitViewModel: HabitViewModel
@@ -30,10 +35,16 @@ class TodayFragment : Fragment() {
         if (result.resultCode == Activity.RESULT_OK) {
             val updatedHabit = result.data?.getSerializableExtra("updatedHabit") as? AddHabit
             updatedHabit?.let {
-                habitViewModel.loadTodayHabits()
+                // Reset calendar to today's date
+                calendar.timeInMillis = System.currentTimeMillis()
+                habitViewModel.setCurrentDate(calendar)
+                setupDateDisplay()
+                setupDayButtons() // Update button states for today
+                loadHabitsForCurrentDay()
             }
         }
     }
+
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
@@ -46,18 +57,99 @@ class TodayFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
 
         habitViewModel = ViewModelProvider(this).get(HabitViewModel::class.java)
-
+        habitViewModel.setCurrentDate(calendar) // Initialize with current date
+        setupDateDisplay()
         setupRecyclerView()
+        
         habitViewModel.habitList.observe(viewLifecycleOwner) { habits ->
             adapter.submitList(habits)
         }
 
-        habitViewModel.loadTodayHabits()
+        loadHabitsForCurrentDay()
 
         binding.addBtn.setOnClickListener {
             val intent = Intent(requireContext(), AddHabitActivity::class.java)
             resultLauncher.launch(intent)
         }
+
+        setupDayButtons()
+    }
+
+    private fun setupDateDisplay() {
+        binding.todayText.text = dateFormat.format(calendar.time)
+    }
+
+    private fun setupDayButtons() {
+        val currentDay = dayFormat.format(calendar.time)
+        
+        // Reset all buttons to unselected state
+        binding.apply {
+            SunBtn.isSelected = false
+            MonBtn.isSelected = false
+            TueBtn.isSelected = false
+            WedBtn.isSelected = false
+            ThuBtn.isSelected = false
+            FriBtn.isSelected = false
+            SatBtn.isSelected = false
+
+            // Set the current day button as selected
+            when (currentDay) {
+                "Sun" -> SunBtn.isSelected = true
+                "Mon" -> MonBtn.isSelected = true
+                "Tue" -> TueBtn.isSelected = true
+                "Wed" -> WedBtn.isSelected = true
+                "Thu" -> ThuBtn.isSelected = true
+                "Fri" -> FriBtn.isSelected = true
+                "Sat" -> SatBtn.isSelected = true
+            }
+
+            // Set click listeners for day selection
+            SunBtn.setOnClickListener { updateSelectedDay(Calendar.SUNDAY) }
+            MonBtn.setOnClickListener { updateSelectedDay(Calendar.MONDAY) }
+            TueBtn.setOnClickListener { updateSelectedDay(Calendar.TUESDAY) }
+            WedBtn.setOnClickListener { updateSelectedDay(Calendar.WEDNESDAY) }
+            ThuBtn.setOnClickListener { updateSelectedDay(Calendar.THURSDAY) }
+            FriBtn.setOnClickListener { updateSelectedDay(Calendar.FRIDAY) }
+            SatBtn.setOnClickListener { updateSelectedDay(Calendar.SATURDAY) }
+
+            // Forward button to next week
+            forwardBtn.setOnClickListener {
+                calendar.add(Calendar.WEEK_OF_YEAR, 1)
+                habitViewModel.setCurrentDate(calendar)
+                setupDateDisplay()
+                setupDayButtons()
+                loadHabitsForCurrentDay()
+            }
+
+            // Backward button to previous week
+            backwardBtn.setOnClickListener {
+                calendar.add(Calendar.WEEK_OF_YEAR, -1)
+                habitViewModel.setCurrentDate(calendar)
+                setupDateDisplay()
+                setupDayButtons()
+                loadHabitsForCurrentDay()
+            }
+        }
+    }
+
+    private fun updateSelectedDay(dayOfWeek: Int) {
+        // Calculate the difference between current day and selected day
+        val currentDayOfWeek = calendar.get(Calendar.DAY_OF_WEEK)
+        val diff = dayOfWeek - currentDayOfWeek
+        
+        // Adjust the calendar to the selected day
+        calendar.add(Calendar.DAY_OF_WEEK, diff)
+        
+        // Sync the selected date with ViewModel
+        habitViewModel.setCurrentDate(calendar)
+        setupDateDisplay()
+        setupDayButtons()
+        loadHabitsForCurrentDay()
+    }
+
+    private fun loadHabitsForCurrentDay() {
+        val currentDay = dayFormat.format(calendar.time)
+        habitViewModel.loadHabitsForDay(currentDay)
     }
 
     private fun setupRecyclerView() {
@@ -79,7 +171,7 @@ class TodayFragment : Fragment() {
             .delete()
             .addOnSuccessListener {
                 Toast.makeText(requireContext(), "Habit deleted", Toast.LENGTH_SHORT).show()
-                habitViewModel.loadTodayHabits()
+                loadHabitsForCurrentDay()
             }
             .addOnFailureListener {
                 Toast.makeText(requireContext(), "Failed to delete habit", Toast.LENGTH_SHORT).show()
