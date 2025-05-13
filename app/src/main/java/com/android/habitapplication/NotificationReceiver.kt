@@ -21,12 +21,35 @@ import java.text.SimpleDateFormat
 import java.util.*
 
 class NotificationReceiver : BroadcastReceiver() {
+    companion object {
+        private const val TAG = "NotificationReceiver"
+        const val ACTION_RANDOM_NOTIFICATION = "com.android.habitapplication.RANDOM_NOTIFICATION"
+    }
+
     override fun onReceive(context: Context, intent: Intent?) {
-        Log.d("NotificationReceiver", "onReceive called")
+        Log.d(TAG, "onReceive called with action: ${intent?.action}")
         
+        // Handle both random notifications and wake/sleep alarms
+        when (intent?.action) {
+            ACTION_RANDOM_NOTIFICATION -> {
+                // If this is the first random notification after wake-up, start repeating notifications
+                if (intent.getBooleanExtra("isFirstNotification", false)) {
+                    Log.d(TAG, "Starting repeating notifications after initial delay")
+                    NotificationScheduler.scheduleRepeatingNotifications(context, 2 * 60 * 1000L)
+                } else {
+                    handleRandomNotification(context)
+                }
+            }
+            "com.android.habitapplication.ALARM_WAKE" -> handleWakeAlarm(context)
+            "com.android.habitapplication.ALARM_SLEEP" -> handleSleepAlarm(context)
+            else -> Log.d(TAG, "Unknown action received: ${intent?.action}")
+        }
+    }
+
+    private fun handleRandomNotification(context: Context) {
         val user = FirebaseAuth.getInstance().currentUser
         if (user == null) {
-            Log.e("NotificationReceiver", "No user logged in")
+            Log.e(TAG, "No user logged in")
             return
         }
         
@@ -39,7 +62,7 @@ class NotificationReceiver : BroadcastReceiver() {
             .addOnSuccessListener { document ->
                 val isVacationModeOn = document.getBoolean("isVacationModeOn") ?: false
                 if (isVacationModeOn) {
-                    Log.d("NotificationReceiver", "Vacation mode is on, skipping notification")
+                    Log.d(TAG, "Vacation mode is on, skipping notification")
                     return@addOnSuccessListener
                 }
 
@@ -50,10 +73,10 @@ class NotificationReceiver : BroadcastReceiver() {
                 val wake = prefs.getInt("wakeHour", 8) * 60 + prefs.getInt("wakeMinute", 0)
                 val sleep = prefs.getInt("sleepHour", 22) * 60 + prefs.getInt("sleepMinute", 0)
 
-                Log.d("NotificationReceiver", "Current time: $now, Wake time: $wake, Sleep time: $sleep")
+                Log.d(TAG, "Current time: $now, Wake time: $wake, Sleep time: $sleep")
 
                 if (now in wake until sleep) {
-                    Log.d("NotificationReceiver", "Within active hours, sending notification")
+                    Log.d(TAG, "Within active hours, sending notification")
                     val messages = listOf(
                         Notification(R.drawable.sun, "Time for a quick stretch! 🧘‍♂️", "Today"),
                         Notification(R.drawable.water_cup, "Stay hydrated! Time to drink water 💧", "Today"),
@@ -81,23 +104,44 @@ class NotificationReceiver : BroadcastReceiver() {
                         .collection("notifications")
                         .add(notificationData)
                         .addOnSuccessListener {
-                            Log.d("NotificationReceiver", "Notification saved to Firestore")
+                            Log.d(TAG, "Notification saved to Firestore")
                         }
                         .addOnFailureListener { e ->
-                            Log.e("NotificationReceiver", "Error saving notification: ${e.message}")
+                            Log.e(TAG, "Error saving notification: ${e.message}")
                         }
-                    
-                    // No need to schedule next notification as we're using setRepeating
                 } else {
-                    Log.d("NotificationReceiver", "Outside active hours, skipping notification")
+                    Log.d(TAG, "Outside active hours, skipping notification")
+                    // Cancel notifications if we're outside active hours
+                    NotificationScheduler.cancelNotifications(context)
                 }
             }
             .addOnFailureListener { e ->
-                Log.e("NotificationReceiver", "Error checking vacation mode: ${e.message}")
+                Log.e(TAG, "Error checking vacation mode: ${e.message}")
             }
     }
 
+    private fun handleWakeAlarm(context: Context) {
+        // Handle wake-up notification
+        val notification = Notification(
+            R.drawable.sun,
+            "Wake Up Time!",
+            "Time to start your day!"
+        )
+        showNotification(context, notification)
+    }
+
+    private fun handleSleepAlarm(context: Context) {
+        // Handle sleep time notification
+        val notification = Notification(
+            R.drawable.nights,
+            "Sleep Time!",
+            "Time to review your day and prepare for tomorrow!"
+        )
+        showNotification(context, notification)
+    }
+
     private fun showNotification(context: Context, notification: Notification) {
+        Log.d(TAG, "Attempting to show notification: ${notification.title}")
         val notificationManager = NotificationManagerCompat.from(context)
         
         val builder = NotificationCompat.Builder(context, NotificationsFragment.CHANNEL_ID)
@@ -113,13 +157,14 @@ class NotificationReceiver : BroadcastReceiver() {
                     android.Manifest.permission.POST_NOTIFICATIONS
                 ) == PackageManager.PERMISSION_GRANTED
             ) {
-                notificationManager.notify(Random.nextInt(), builder.build())
-                Log.d("NotificationReceiver", "Notification shown successfully")
+                val notificationId = Random.nextInt()
+                notificationManager.notify(notificationId, builder.build())
+                Log.d(TAG, "Notification shown successfully with ID: $notificationId")
             } else {
-                Log.e("NotificationReceiver", "Notification permission not granted")
+                Log.e(TAG, "Notification permission not granted")
             }
         } catch (e: Exception) {
-            Log.e("NotificationReceiver", "Error showing notification: ${e.message}")
+            Log.e(TAG, "Error showing notification: ${e.message}", e)
         }
     }
 }

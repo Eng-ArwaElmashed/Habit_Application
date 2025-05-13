@@ -5,11 +5,7 @@
     android:id="@+id/mobile_navigation"
     app:startDestination="@+id/nav_today">
 
-    <fragment
-        android:id="@+id/nav_profile"
-        android:name="com.android.habitapplication.ui.profile.ProfileFragment"
-        android:label="Profile"
-        tools:layout="@layout/fragment_profile" />
+
 
     <fragment
         android:id="@+id/nav_today"
@@ -17,16 +13,6 @@
         android:label="Today"
         tools:layout="@layout/fragment_today" />
 
-    <fragment
-        android:id="@+id/nav_your_states"
-        android:name="com.android.habitapplication.ui.your_states.YourStatesFragment"
-        android:label="Your States"
-        tools:layout="@layout/fragment_your_states" />
-    <fragment
-        android:id="@+id/nav_challenges"
-        android:name="com.android.habitapplication.ui.challenges.ChallengesFragment"
-        android:label="Challenges"
-        tools:layout="@layout/fragment_challenges" />
     <fragment
         android:id="@+id/nav_all_habits"
         android:name="com.android.habitapplication.ui.all_habits.AllHabitsFragment"
@@ -42,10 +28,11 @@
         android:name="com.android.habitapplication.ui.settings.SettingsFragment"
         android:label="Settings"
         tools:layout="@layout/fragment_settings" />
+
     <fragment
-        android:id="@+id/nav_try_free"
-        android:name="com.android.habitapplication.ui.try_free.TryFreeFragment"
-        android:label="Try Free"
-        tools:layout="@layout/fragment_try_free" />
+        android:id="@+id/nav_profile"
+        android:name="com.android.habitapplication.ui.profile.ProfileFragment"
+        android:label="Profile"
+        tools:layout="@layout/fragment_profile" />
 
 </navigation>

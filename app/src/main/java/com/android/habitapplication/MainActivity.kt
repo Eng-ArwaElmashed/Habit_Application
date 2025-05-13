@@ -5,6 +5,7 @@ import android.app.NotificationManager
 import android.content.pm.PackageManager
 import android.os.Build
 import android.os.Bundle
+import android.os.SystemClock
 import android.util.Log
 import android.view.Menu
 import android.widget.TextView
@@ -21,6 +22,11 @@ import androidx.navigation.ui.setupWithNavController
 import com.android.habitapplication.databinding.ActivityMainBinding
 import com.android.habitapplication.ui.notifications.NotificationsFragment
 import com.google.android.material.navigation.NavigationView
+import android.app.AlarmManager
+import android.app.PendingIntent
+import android.content.Context
+import android.content.Intent
+import java.util.*
 
 class MainActivity : AppCompatActivity() {
 
@@ -29,6 +35,48 @@ class MainActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
+        // Check if notifications are scheduled
+        val alarmManager = getSystemService(Context.ALARM_SERVICE) as AlarmManager
+        val intent = Intent(this, NotificationReceiver::class.java).apply {
+            action = NotificationReceiver.ACTION_RANDOM_NOTIFICATION
+        }
+        val pendingIntent = PendingIntent.getBroadcast(
+            this,
+            101,
+            intent,
+            PendingIntent.FLAG_NO_CREATE or PendingIntent.FLAG_IMMUTABLE
+        )
+        
+        // Check if we're within active hours and should have notifications
+        val prefs = getSharedPreferences("user_times", Context.MODE_PRIVATE)
+        val wakeHour = prefs.getInt("wakeHour", 8)
+        val wakeMinute = prefs.getInt("wakeMinute", 0)
+        val sleepHour = prefs.getInt("sleepHour", 22)
+        val sleepMinute = prefs.getInt("sleepMinute", 0)
+
+        val cal = Calendar.getInstance()
+        val now = cal.get(Calendar.HOUR_OF_DAY) * 60 + cal.get(Calendar.MINUTE)
+        val wake = wakeHour * 60 + wakeMinute
+        val sleep = sleepHour * 60 + sleepMinute
+
+        if (now in wake until sleep) {
+            if (pendingIntent == null) {
+                Log.d("MainActivity", "Within active hours but no notifications scheduled, starting them now")
+                NotificationScheduler.scheduleRepeatingNotifications(this, 2 * 60 * 1000L)
+            } else {
+                Log.d("MainActivity", "Notifications are currently scheduled")
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+                    val alarmInfo = alarmManager.getNextAlarmClock()
+                    Log.d("MainActivity", "Next alarm scheduled for: ${alarmInfo?.triggerTime}")
+                }
+            }
+        } else {
+            Log.d("MainActivity", "Outside active hours (${wakeHour}:${wakeMinute} - ${sleepHour}:${sleepMinute})")
+            if (pendingIntent != null) {
+                NotificationScheduler.cancelNotifications(this)
+            }
+        }
 
         // Create all notification channels
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
@@ -85,12 +133,9 @@ class MainActivity : AppCompatActivity() {
             setOf(
                 R.id.nav_profile,
                 R.id.nav_today,
-                R.id.nav_your_states,
-                R.id.nav_challenges,
                 R.id.nav_all_habits,
                 R.id.nav_notification,
                 R.id.nav_settings,
-                R.id.nav_try_free
             ), drawerLayout
         )
 
@@ -106,25 +151,20 @@ class MainActivity : AppCompatActivity() {
                 R.id.nav_settings -> R.color.light_pink
                 R.id.nav_profile -> R.color.main_pink
                 R.id.nav_today -> R.color.light_pink
-                R.id.nav_challenges -> R.color.main_pink
 
-                R.id.nav_your_states -> R.color.main_pink
 
                 R.id.nav_all_habits -> R.color.light_pink
                 R.id.nav_notification -> R.color.light_pink
 
-                R.id.nav_try_free-> R.color.main_pink
                 else -> R.color.light_pink
             }
             toolbarTitle.text = when (destination.id) {
                 R.id.nav_profile -> "Profile"
                 R.id.nav_today-> "Today"
-                R.id.nav_your_states-> "Your Status"
-                R.id.nav_challenges-> "Challenges"
                 R.id.nav_all_habits-> "All Habits"
                 R.id.nav_notification-> "Notifications"
                 R.id.nav_settings-> "Settings"
-                R.id.nav_try_free-> "Subscription"
+
 
                 else -> "Habit App"
             }

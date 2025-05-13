@@ -103,6 +103,28 @@ class MorningSelectionActivity : AppCompatActivity() {
                         pendingIntent
                     )
                 }
+
+                // Start random notifications if we're within active hours
+                val sleepHour = prefs.getInt("sleepHour", 22)
+                val sleepMinute = prefs.getInt("sleepMinute", 0)
+                val wakeHour = timePicker.hour
+                val wakeMinute = timePicker.minute
+
+                val cal = Calendar.getInstance()
+                val now = cal.get(Calendar.HOUR_OF_DAY) * 60 + cal.get(Calendar.MINUTE)
+                val wake = wakeHour * 60 + wakeMinute
+                val sleep = sleepHour * 60 + sleepMinute
+
+                Log.d("MorningSelection", "Current time: $now, Wake time: $wake, Sleep time: $sleep")
+
+                if (now in wake until sleep) {
+                    Log.d("MorningSelection", "Starting random notifications")
+                    NotificationScheduler.scheduleRepeatingNotifications(this, 2 * 60 * 1000L)
+                    Toast.makeText(this, "Random notifications started", Toast.LENGTH_SHORT).show()
+                } else {
+                    Log.d("MorningSelection", "Outside active hours, notifications will start at wake time")
+                }
+
                 Toast.makeText(this, "Wake up alarm set for ${timePicker.hour}:${timePicker.minute}", Toast.LENGTH_SHORT).show()
             }
             .addOnFailureListener { e ->

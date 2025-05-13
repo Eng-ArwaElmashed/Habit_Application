@@ -41,6 +41,12 @@ class EveningSelectionActivity : AppCompatActivity() {
 
         createNotificationChannel()
 
+        // Check if we need to fetch existing times
+        val user = FirebaseAuth.getInstance().currentUser
+        if (user != null) {
+            fetchTimesAndSchedule(user.uid)
+        }
+
         getStartedButton.setOnClickListener {
             setAlarm()
             startActivity(Intent(this, ChooseHabitActivity::class.java))
@@ -105,7 +111,7 @@ class EveningSelectionActivity : AppCompatActivity() {
                     )
                 }
 
-                // Start random notifications
+                // Start random notifications if we're within active hours
                 val wakeHour = prefs.getInt("wakeHour", 8)
                 val wakeMinute = prefs.getInt("wakeMinute", 0)
                 val sleepHour = timePicker.hour
@@ -116,9 +122,14 @@ class EveningSelectionActivity : AppCompatActivity() {
                 val wake = wakeHour * 60 + wakeMinute
                 val sleep = sleepHour * 60 + sleepMinute
 
+                Log.d("EveningSelection", "Current time: $now, Wake time: $wake, Sleep time: $sleep")
+
                 if (now in wake until sleep) {
+                    Log.d("EveningSelection", "Starting random notifications")
                     NotificationScheduler.scheduleRepeatingNotifications(this, 2 * 60 * 1000L)
                     Toast.makeText(this, "Random notifications started", Toast.LENGTH_SHORT).show()
+                } else {
+                    Log.d("EveningSelection", "Outside active hours, notifications will start at wake time")
                 }
 
                 Toast.makeText(this, "Sleep time alarm set for ${timePicker.hour}:${timePicker.minute}", Toast.LENGTH_SHORT).show()
