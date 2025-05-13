@@ -12,7 +12,7 @@ import android.view.View
 import android.widget.TimePicker
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
-import com.android.habitapplication.NotificationScheduler
+import com.android.habitapplication.ui.AlarmReceiver
 import com.google.android.material.button.MaterialButton
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
@@ -105,36 +105,31 @@ class EveningSelectionActivity : AppCompatActivity() {
         }
     }
     private fun fetchTimesAndSchedule(userId: String) {
-        val userDocRef = db.collection("Users").document(userId)
+        val wakeTimeDoc = db.collection("userWakeTimes").document(userId)
+        val sleepTimeDoc = db.collection("userSleepTimes").document(userId)
 
-        userDocRef.get()
-            .addOnSuccessListener { document ->
-                if (document != null && document.exists()) {
-                    val wakeHour = (document.getLong("wakeHour") ?: 8).toInt()
-                    val wakeMinute = (document.getLong("wakeMinute") ?: 0).toInt()
-                    val sleepHour = (document.getLong("sleepHour") ?: 22).toInt()
-                    val sleepMinute = (document.getLong("sleepMinute") ?: 0).toInt()
+        wakeTimeDoc.get()
+            .addOnSuccessListener { wakeDoc ->
+                sleepTimeDoc.get()
+                    .addOnSuccessListener { sleepDoc ->
+                        if (wakeDoc.exists() && sleepDoc.exists()) {
+                            val wakeHour = wakeDoc.getLong("wakeHour")?.toInt() ?: 8
+                            val wakeMinute = wakeDoc.getLong("wakeMinute")?.toInt() ?: 0
+                            val sleepHour = sleepDoc.getLong("sleepHour")?.toInt() ?: 22
+                            val sleepMinute = sleepDoc.getLong("sleepMinute")?.toInt() ?: 0
 
-                    val prefs = getSharedPreferences("user_times", Context.MODE_PRIVATE)
-                    prefs.edit()
-                        .putInt("wakeHour", wakeHour)
-                        .putInt("wakeMinute", wakeMinute)
-                        .putInt("sleepHour", sleepHour)
-                        .putInt("sleepMinute", sleepMinute)
-                        .apply()
+                            val prefs = getSharedPreferences("user_times", Context.MODE_PRIVATE)
+                            prefs.edit()
+                                .putInt("wakeHour", wakeHour)
+                                .putInt("wakeMinute", wakeMinute)
+                                .putInt("sleepHour", sleepHour)
+                                .putInt("sleepMinute", sleepMinute)
+                                .apply()
 
-                    val intervalMillis = 2 * 60 * 1000L // كل دقيقتين للتجربة
-                    NotificationScheduler.scheduleRepeatingNotifications(this, intervalMillis)
-
-                    Toast.makeText(this, "Notifications scheduled successfully", Toast.LENGTH_SHORT).show()
-                    startActivity(Intent(this, MorningSelectionActivity::class.java))
-                    finish()
-                } else {
-                    Toast.makeText(this, "User data not found", Toast.LENGTH_SHORT).show()
-                }
-            }
-            .addOnFailureListener { e ->
-                Toast.makeText(this, "Error fetching user data: ${e.message}", Toast.LENGTH_SHORT).show()
+                            NotificationScheduler.scheduleRepeatingNotifications(this, 2 * 60 * 1000L)
+                            Toast.makeText(this, "Notifications scheduled successfully", Toast.LENGTH_SHORT).show()
+                        }
+                    }
             }
     }
 }

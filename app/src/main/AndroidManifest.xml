@@ -83,7 +83,7 @@
         </activity>
         <!-- Receiver for Alarm -->
         <receiver
-            android:name=".AlarmReceiver"
+            android:name=".ui.AlarmReceiver"
             android:exported="false" />
         <receiver android:name=".NotificationReceiver" />
         <service

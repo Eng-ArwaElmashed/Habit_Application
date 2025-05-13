@@ -2,7 +2,6 @@ package com.android.habitapplication.ui.settings
 
 import android.content.Context
 import android.content.Intent
-import android.media.AudioManager
 import android.net.Uri
 import android.os.Bundle
 import android.provider.ContactsContract.Profile
@@ -13,12 +12,14 @@ import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
 import com.android.habitapplication.LoginActivity
-import com.android.habitapplication.MainActivity
 import com.android.habitapplication.databinding.FragmentSettingsBinding
-import com.android.habitapplication.ui.profile.HomeViewModel
-import com.android.habitapplication.ui.profile.ProfileFragment
 import com.android.habitapplication.NotificationScheduler
 import com.google.firebase.auth.FirebaseAuth
+import android.app.AlarmManager
+import android.app.PendingIntent
+import com.android.habitapplication.ui.AlarmReceiver
+import java.util.*
+import com.google.firebase.firestore.FirebaseFirestore
 
 class SettingsFragment : Fragment() {
 
@@ -55,22 +56,129 @@ class SettingsFragment : Fragment() {
             startActivity(intent)
         }
 
+        return view
+    }
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+
+        val user = FirebaseAuth.getInstance().currentUser ?: return
+        val db = FirebaseFirestore.getInstance()
+
+        // Initialize vacation mode switch state from Firestore
+        db.collection("userSettings")
+            .document(user.uid)
+            .get()
+            .addOnSuccessListener { document ->
+                val isVacationModeOn = document.getBoolean("isVacationModeOn") ?: false
+                binding.vacationSwitch.isChecked = isVacationModeOn
+            }
 
         // Vacation Mode Switch logic
         binding.vacationSwitch.setOnCheckedChangeListener { _, isChecked ->
-            val sharedPref = requireContext().getSharedPreferences("AppSettings", Context.MODE_PRIVATE)
-            with(sharedPref.edit()) {
-                putBoolean("isVacationModeOn", isChecked)
-                apply()
-            }
+            // Save vacation mode state to Firestore
+            db.collection("userSettings")
+                .document(user.uid)
+                .set(hashMapOf("isVacationModeOn" to isChecked))
+                .addOnSuccessListener {
+                    if (isChecked) {
+                        // Cancel all notifications when vacation mode is enabled
+                        NotificationScheduler.cancelNotifications(requireContext())
+                        
+                        // Cancel morning and evening alarms
+                        val alarmManager = requireContext().getSystemService(Context.ALARM_SERVICE) as AlarmManager
+                        
+                        // Cancel morning alarm
+                        val morningIntent = Intent(requireContext(), AlarmReceiver::class.java)
+                        val morningPendingIntent = PendingIntent.getBroadcast(
+                            requireContext(),
+                            0,
+                            morningIntent,
+                            PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
+                        )
+                        alarmManager.cancel(morningPendingIntent)
+                        
+                        // Cancel evening alarm
+                        val eveningIntent = Intent(requireContext(), AlarmReceiver::class.java).apply {
+                            putExtra("type", "sleep")
+                        }
+                        val eveningPendingIntent = PendingIntent.getBroadcast(
+                            requireContext(),
+                            1,
+                            eveningIntent,
+                            PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
+                        )
+                        alarmManager.cancel(eveningPendingIntent)
 
-            if (isChecked) {
-                NotificationScheduler.cancelNotifications(requireContext())
-                Toast.makeText(requireContext(), "Vacation mode enabled: Notifications disabled", Toast.LENGTH_SHORT).show()
-            } else {
-                NotificationScheduler.scheduleRepeatingNotifications(requireContext(), intervalMillis =2 * 60 * 1000L )
-                Toast.makeText(requireContext(), "Vacation mode disabled: Notifications resumed", Toast.LENGTH_SHORT).show()
-            }
+                        Toast.makeText(requireContext(), "Vacation mode enabled: All notifications disabled", Toast.LENGTH_SHORT).show()
+                    } else {
+                        // Reschedule notifications when vacation mode is disabled
+                        val prefs = requireContext().getSharedPreferences("user_times", Context.MODE_PRIVATE)
+                        val wake = prefs.getInt("wakeHour", 8) * 60 + prefs.getInt("wakeMinute", 0)
+                        val sleep = prefs.getInt("sleepHour", 22) * 60 + prefs.getInt("sleepMinute", 0)
+                        
+                        val cal = Calendar.getInstance()
+                        val now = cal.get(Calendar.HOUR_OF_DAY) * 60 + cal.get(Calendar.MINUTE)
+
+                        // Only schedule if we're between wake and sleep times
+                        if (now in wake until sleep) {
+                            NotificationScheduler.scheduleRepeatingNotifications(requireContext(), 2 * 60 * 1000L)
+                            
+                            // Reschedule morning and evening alarms
+                            val alarmManager = requireContext().getSystemService(Context.ALARM_SERVICE) as AlarmManager
+                            
+                            // Reschedule morning alarm
+                            val morningIntent = Intent(requireContext(), AlarmReceiver::class.java)
+                            val morningPendingIntent = PendingIntent.getBroadcast(
+                                requireContext(),
+                                0,
+                                morningIntent,
+                                PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
+                            )
+                            val morningCal = Calendar.getInstance().apply {
+                                set(Calendar.HOUR_OF_DAY, prefs.getInt("wakeHour", 8))
+                                set(Calendar.MINUTE, prefs.getInt("wakeMinute", 0))
+                                set(Calendar.SECOND, 0)
+                                if (before(Calendar.getInstance())) {
+                                    add(Calendar.DAY_OF_YEAR, 1)
+                                }
+                            }
+                            alarmManager.setExactAndAllowWhileIdle(
+                                AlarmManager.RTC_WAKEUP,
+                                morningCal.timeInMillis,
+                                morningPendingIntent
+                            )
+                            
+                            // Reschedule evening alarm
+                            val eveningIntent = Intent(requireContext(), AlarmReceiver::class.java).apply {
+                                putExtra("type", "sleep")
+                            }
+                            val eveningPendingIntent = PendingIntent.getBroadcast(
+                                requireContext(),
+                                1,
+                                eveningIntent,
+                                PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
+                            )
+                            val eveningCal = Calendar.getInstance().apply {
+                                set(Calendar.HOUR_OF_DAY, prefs.getInt("sleepHour", 22))
+                                set(Calendar.MINUTE, prefs.getInt("sleepMinute", 0))
+                                set(Calendar.SECOND, 0)
+                                if (before(Calendar.getInstance())) {
+                                    add(Calendar.DAY_OF_YEAR, 1)
+                                }
+                            }
+                            alarmManager.setExactAndAllowWhileIdle(
+                                AlarmManager.RTC_WAKEUP,
+                                eveningCal.timeInMillis,
+                                eveningPendingIntent
+                            )
+
+                            Toast.makeText(requireContext(), "Vacation mode disabled: All notifications resumed", Toast.LENGTH_SHORT).show()
+                        } else {
+                            Toast.makeText(requireContext(), "Vacation mode disabled: Notifications will resume at wake time", Toast.LENGTH_SHORT).show()
+                        }
+                    }
+                }
         }
 
         binding.rateUsBtn.setOnClickListener {
@@ -98,9 +206,6 @@ class SettingsFragment : Fragment() {
             }
             startActivity(Intent.createChooser(shareIntent, "Share App via"))
         }
-
-
-        return view
     }
 
     override fun onDestroyView() {
