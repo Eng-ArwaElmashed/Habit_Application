@@ -108,7 +108,7 @@ class LoginActivity : AppCompatActivity() {
 
 
 
-                        startActivity(Intent(this, MorningSelectionActivity::class.java))
+                        startActivity(Intent(this, MainActivity::class.java))
                         finish()
 
                     } else {

@@ -2,11 +2,14 @@ package com.android.habitapplication
 
 import android.app.NotificationChannel
 import android.app.NotificationManager
+import android.content.pm.PackageManager
 import android.os.Build
 import android.os.Bundle
 import android.view.Menu
 import android.widget.TextView
+import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.drawerlayout.widget.DrawerLayout
 import androidx.navigation.findNavController
@@ -26,14 +29,40 @@ class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
+        // Create all notification channels
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            val channel = NotificationChannel(
-                NotificationsFragment.CHANNEL_ID,
-                "Habit Notifications",
-                NotificationManager.IMPORTANCE_DEFAULT
+            val channels = listOf(
+                NotificationChannel(
+                    NotificationsFragment.CHANNEL_ID,
+                    "Habit Reminders",
+                    NotificationManager.IMPORTANCE_HIGH
+                ).apply {
+                    description = "Channel for habit reminders"
+                    enableLights(true)
+                    enableVibration(true)
+                },
+                NotificationChannel(
+                    "wake_channel",
+                    "Wake Up Notifications",
+                    NotificationManager.IMPORTANCE_HIGH
+                ).apply {
+                    description = "Channel for wake up reminders"
+                    enableLights(true)
+                    enableVibration(true)
+                },
+                NotificationChannel(
+                    "sleep_channel",
+                    "Sleep Notifications",
+                    NotificationManager.IMPORTANCE_HIGH
+                ).apply {
+                    description = "Channel for sleep reminders"
+                    enableLights(true)
+                    enableVibration(true)
+                }
             )
+            
             val manager = getSystemService(NotificationManager::class.java)
-            manager.createNotificationChannel(channel)
+            channels.forEach { manager.createNotificationChannel(it) }
         }
 
         binding = ActivityMainBinding.inflate(layoutInflater)
@@ -97,6 +126,8 @@ class MainActivity : AppCompatActivity() {
 
             appBarLayout.setBackgroundColor(ContextCompat.getColor(this, colorRes))
         }
+
+        checkNotificationPermission()
     }
 
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
@@ -107,6 +138,41 @@ class MainActivity : AppCompatActivity() {
     override fun onSupportNavigateUp(): Boolean {
         val navController = findNavController(R.id.nav_host_fragment_content_main)
         return navController.navigateUp(appBarConfiguration) || super.onSupportNavigateUp()
+    }
+
+    private fun checkNotificationPermission() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            if (ContextCompat.checkSelfPermission(
+                    this,
+                    android.Manifest.permission.POST_NOTIFICATIONS
+                ) != PackageManager.PERMISSION_GRANTED
+            ) {
+                ActivityCompat.requestPermissions(
+                    this,
+                    arrayOf(android.Manifest.permission.POST_NOTIFICATIONS),
+                    NOTIFICATION_PERMISSION_REQUEST_CODE
+                )
+            }
+        }
+    }
+
+    override fun onRequestPermissionsResult(
+        requestCode: Int,
+        permissions: Array<out String>,
+        grantResults: IntArray
+    ) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults)
+        if (requestCode == NOTIFICATION_PERMISSION_REQUEST_CODE) {
+            if (grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                // Permission granted, proceed with notifications
+            } else {
+                Toast.makeText(this, "Notification permission is required for reminders", Toast.LENGTH_LONG).show()
+            }
+        }
+    }
+
+    companion object {
+        private const val NOTIFICATION_PERMISSION_REQUEST_CODE = 123
     }
 
 }

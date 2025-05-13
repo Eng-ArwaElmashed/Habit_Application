@@ -1,4 +1,4 @@
-package com.android.habitapplication
+package com.android.habitapplication.ui
 
 import android.app.NotificationChannel
 import android.app.NotificationManager
@@ -8,7 +8,10 @@ import android.content.Context
 import android.content.Intent
 import android.graphics.Color
 import android.os.Build
+import android.util.Log
 import androidx.core.app.NotificationCompat
+import com.android.habitapplication.MainActivity
+import com.android.habitapplication.R
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 import java.text.SimpleDateFormat
@@ -26,6 +29,13 @@ class AlarmReceiver : BroadcastReceiver() {
     )
 
     override fun onReceive(context: Context, intent: Intent) {
+        // Check vacation mode first
+        val vacationPref = context.getSharedPreferences("AppSettings", Context.MODE_PRIVATE)
+        if (vacationPref.getBoolean("isVacationModeOn", false)) {
+            Log.d("AlarmReceiver", "Vacation mode is on, skipping notification")
+            return
+        }
+
         val type = intent.getStringExtra("type") ?: "wake"
 
         val data = when (type) {
