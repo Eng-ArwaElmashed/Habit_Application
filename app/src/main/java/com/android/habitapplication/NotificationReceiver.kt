@@ -87,14 +87,17 @@ class NotificationReceiver : BroadcastReceiver() {
         val db = FirebaseFirestore.getInstance()
 
         val dateFormat = SimpleDateFormat("MM/dd/yyyy", Locale.getDefault())
+        val timeFormat = SimpleDateFormat("HH:mm", Locale.getDefault())
         val date = dateFormat.format(Date())
+        val time = timeFormat.format(Date())
 
         val notificationData = hashMapOf(
             "title" to notification.title,
             "message" to notification.title, // Using title as message since that's what we show
             "imageResId" to notification.imageResId,
             "timestamp" to System.currentTimeMillis(),
-            "date" to date
+            "date" to date,
+            "time" to time
         )
 
         db.collection("userNotifications")

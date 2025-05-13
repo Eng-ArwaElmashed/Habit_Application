@@ -106,9 +106,10 @@ class NotificationsFragment : Fragment() {
                 snapshot?.documents?.forEach { document ->
                     val title = document.getString("title") ?: ""
                     val date = document.getString("date") ?: ""
+                    val time = document.getString("time") ?: ""
                     val imageResId = (document.getLong("imageResId") ?: R.drawable.ic_launcher_background).toInt()
 
-                    notificationList.add(Notification(imageResId, title, date))
+                    notificationList.add(Notification(imageResId, title, date, time))
                 }
                 adapter.notifyDataSetChanged()
             }

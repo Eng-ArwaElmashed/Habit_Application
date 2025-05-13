@@ -12,11 +12,13 @@ import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import com.android.habitapplication.R
 import com.android.habitapplication.model.AddHabit
+import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 
 class AddHabitActivity : AppCompatActivity() {
 
     private lateinit var db: FirebaseFirestore
+    private lateinit var auth: FirebaseAuth
     private lateinit var habitId: String
     private lateinit var habitTitle: String
     private lateinit var habitDesc: String
@@ -30,6 +32,8 @@ class AddHabitActivity : AppCompatActivity() {
         setContentView(R.layout.activity_add_habit)
 
         db = FirebaseFirestore.getInstance()
+        auth = FirebaseAuth.getInstance()
+        val userId = auth.currentUser?.uid ?: return
 
         habitId = intent.getStringExtra("habitId") ?: ""
         habitTitle = intent.getStringExtra("habitTitle") ?: ""
@@ -49,7 +53,8 @@ class AddHabitActivity : AppCompatActivity() {
             descEditText.setText(habitDesc)
         }
         if (habitId.isNotEmpty()) {
-            val tasksCollection = db.collection("habits").document(habitId).collection("tasks")
+            val tasksCollection = db.collection("users").document(userId)
+                .collection("habits").document(habitId).collection("tasks")
             tasksCollection.get()
                 .addOnSuccessListener { querySnapshot ->
                     for (document in querySnapshot) {
@@ -82,10 +87,12 @@ class AddHabitActivity : AppCompatActivity() {
 
             if (habitId.isEmpty()) {
                 // Adding a new habit
-                habitId = db.collection("habits").document().id  // Generate new ID
+                habitId = db.collection("users").document(userId)
+                    .collection("habits").document().id  // Generate new ID
                 val newHabit = AddHabit(habitId, title, desc)
 
-                val habitDocRef = db.collection("habits").document(habitId)
+                val habitDocRef = db.collection("users").document(userId)
+                    .collection("habits").document(habitId)
                 habitDocRef.set(newHabit)
                     .addOnSuccessListener {
                         val tasksCollection = habitDocRef.collection("tasks")
@@ -112,7 +119,8 @@ class AddHabitActivity : AppCompatActivity() {
                     }
             } else {
                 // Updating an existing habit
-                val habitDocRef = db.collection("habits").document(habitId)
+                val habitDocRef = db.collection("users").document(userId)
+                    .collection("habits").document(habitId)
 
                 // Fetch existing tasks from Firestore
                 val tasksCollection = habitDocRef.collection("tasks")
@@ -170,7 +178,10 @@ class AddHabitActivity : AppCompatActivity() {
 
         checkBox.setOnCheckedChangeListener { _, isChecked ->
             if (taskId.isNotEmpty()) {
-                val taskRef = db.collection("habits").document(habitId).collection("tasks").document(taskId)
+                val userId = auth.currentUser?.uid ?: return@setOnCheckedChangeListener
+                val taskRef = db.collection("users").document(userId)
+                    .collection("habits").document(habitId)
+                    .collection("tasks").document(taskId)
                 taskRef.update("done", isChecked)
             }
         }
@@ -183,7 +194,10 @@ class AddHabitActivity : AppCompatActivity() {
                     tasksContainer.removeView(checkBox)
                     tasksList.remove(taskName)
                     if (taskId.isNotEmpty()) {
-                        val taskRef = db.collection("habits").document(habitId).collection("tasks").document(taskId)
+                        val userId = auth.currentUser?.uid ?: return@setPositiveButton
+                        val taskRef = db.collection("users").document(userId)
+                            .collection("habits").document(habitId)
+                            .collection("tasks").document(taskId)
                         taskRef.delete()
                     }
                 }
