@@ -38,8 +38,6 @@ class ProfileFragment : Fragment() {
                 if (document.exists()) {
                     val completedDates = document["completedDates"] as? List<String> ?: emptyList()
                     val streak = calculateStreak(completedDates)
-
-                    // Update UI
                     binding.streakTextView.text = "🔥 Streak: $streak Days"
                 }
             }
