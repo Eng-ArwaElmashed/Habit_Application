@@ -92,11 +92,11 @@ class SignupActivity : AppCompatActivity() {
             isPasswordVisible = !isPasswordVisible
             if (isPasswordVisible) {
                 confirmPass.inputType = InputType.TYPE_TEXT_VARIATION_VISIBLE_PASSWORD
-                toggle.setImageResource(R.drawable.ic_baseline_eye_24)
+                toggle2.setImageResource(R.drawable.ic_baseline_eye_24)
             } else {
                 confirmPass.inputType =
                     InputType.TYPE_CLASS_TEXT or InputType.TYPE_TEXT_VARIATION_PASSWORD
-                toggle.setImageResource(R.drawable.baseline_visibility_off_24)
+                toggle2.setImageResource(R.drawable.baseline_visibility_off_24)
             }
             // Move cursor to end of text
             etPassword.setSelection(etPassword.text.length)

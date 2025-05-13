@@ -8,6 +8,7 @@ import android.content.Context
 import android.content.Intent
 import android.os.Build
 import android.os.Bundle
+import android.util.Log
 import android.view.View
 import android.widget.TimePicker
 import android.widget.Toast
@@ -41,69 +42,111 @@ class EveningSelectionActivity : AppCompatActivity() {
         createNotificationChannel()
 
         getStartedButton.setOnClickListener {
-            setSleepAlarm()
-            val prefs = getSharedPreferences("AppPrefs", MODE_PRIVATE)
-            prefs.edit().putBoolean("setupCompleted", true).apply()
+            setAlarm()
             startActivity(Intent(this, ChooseHabitActivity::class.java))
-            finish()
         }
     }
 
-    private fun setSleepAlarm() {
+    private fun setAlarm() {
+        val user = FirebaseAuth.getInstance().currentUser ?: return
+        
         calendar = Calendar.getInstance().apply {
             set(Calendar.HOUR_OF_DAY, timePicker.hour)
             set(Calendar.MINUTE, timePicker.minute)
             set(Calendar.SECOND, 0)
+            set(Calendar.MILLISECOND, 0)
+        }
+        if (calendar.timeInMillis <= System.currentTimeMillis()) {
+            calendar.add(Calendar.DAY_OF_YEAR, 1)
         }
 
-        val user = FirebaseAuth.getInstance().currentUser
-        if (user != null) {
-            val sleepTime = hashMapOf(
-                "sleepHour" to calendar.get(Calendar.HOUR_OF_DAY),
-                "sleepMinute" to calendar.get(Calendar.MINUTE),
-                "timestamp" to calendar.timeInMillis
-            )
-            FirebaseFirestore.getInstance().collection("userSleepTimes")
-                .document(user.uid)
-                .set(sleepTime)
-                .addOnSuccessListener {
-                    Toast.makeText(this, "Sleep time saved!", Toast.LENGTH_SHORT).show()
-                    fetchTimesAndSchedule(user.uid)
-                }
-                .addOnFailureListener {
-                    Toast.makeText(this, "Failed to save sleep time.", Toast.LENGTH_SHORT).show()
-                }
-        }
-
-        val intent = Intent(this, AlarmReceiver::class.java).apply {
-            putExtra("type", "sleep")  // بنحدد نوع الإشعار
-        }
-
-        pendingIntent = PendingIntent.getBroadcast(
-            this, 1, intent,  // نستخدم requestCode مختلف
-            PendingIntent.FLAG_IMMUTABLE or PendingIntent.FLAG_UPDATE_CURRENT
+        // Save sleep time to Firestore
+        val sleepTimeData = hashMapOf(
+            "sleepHour" to timePicker.hour,
+            "sleepMinute" to timePicker.minute,
+            "timestamp" to System.currentTimeMillis()
         )
 
-        alarmManager.setExactAndAllowWhileIdle(
-            AlarmManager.RTC_WAKEUP,
-            calendar.timeInMillis,
-            pendingIntent
-        )
+        db.collection("userSleepTimes")
+            .document(user.uid)
+            .set(sleepTimeData)
+            .addOnSuccessListener {
+                // Save to local preferences
+                val prefs = getSharedPreferences("user_times", Context.MODE_PRIVATE)
+                prefs.edit()
+                    .putInt("sleepHour", timePicker.hour)
+                    .putInt("sleepMinute", timePicker.minute)
+                    .apply()
 
-        Toast.makeText(this, "Sleep alarm set!", Toast.LENGTH_SHORT).show()
+                // Set alarm
+                val intent = Intent(this, AlarmReceiver::class.java).apply {
+                    action = "com.android.habitapplication.ALARM_SLEEP"
+                    putExtra("type", "sleep")
+                    putExtra("title", "Sleep Time!")
+                    putExtra("message", "Time to review your day and prepare for tomorrow!")
+                    putExtra("channelId", "sleep_channel")
+                    putExtra("notificationId", 2)
+                }
+                val pendingIntent = PendingIntent.getBroadcast(
+                    this, 2, intent, PendingIntent.FLAG_IMMUTABLE or PendingIntent.FLAG_UPDATE_CURRENT
+                )
+                alarmManager.cancel(pendingIntent)
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                    alarmManager.setAlarmClock(
+                        AlarmManager.AlarmClockInfo(calendar.timeInMillis, pendingIntent),
+                        pendingIntent
+                    )
+                } else {
+                    alarmManager.setRepeating(
+                        AlarmManager.RTC_WAKEUP,
+                        calendar.timeInMillis,
+                        AlarmManager.INTERVAL_DAY,
+                        pendingIntent
+                    )
+                }
+
+                // Start random notifications
+                val wakeHour = prefs.getInt("wakeHour", 8)
+                val wakeMinute = prefs.getInt("wakeMinute", 0)
+                val sleepHour = timePicker.hour
+                val sleepMinute = timePicker.minute
+
+                val cal = Calendar.getInstance()
+                val now = cal.get(Calendar.HOUR_OF_DAY) * 60 + cal.get(Calendar.MINUTE)
+                val wake = wakeHour * 60 + wakeMinute
+                val sleep = sleepHour * 60 + sleepMinute
+
+                if (now in wake until sleep) {
+                    NotificationScheduler.scheduleRepeatingNotifications(this, 2 * 60 * 1000L)
+                    Toast.makeText(this, "Random notifications started", Toast.LENGTH_SHORT).show()
+                }
+
+                Toast.makeText(this, "Sleep time alarm set for ${timePicker.hour}:${timePicker.minute}", Toast.LENGTH_SHORT).show()
+            }
+            .addOnFailureListener { e ->
+                Log.e("EveningSelection", "Error saving sleep time: ${e.message}")
+                Toast.makeText(this, "Error saving sleep time", Toast.LENGTH_SHORT).show()
+            }
     }
 
     private fun createNotificationChannel() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             val channel = NotificationChannel(
                 "sleep_channel",
-                "Sleep Notification",
+                "Sleep Time Notification",
                 NotificationManager.IMPORTANCE_HIGH
-            )
+            ).apply {
+                description = "Channel for sleep time reminders"
+                enableLights(true)
+                enableVibration(true)
+                setShowBadge(true)
+            }
             val manager = getSystemService(NotificationManager::class.java)
             manager.createNotificationChannel(channel)
+            Log.d("EveningSelection", "Notification channel created with high importance")
         }
     }
+
     private fun fetchTimesAndSchedule(userId: String) {
         val wakeTimeDoc = db.collection("userWakeTimes").document(userId)
         val sleepTimeDoc = db.collection("userSleepTimes").document(userId)
@@ -125,6 +168,10 @@ class EveningSelectionActivity : AppCompatActivity() {
                                 .putInt("sleepHour", sleepHour)
                                 .putInt("sleepMinute", sleepMinute)
                                 .apply()
+
+                            Log.d("EveningSelection", "User times saved to preferences")
+                            Log.d("EveningSelection", "Wake time: $wakeHour:$wakeMinute")
+                            Log.d("EveningSelection", "Sleep time: $sleepHour:$sleepMinute")
 
                             NotificationScheduler.scheduleRepeatingNotifications(this, 2 * 60 * 1000L)
                             Toast.makeText(this, "Notifications scheduled successfully", Toast.LENGTH_SHORT).show()

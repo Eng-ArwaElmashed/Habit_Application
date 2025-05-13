@@ -29,6 +29,8 @@ class AlarmReceiver : BroadcastReceiver() {
     )
 
     override fun onReceive(context: Context, intent: Intent) {
+        Log.d("AlarmReceiver", "onReceive called with type: ${intent.getStringExtra("type")}")
+        
         // Check vacation mode first
         val vacationPref = context.getSharedPreferences("AppSettings", Context.MODE_PRIVATE)
         if (vacationPref.getBoolean("isVacationModeOn", false)) {
@@ -36,64 +38,82 @@ class AlarmReceiver : BroadcastReceiver() {
             return
         }
 
-        val type = intent.getStringExtra("type") ?: "wake"
+        // Get notification type from intent
+        val type = intent.getStringExtra("type")
+        if (type == null) {
+            Log.e("AlarmReceiver", "No notification type provided in intent")
+            return
+        }
+        Log.d("AlarmReceiver", "Processing notification type: $type")
 
+        // Get notification data based on type
         val data = when (type) {
-            "sleep" -> NotificationData(
-                "sleep_channel",
-                "Time to Sleep",
-                "Get ready for bed and relax.",
-                R.drawable.nights, // Replace with actual icon
+            "wake" -> NotificationData(
+                "wake_channel",
+                "Wake Up Time!",
+                "Time to start your day!",
+                R.drawable.sun,
                 1
             )
-            else -> NotificationData(
-                "wake_channel",
-                "Good Morning!",
-                "Time to rise and shine!",
-                R.drawable.sun, // Replace with actual icon
-                0
+            "sleep" -> NotificationData(
+                "sleep_channel",
+                "Sleep Time!",
+                "Time to review your day and prepare for tomorrow!",
+                R.drawable.nights,
+                2
             )
+            else -> {
+                Log.e("AlarmReceiver", "Unknown notification type: $type")
+                return
+            }
         }
 
-        // Create intent to open app when notification is tapped
-        val notificationIntent = Intent(context, MainActivity::class.java)
-        val pendingIntent = PendingIntent.getActivity(
-            context, 0, notificationIntent,
-            PendingIntent.FLAG_IMMUTABLE or PendingIntent.FLAG_UPDATE_CURRENT
-        )
+        try {
+            // Create intent to open app when notification is tapped
+            val notificationIntent = Intent(context, MainActivity::class.java)
+            val pendingIntent = PendingIntent.getActivity(
+                context, 0, notificationIntent,
+                PendingIntent.FLAG_IMMUTABLE or PendingIntent.FLAG_UPDATE_CURRENT
+            )
 
-        // Build notification
-        val builder = NotificationCompat.Builder(context, data.channelId)
-            .setSmallIcon(data.imageResId)
-            .setContentTitle(data.title)
-            .setContentText(data.message)
-            .setPriority(NotificationCompat.PRIORITY_HIGH)
-            .setAutoCancel(true)
-            .setContentIntent(pendingIntent)
+            // Build notification
+            val builder = NotificationCompat.Builder(context, data.channelId)
+                .setSmallIcon(data.imageResId)
+                .setContentTitle(data.title)
+                .setContentText(data.message)
+                .setPriority(NotificationCompat.PRIORITY_HIGH)
+                .setAutoCancel(true)
+                .setContentIntent(pendingIntent)
 
-        // Create notification channel (for Android 8+)
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            val channel = NotificationChannel(
-                data.channelId,
-                "$type notifications",
-                NotificationManager.IMPORTANCE_HIGH
-            ).apply {
-                description = "Channel for $type time reminders"
-                enableLights(true)
-                lightColor = Color.MAGENTA
-                enableVibration(true)
+            // Create notification channel (for Android 8+)
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                val channel = NotificationChannel(
+                    data.channelId,
+                    "$type notifications",
+                    NotificationManager.IMPORTANCE_HIGH
+                ).apply {
+                    description = "Channel for $type time reminders"
+                    enableLights(true)
+                    lightColor = Color.MAGENTA
+                    enableVibration(true)
+                    setShowBadge(true)
+                }
+
+                val manager = context.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
+                manager.createNotificationChannel(channel)
+                Log.d("AlarmReceiver", "Created notification channel: ${data.channelId}")
             }
 
-            val manager = context.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
-            manager.createNotificationChannel(channel)
+            // Show the notification
+            val notificationManager = context.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
+            notificationManager.notify(data.notificationId, builder.build())
+            Log.d("AlarmReceiver", "Notification sent: ${data.title}")
+
+            // Save to Firestore
+            saveNotificationToFirestore(data.title, data.message, data.imageResId)
+        } catch (e: Exception) {
+            Log.e("AlarmReceiver", "Error showing notification: ${e.message}")
         }
-
-        // Show the notification
-        val notificationManager = context.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
-        notificationManager.notify(data.notificationId, builder.build())
-
-        // Save to Firestore
-        saveNotificationToFirestore(data.title, data.message, data.imageResId)
     }
 
     private fun saveNotificationToFirestore(title: String, message: String, imageResId: Int) {
@@ -118,5 +138,11 @@ class AlarmReceiver : BroadcastReceiver() {
             .document(user.uid)
             .collection("notifications")
             .add(notification)
+            .addOnSuccessListener {
+                Log.d("AlarmReceiver", "Notification saved to Firestore")
+            }
+            .addOnFailureListener { e ->
+                Log.e("AlarmReceiver", "Error saving notification to Firestore: ${e.message}")
+            }
     }
 }

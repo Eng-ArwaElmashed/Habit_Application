@@ -8,6 +8,7 @@ import android.content.Context
 import android.content.Intent
 import android.os.Build
 import android.os.Bundle
+import android.util.Log
 import android.view.View
 import android.widget.TimePicker
 import android.widget.Toast
@@ -24,6 +25,7 @@ class MorningSelectionActivity : AppCompatActivity() {
     private lateinit var pendingIntent: PendingIntent
     private lateinit var calendar: Calendar
     private lateinit var timePicker: TimePicker
+    private lateinit var db: FirebaseFirestore
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -31,6 +33,7 @@ class MorningSelectionActivity : AppCompatActivity() {
         window.decorView.systemUiVisibility = View.SYSTEM_UI_FLAG_FULLSCREEN
         setContentView(R.layout.activity_morning_selection)
 
+        db = FirebaseFirestore.getInstance()
         alarmManager = getSystemService(Context.ALARM_SERVICE) as AlarmManager
         timePicker = findViewById(R.id.time_pk)
         val getStartedButton: MaterialButton = findViewById(R.id.get_started_btn)
@@ -44,47 +47,68 @@ class MorningSelectionActivity : AppCompatActivity() {
     }
 
     private fun setAlarm() {
+        val user = FirebaseAuth.getInstance().currentUser ?: return
+        
         calendar = Calendar.getInstance().apply {
             set(Calendar.HOUR_OF_DAY, timePicker.hour)
             set(Calendar.MINUTE, timePicker.minute)
             set(Calendar.SECOND, 0)
+            set(Calendar.MILLISECOND, 0)
+        }
+        if (calendar.timeInMillis <= System.currentTimeMillis()) {
+            calendar.add(Calendar.DAY_OF_YEAR, 1)
         }
 
-        // تخزين الوقت في Firestore
-        val user = FirebaseAuth.getInstance().currentUser
-        if (user != null) {
-            val wakeTime = hashMapOf(
-                "wakeHour" to calendar.get(Calendar.HOUR_OF_DAY),
-                "wakeMinute" to calendar.get(Calendar.MINUTE),
-                "timestamp" to calendar.timeInMillis
-            )
-            FirebaseFirestore.getInstance().collection("userWakeTimes")
-                .document(user.uid)
-                .set(wakeTime)
-                .addOnSuccessListener {
-                    Toast.makeText(this, "Wake time saved!", Toast.LENGTH_SHORT).show()
-                }
-                .addOnFailureListener {
-                    Toast.makeText(this, "Failed to save wake time.", Toast.LENGTH_SHORT).show()
-                }
-        }
-
-        // ضبط المنبه
-        val intent = Intent(this, AlarmReceiver::class.java)
-        pendingIntent = PendingIntent.getBroadcast(
-            this, 0, intent,
-            PendingIntent.FLAG_IMMUTABLE or PendingIntent.FLAG_UPDATE_CURRENT
+        // Save wake time to Firestore
+        val wakeTimeData = hashMapOf(
+            "wakeHour" to timePicker.hour,
+            "wakeMinute" to timePicker.minute,
+            "timestamp" to System.currentTimeMillis()
         )
 
-        alarmManager.setExactAndAllowWhileIdle(
-            AlarmManager.RTC_WAKEUP,
-            calendar.timeInMillis,
-            pendingIntent
-        )
+        db.collection("userWakeTimes")
+            .document(user.uid)
+            .set(wakeTimeData)
+            .addOnSuccessListener {
+                // Save to local preferences
+                val prefs = getSharedPreferences("user_times", Context.MODE_PRIVATE)
+                prefs.edit()
+                    .putInt("wakeHour", timePicker.hour)
+                    .putInt("wakeMinute", timePicker.minute)
+                    .apply()
 
-        Toast.makeText(this, "Alarm set successfully!", Toast.LENGTH_SHORT).show()
-
-
+                // Set alarm
+                val intent = Intent(this, AlarmReceiver::class.java).apply {
+                    action = "com.android.habitapplication.ALARM_WAKE"
+                    putExtra("type", "wake")
+                    putExtra("title", "Wake Up Time!")
+                    putExtra("message", "Time to start your day!")
+                    putExtra("channelId", "wake_channel")
+                    putExtra("notificationId", 1)
+                }
+                val pendingIntent = PendingIntent.getBroadcast(
+                    this, 1, intent, PendingIntent.FLAG_IMMUTABLE or PendingIntent.FLAG_UPDATE_CURRENT
+                )
+                alarmManager.cancel(pendingIntent)
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                    alarmManager.setAlarmClock(
+                        AlarmManager.AlarmClockInfo(calendar.timeInMillis, pendingIntent),
+                        pendingIntent
+                    )
+                } else {
+                    alarmManager.setRepeating(
+                        AlarmManager.RTC_WAKEUP,
+                        calendar.timeInMillis,
+                        AlarmManager.INTERVAL_DAY,
+                        pendingIntent
+                    )
+                }
+                Toast.makeText(this, "Wake up alarm set for ${timePicker.hour}:${timePicker.minute}", Toast.LENGTH_SHORT).show()
+            }
+            .addOnFailureListener { e ->
+                Log.e("MorningSelection", "Error saving wake time: ${e.message}")
+                Toast.makeText(this, "Error saving wake time", Toast.LENGTH_SHORT).show()
+            }
     }
 
     private fun createNotificationChannel() {
@@ -93,9 +117,15 @@ class MorningSelectionActivity : AppCompatActivity() {
                 "wake_channel",
                 "Wake Up Notification",
                 NotificationManager.IMPORTANCE_HIGH
-            )
+            ).apply {
+                description = "Channel for wake up reminders"
+                enableLights(true)
+                enableVibration(true)
+                setShowBadge(true)
+            }
             val manager = getSystemService(NotificationManager::class.java)
             manager.createNotificationChannel(channel)
+            Log.d("MorningSelection", "Notification channel created with high importance")
         }
     }
 }

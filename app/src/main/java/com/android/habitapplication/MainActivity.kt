@@ -5,6 +5,7 @@ import android.app.NotificationManager
 import android.content.pm.PackageManager
 import android.os.Build
 import android.os.Bundle
+import android.util.Log
 import android.view.Menu
 import android.widget.TextView
 import android.widget.Toast
@@ -40,6 +41,7 @@ class MainActivity : AppCompatActivity() {
                     description = "Channel for habit reminders"
                     enableLights(true)
                     enableVibration(true)
+                    setShowBadge(true)
                 },
                 NotificationChannel(
                     "wake_channel",
@@ -49,6 +51,7 @@ class MainActivity : AppCompatActivity() {
                     description = "Channel for wake up reminders"
                     enableLights(true)
                     enableVibration(true)
+                    setShowBadge(true)
                 },
                 NotificationChannel(
                     "sleep_channel",
@@ -58,11 +61,13 @@ class MainActivity : AppCompatActivity() {
                     description = "Channel for sleep reminders"
                     enableLights(true)
                     enableVibration(true)
+                    setShowBadge(true)
                 }
             )
             
             val manager = getSystemService(NotificationManager::class.java)
             channels.forEach { manager.createNotificationChannel(it) }
+            Log.d("MainActivity", "Created all notification channels")
         }
 
         binding = ActivityMainBinding.inflate(layoutInflater)

@@ -21,15 +21,11 @@ class WelcomeActivity : AppCompatActivity() {
     private val notificationPermissionRequest =
         registerForActivityResult(ActivityResultContracts.RequestPermission()) { isGranted ->
             if (isGranted) {
-                // Permission granted, proceed to the next screen
+                // Permission granted, show success message
                 Toast.makeText(this, "Permission granted!", Toast.LENGTH_SHORT).show()
-                startActivity(Intent(this, Onboarding1Activity::class.java))
-                finish()
             } else {
-                // Permission denied, show a message or handle accordingly
+                // Permission denied, show a message
                 Toast.makeText(this, "Permission denied! Notifications will not work.", Toast.LENGTH_SHORT).show()
-                startActivity(Intent(this, Onboarding1Activity::class.java))
-                finish()
             }
         }
 
@@ -54,15 +50,7 @@ class WelcomeActivity : AppCompatActivity() {
             if (ActivityCompat.checkSelfPermission(this, android.Manifest.permission.POST_NOTIFICATIONS) !=
                 android.content.pm.PackageManager.PERMISSION_GRANTED) {
                 notificationPermissionRequest.launch(android.Manifest.permission.POST_NOTIFICATIONS)
-            } else {
-                // Permission already granted
-                startActivity(Intent(this, Onboarding1Activity::class.java))
-                finish()
             }
-        } else {
-            // No need to request permission on lower versions, proceed directly
-            startActivity(Intent(this, Onboarding1Activity::class.java))
-            finish()
         }
 
         val getStartedBtn = findViewById<Button>(R.id.btnGetStarted)

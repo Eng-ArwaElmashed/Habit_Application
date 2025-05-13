@@ -1,5 +1,7 @@
 package com.android.habitapplication.ui.settings
 
+import android.app.AlarmManager
+import android.app.TimePickerDialog
 import android.content.Context
 import android.content.Intent
 import android.net.Uri
@@ -15,16 +17,19 @@ import com.android.habitapplication.LoginActivity
 import com.android.habitapplication.databinding.FragmentSettingsBinding
 import com.android.habitapplication.NotificationScheduler
 import com.google.firebase.auth.FirebaseAuth
-import android.app.AlarmManager
 import android.app.PendingIntent
 import com.android.habitapplication.ui.AlarmReceiver
 import java.util.*
 import com.google.firebase.firestore.FirebaseFirestore
+import android.os.Build
+import android.util.Log
 
 class SettingsFragment : Fragment() {
 
     private var _binding: FragmentSettingsBinding? = null
     private val binding get() = _binding!!
+    private lateinit var db: FirebaseFirestore
+    private lateinit var alarmManager: AlarmManager
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -32,6 +37,9 @@ class SettingsFragment : Fragment() {
     ): View {
         _binding = FragmentSettingsBinding.inflate(inflater, container, false)
         val view = binding.root
+
+        db = FirebaseFirestore.getInstance()
+        alarmManager = requireContext().getSystemService(Context.ALARM_SERVICE) as AlarmManager
 
         binding.logoutBtn.setOnClickListener {
             // Sign out from Firebase
@@ -56,14 +64,162 @@ class SettingsFragment : Fragment() {
             startActivity(intent)
         }
 
+        // Set up morning time change button
+        binding.morningTimeBtn.setOnClickListener {
+            showTimePickerDialog(true)
+            val intent = Intent(requireContext(), AlarmReceiver::class.java).apply {
+            putExtra("type", "wake")
+            putExtra("title", "Wake Up Time!")
+            putExtra("message", "Time to start your day!")
+            putExtra("channelId", "wake_channel")
+            putExtra("notificationId", 1)
+        }
+        }
+
+        // Set up evening time change button
+        binding.eveningTimeBtn.setOnClickListener {
+            showTimePickerDialog(false)
+            val intent = Intent(requireContext(), AlarmReceiver::class.java).apply {
+            putExtra("type", "sleep")
+            putExtra("title", "Sleep Time!")
+            putExtra("message", "Time to review your day and prepare for tomorrow!")
+            putExtra("channelId", "sleep_channel")
+            putExtra("notificationId", 2)
+        }
+        }
+
         return view
+    }
+
+    private fun showTimePickerDialog(isMorning: Boolean) {
+        val prefs = requireContext().getSharedPreferences("user_times", Context.MODE_PRIVATE)
+        val currentHour = if (isMorning) prefs.getInt("wakeHour", 8) else prefs.getInt("sleepHour", 22)
+        val currentMinute = if (isMorning) prefs.getInt("wakeMinute", 0) else prefs.getInt("sleepMinute", 0)
+
+        TimePickerDialog(
+            requireContext(),
+            { _, hourOfDay, minute ->
+                updateTime(isMorning, hourOfDay, minute)
+            },
+            currentHour,
+            currentMinute,
+            true
+        ).show()
+    }
+
+    private fun updateTime(isMorning: Boolean, hour: Int, minute: Int) {
+        val user = FirebaseAuth.getInstance().currentUser ?: return
+        val prefs = requireContext().getSharedPreferences("user_times", Context.MODE_PRIVATE)
+        val collection = if (isMorning) "userWakeTimes" else "userSleepTimes"
+        val timeField = if (isMorning) "wake" else "sleep"
+
+        // Update Firestore
+        val timeData = hashMapOf(
+            "${timeField}Hour" to hour,
+            "${timeField}Minute" to minute,
+            "timestamp" to System.currentTimeMillis()
+        )
+
+        db.collection(collection)
+            .document(user.uid)
+            .set(timeData)
+            .addOnSuccessListener {
+                // Update local preferences
+                prefs.edit()
+                    .putInt("${timeField}Hour", hour)
+                    .putInt("${timeField}Minute", minute)
+                    .apply()
+
+                // Update alarm
+                updateAlarm(isMorning, hour, minute)
+
+                Toast.makeText(
+                    requireContext(),
+                    "${if (isMorning) "Morning" else "Evening"} time updated to ${String.format("%02d:%02d", hour, minute)}",
+                    Toast.LENGTH_SHORT
+                ).show()
+            }
+            .addOnFailureListener {
+                Toast.makeText(
+                    requireContext(),
+                    "Failed to update time",
+                    Toast.LENGTH_SHORT
+                ).show()
+            }
+    }
+
+    private fun updateAlarm(isMorning: Boolean, hour: Int, minute: Int) {
+        val calendar = Calendar.getInstance().apply {
+            set(Calendar.HOUR_OF_DAY, hour)
+            set(Calendar.MINUTE, minute)
+            set(Calendar.SECOND, 0)
+            set(Calendar.MILLISECOND, 0)
+        }
+
+        // If the time has already passed today, set it for tomorrow
+        if (calendar.timeInMillis <= System.currentTimeMillis()) {
+            calendar.add(Calendar.DAY_OF_YEAR, 1)
+            Log.d("SettingsFragment", "Time has passed, setting for tomorrow")
+        }
+
+        val intent = Intent(requireContext(), AlarmReceiver::class.java).apply {
+            putExtra("type", if (isMorning) "wake" else "sleep")
+            putExtra("title", if (isMorning) "Wake Up Time!" else "Sleep Time!")
+            putExtra("message", if (isMorning) "Time to start your day!" else "Time to review your day and prepare for tomorrow!")
+            putExtra("channelId", if (isMorning) "wake_channel" else "sleep_channel")
+            putExtra("notificationId", if (isMorning) 1 else 2)
+        }
+
+        val pendingIntent = PendingIntent.getBroadcast(
+            requireContext(),
+            if (isMorning) 1 else 2,
+            intent,
+            PendingIntent.FLAG_IMMUTABLE or PendingIntent.FLAG_UPDATE_CURRENT
+        )
+
+        try {
+            // Cancel existing alarm
+            alarmManager.cancel(pendingIntent)
+            Log.d("SettingsFragment", "Cancelled existing alarm")
+
+            // Set new alarm using setAlarmClock for better reliability
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                alarmManager.setAlarmClock(
+                    AlarmManager.AlarmClockInfo(calendar.timeInMillis, pendingIntent),
+                    pendingIntent
+                )
+                Log.d("SettingsFragment", "Alarm clock set for: ${calendar.time}")
+            } else {
+                // For older Android versions, use setRepeating
+                val interval = AlarmManager.INTERVAL_DAY
+                alarmManager.setRepeating(
+                    AlarmManager.RTC_WAKEUP,
+                    calendar.timeInMillis,
+                    interval,
+                    pendingIntent
+                )
+                Log.d("SettingsFragment", "Repeating alarm set for: ${calendar.time}")
+            }
+
+            Toast.makeText(
+                requireContext(),
+                "${if (isMorning) "Morning" else "Evening"} alarm set for ${String.format("%02d:%02d", hour, minute)}",
+                Toast.LENGTH_SHORT
+            ).show()
+        } catch (e: Exception) {
+            Log.e("SettingsFragment", "Error setting alarm: ${e.message}")
+            Toast.makeText(
+                requireContext(),
+                "Error setting alarm: ${e.message}",
+                Toast.LENGTH_SHORT
+            ).show()
+        }
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
         val user = FirebaseAuth.getInstance().currentUser ?: return
-        val db = FirebaseFirestore.getInstance()
 
         // Initialize vacation mode switch state from Firestore
         db.collection("userSettings")
@@ -89,10 +245,13 @@ class SettingsFragment : Fragment() {
                         val alarmManager = requireContext().getSystemService(Context.ALARM_SERVICE) as AlarmManager
                         
                         // Cancel morning alarm
-                        val morningIntent = Intent(requireContext(), AlarmReceiver::class.java)
+                        val morningIntent = Intent(requireContext(), AlarmReceiver::class.java).apply {
+                            action = "com.android.habitapplication.ALARM_WAKE"
+                            putExtra("type", "wake")
+                        }
                         val morningPendingIntent = PendingIntent.getBroadcast(
                             requireContext(),
-                            0,
+                            1,
                             morningIntent,
                             PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
                         )
@@ -100,11 +259,12 @@ class SettingsFragment : Fragment() {
                         
                         // Cancel evening alarm
                         val eveningIntent = Intent(requireContext(), AlarmReceiver::class.java).apply {
+                            action = "com.android.habitapplication.ALARM_SLEEP"
                             putExtra("type", "sleep")
                         }
                         val eveningPendingIntent = PendingIntent.getBroadcast(
                             requireContext(),
-                            1,
+                            2,
                             eveningIntent,
                             PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
                         )
@@ -128,10 +288,17 @@ class SettingsFragment : Fragment() {
                             val alarmManager = requireContext().getSystemService(Context.ALARM_SERVICE) as AlarmManager
                             
                             // Reschedule morning alarm
-                            val morningIntent = Intent(requireContext(), AlarmReceiver::class.java)
+                            val morningIntent = Intent(requireContext(), AlarmReceiver::class.java).apply {
+                                action = "com.android.habitapplication.ALARM_WAKE"
+                                putExtra("type", "wake")
+                                putExtra("title", "Wake Up Time!")
+                                putExtra("message", "Time to start your day!")
+                                putExtra("channelId", "wake_channel")
+                                putExtra("notificationId", 1)
+                            }
                             val morningPendingIntent = PendingIntent.getBroadcast(
                                 requireContext(),
-                                0,
+                                1,
                                 morningIntent,
                                 PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
                             )
@@ -143,19 +310,39 @@ class SettingsFragment : Fragment() {
                                     add(Calendar.DAY_OF_YEAR, 1)
                                 }
                             }
-                            alarmManager.setExactAndAllowWhileIdle(
-                                AlarmManager.RTC_WAKEUP,
-                                morningCal.timeInMillis,
-                                morningPendingIntent
-                            )
+                            
+                            // Cancel existing morning alarm
+                            alarmManager.cancel(morningPendingIntent)
+                            
+                            // Set new morning alarm
+                            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                                alarmManager.setAlarmClock(
+                                    AlarmManager.AlarmClockInfo(morningCal.timeInMillis, morningPendingIntent),
+                                    morningPendingIntent
+                                )
+                                Log.d("SettingsFragment", "Morning alarm clock set for: ${morningCal.time}")
+                            } else {
+                                alarmManager.setRepeating(
+                                    AlarmManager.RTC_WAKEUP,
+                                    morningCal.timeInMillis,
+                                    AlarmManager.INTERVAL_DAY,
+                                    morningPendingIntent
+                                )
+                                Log.d("SettingsFragment", "Morning repeating alarm set for: ${morningCal.time}")
+                            }
                             
                             // Reschedule evening alarm
                             val eveningIntent = Intent(requireContext(), AlarmReceiver::class.java).apply {
+                                action = "com.android.habitapplication.ALARM_SLEEP"
                                 putExtra("type", "sleep")
+                                putExtra("title", "Sleep Time!")
+                                putExtra("message", "Time to review your day and prepare for tomorrow!")
+                                putExtra("channelId", "sleep_channel")
+                                putExtra("notificationId", 2)
                             }
                             val eveningPendingIntent = PendingIntent.getBroadcast(
                                 requireContext(),
-                                1,
+                                2,
                                 eveningIntent,
                                 PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
                             )
@@ -167,18 +354,33 @@ class SettingsFragment : Fragment() {
                                     add(Calendar.DAY_OF_YEAR, 1)
                                 }
                             }
-                            alarmManager.setExactAndAllowWhileIdle(
-                                AlarmManager.RTC_WAKEUP,
-                                eveningCal.timeInMillis,
-                                eveningPendingIntent
-                            )
+                            
+                            // Cancel existing evening alarm
+                            alarmManager.cancel(eveningPendingIntent)
+                            
+                            // Set new evening alarm
+                            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                                alarmManager.setAlarmClock(
+                                    AlarmManager.AlarmClockInfo(eveningCal.timeInMillis, eveningPendingIntent),
+                                    eveningPendingIntent
+                                )
+                                Log.d("SettingsFragment", "Evening alarm clock set for: ${eveningCal.time}")
+                            } else {
+                                alarmManager.setRepeating(
+                                    AlarmManager.RTC_WAKEUP,
+                                    eveningCal.timeInMillis,
+                                    AlarmManager.INTERVAL_DAY,
+                                    eveningPendingIntent
+                                )
+                                Log.d("SettingsFragment", "Evening repeating alarm set for: ${eveningCal.time}")
+                            }
 
                             Toast.makeText(requireContext(), "Vacation mode disabled: All notifications resumed", Toast.LENGTH_SHORT).show()
-                        } else {
+            } else {
                             Toast.makeText(requireContext(), "Vacation mode disabled: Notifications will resume at wake time", Toast.LENGTH_SHORT).show()
                         }
                     }
-                }
+            }
         }
 
         binding.rateUsBtn.setOnClickListener {
@@ -198,13 +400,10 @@ class SettingsFragment : Fragment() {
             val packageName = requireContext().packageName
             val shareIntent = Intent().apply {
                 action = Intent.ACTION_SEND
-                putExtra(
-                    Intent.EXTRA_TEXT,
-                    "جرب هذا التطبيق الرائع: https://play.google.com/store/apps/details?id=$packageName"
-                )
                 type = "text/plain"
+                putExtra(Intent.EXTRA_TEXT, "Check out this awesome habit tracking app: https://play.google.com/store/apps/details?id=$packageName")
             }
-            startActivity(Intent.createChooser(shareIntent, "Share App via"))
+            startActivity(Intent.createChooser(shareIntent, "Share via"))
         }
     }
 
