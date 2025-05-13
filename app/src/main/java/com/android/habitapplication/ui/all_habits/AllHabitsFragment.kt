@@ -1,5 +1,6 @@
 package com.android.habitapplication.ui.all_habits
 
+import AddHabit
 import HabitViewModel
 import android.app.Activity
 import android.content.Intent
@@ -14,7 +15,6 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.GridLayoutManager
 import com.android.habitapplication.*
 import com.android.habitapplication.databinding.FragmentAllHabitsBinding
-import com.android.habitapplication.model.AddHabit
 import com.android.habitapplication.ui.all_habits.AddHabitActivity
 import com.google.firebase.firestore.FirebaseFirestore
 
