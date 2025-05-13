@@ -12,6 +12,7 @@ import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import com.android.habitapplication.R
 import com.android.habitapplication.model.AddHabit
+import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 
 class AddHabitActivity : AppCompatActivity() {
@@ -48,8 +49,12 @@ class AddHabitActivity : AppCompatActivity() {
             titleEditText.setText(habitTitle)
             descEditText.setText(habitDesc)
         }
+
+        val userId = FirebaseAuth.getInstance().currentUser?.uid ?: return
         if (habitId.isNotEmpty()) {
-            val tasksCollection = db.collection("habits").document(habitId).collection("tasks")
+            val tasksCollection = db.collection("users").document(userId)
+                .collection("habits").document(habitId)
+                .collection("tasks")
             tasksCollection.get()
                 .addOnSuccessListener { querySnapshot ->
                     for (document in querySnapshot) {
@@ -66,12 +71,11 @@ class AddHabitActivity : AppCompatActivity() {
 
         val saveButton: Button = findViewById(R.id.saveHabitButton)
 
-        // Add new task when the "Add Task" button is clicked
         addTaskBtn.setOnClickListener {
             val taskName = taskInput.text.toString().trim()
             if (taskName.isNotEmpty()) {
                 tasksList.add(taskName)
-                addTaskToView(taskName, "", false)  // No taskId for new tasks
+                addTaskToView(taskName, "", false)
                 taskInput.text.clear()
             }
         }
@@ -81,17 +85,17 @@ class AddHabitActivity : AppCompatActivity() {
             val desc = descEditText.text.toString()
 
             if (habitId.isEmpty()) {
-                // Adding a new habit
-                habitId = db.collection("habits").document().id  // Generate new ID
+                habitId = db.collection("users").document(userId)
+                    .collection("habits").document().id
                 val newHabit = AddHabit(habitId, title, desc)
 
-                val habitDocRef = db.collection("habits").document(habitId)
+                val habitDocRef = db.collection("users").document(userId)
+                    .collection("habits").document(habitId)
                 habitDocRef.set(newHabit)
                     .addOnSuccessListener {
                         val tasksCollection = habitDocRef.collection("tasks")
                         val batch = db.batch()
 
-                        // Add tasks for the new habit
                         tasksList.forEach { taskName ->
                             val taskMap = hashMapOf("name" to taskName, "done" to false)
                             tasksCollection.add(taskMap)
@@ -111,10 +115,9 @@ class AddHabitActivity : AppCompatActivity() {
                         Toast.makeText(this, "Failed to add habit", Toast.LENGTH_SHORT).show()
                     }
             } else {
-                // Updating an existing habit
-                val habitDocRef = db.collection("habits").document(habitId)
+                val habitDocRef = db.collection("users").document(userId)
+                    .collection("habits").document(habitId)
 
-                // Fetch existing tasks from Firestore
                 val tasksCollection = habitDocRef.collection("tasks")
                 tasksCollection.get().addOnSuccessListener { snapshot ->
                     val oldTasks = snapshot.documents.map { it.id to (it.getString("name") ?: "") }.toMap()
@@ -127,13 +130,11 @@ class AddHabitActivity : AppCompatActivity() {
 
                     val batch = db.batch()
 
-                    // Delete the tasks that were removed
                     for ((docId, _) in tasksToDelete) {
                         val docRef = tasksCollection.document(docId)
                         batch.delete(docRef)
                     }
 
-                    // Add new tasks
                     for (task in tasksToAdd) {
                         val taskMap = hashMapOf("name" to task, "done" to false)
                         tasksCollection.add(taskMap)
@@ -170,7 +171,10 @@ class AddHabitActivity : AppCompatActivity() {
 
         checkBox.setOnCheckedChangeListener { _, isChecked ->
             if (taskId.isNotEmpty()) {
-                val taskRef = db.collection("habits").document(habitId).collection("tasks").document(taskId)
+                val userId = FirebaseAuth.getInstance().currentUser?.uid ?: return@setOnCheckedChangeListener
+                val taskRef = db.collection("users").document(userId)
+                    .collection("habits").document(habitId)
+                    .collection("tasks").document(taskId)
                 taskRef.update("done", isChecked)
             }
         }
@@ -183,7 +187,10 @@ class AddHabitActivity : AppCompatActivity() {
                     tasksContainer.removeView(checkBox)
                     tasksList.remove(taskName)
                     if (taskId.isNotEmpty()) {
-                        val taskRef = db.collection("habits").document(habitId).collection("tasks").document(taskId)
+                        val userId = FirebaseAuth.getInstance().currentUser?.uid ?: return@setPositiveButton
+                        val taskRef = db.collection("users").document(userId)
+                            .collection("habits").document(habitId)
+                            .collection("tasks").document(taskId)
                         taskRef.delete()
                     }
                 }

@@ -1,7 +1,5 @@
 package com.android.habitapplication.ui.all_habits
 
-import AddHabit
-import HabitViewModel
 import android.app.Activity
 import android.content.Intent
 import android.os.Bundle
@@ -13,9 +11,10 @@ import androidx.activity.result.contract.ActivityResultContracts
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.GridLayoutManager
-import com.android.habitapplication.*
+import com.android.habitapplication.HabitAdapter
+import com.android.habitapplication.HabitViewModel
 import com.android.habitapplication.databinding.FragmentAllHabitsBinding
-import com.android.habitapplication.ui.all_habits.AddHabitActivity
+import com.android.habitapplication.model.AddHabit
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 
@@ -30,8 +29,7 @@ class AllHabitsFragment : Fragment() {
         if (result.resultCode == Activity.RESULT_OK) {
             val updatedHabit = result.data?.getSerializableExtra("updatedHabit") as? AddHabit
             updatedHabit?.let {
-                habitViewModel.loadTodayHabits()
-
+                habitViewModel.loadAllHabits()
             }
         }
     }
@@ -49,14 +47,12 @@ class AllHabitsFragment : Fragment() {
 
         habitViewModel = ViewModelProvider(this).get(HabitViewModel::class.java)
 
-        habitViewModel = ViewModelProvider(this).get(HabitViewModel::class.java)
-
         setupRecyclerView()
         habitViewModel.habitList.observe(viewLifecycleOwner) { habits ->
             adapter.submitList(habits)
         }
 
-        habitViewModel.loadTodayHabits()
+        habitViewModel.loadAllHabits()
 
         binding.addBtn.setOnClickListener {
             val intent = Intent(requireContext(), AddHabitActivity::class.java)

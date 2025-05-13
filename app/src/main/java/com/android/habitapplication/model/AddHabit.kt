@@ -1,3 +1,4 @@
+package com.android.habitapplication.model
 import com.android.habitapplication.R
 import java.io.Serializable
 

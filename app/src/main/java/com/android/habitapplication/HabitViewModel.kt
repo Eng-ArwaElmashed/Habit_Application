@@ -1,8 +1,11 @@
+package com.android.habitapplication
+
 import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.android.habitapplication.model.AddHabit
+import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 
 class HabitViewModel : ViewModel() {
@@ -10,11 +13,15 @@ class HabitViewModel : ViewModel() {
     private val _habitList = MutableLiveData<List<AddHabit>>()
     val habitList: LiveData<List<AddHabit>> get() = _habitList
 
+    private fun getUserId(): String? {
+        return FirebaseAuth.getInstance().currentUser?.uid
+    }
 
     fun loadHabitsForDay(day: String) {
+        val userId = getUserId() ?: return
         val habitList = mutableListOf<AddHabit>()
         val tempList = mutableListOf<AddHabit>()
-        val habitsCollection = db.collection("habits")
+        val habitsCollection = db.collection("users").document(userId).collection("habits")
 
         habitsCollection
             .whereEqualTo("day", day)
@@ -55,9 +62,10 @@ class HabitViewModel : ViewModel() {
     }
 
     fun loadTodayHabits() {
+        val userId = getUserId() ?: return
         val habitList = mutableListOf<AddHabit>()
         val tempList = mutableListOf<AddHabit>()
-        val habitsCollection = db.collection("habits")
+        val habitsCollection = db.collection("users").document(userId).collection("habits")
 
         habitsCollection.get()
             .addOnSuccessListener { result ->
@@ -96,7 +104,10 @@ class HabitViewModel : ViewModel() {
     }
 
     fun updateTaskStatus(habitId: String, taskId: String, newStatus: Boolean) {
-        val taskRef = db.collection("habits").document(habitId).collection("tasks").document(taskId)
+        val userId = getUserId() ?: return
+        val taskRef = db.collection("users").document(userId)
+            .collection("habits").document(habitId)
+            .collection("tasks").document(taskId)
         taskRef.update("done", newStatus)
             .addOnSuccessListener {
                 Log.d("TodayFragment", "Task updated successfully")
@@ -108,7 +119,8 @@ class HabitViewModel : ViewModel() {
     }
 
     fun loadAllHabits() {
-        db.collection("habits")
+        val userId = getUserId() ?: return
+        db.collection("users").document(userId).collection("habits")
             .get()
             .addOnSuccessListener { result ->
                 val habits = result.documents.mapNotNull { it.toObject(AddHabit::class.java) }
@@ -118,5 +130,4 @@ class HabitViewModel : ViewModel() {
                 Log.e("HabitViewModel", "Error loading habits", exception)
             }
     }
-
 }

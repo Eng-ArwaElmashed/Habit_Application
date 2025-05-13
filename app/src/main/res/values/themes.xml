@@ -17,7 +17,7 @@
 
     <style name="Theme.HabitApplication.Splash" parent="Theme.AppCompat.Light.NoActionBar">
         <item name="android:windowBackground">@color/light_pink</item>
-        <item name="windowSplashScreenAnimatedIcon">@drawable/logo</item>
+        <item name="windowSplashScreenAnimatedIcon">@mipmap/ic_launcher</item>
         <item name="postSplashScreenTheme">@style/Theme.HabitApplication</item>
     </style>
 

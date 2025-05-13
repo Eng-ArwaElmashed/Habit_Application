@@ -1,10 +1,8 @@
 package com.android.habitapplication.ui.today
 
-import HabitViewModel
 import android.app.Activity
 import android.content.Intent
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -14,11 +12,11 @@ import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.GridLayoutManager
 import com.android.habitapplication.HabitAdapter
-import com.android.habitapplication.R
+import com.android.habitapplication.HabitViewModel
 import com.android.habitapplication.databinding.FragmentTodayBinding
 import com.android.habitapplication.model.AddHabit
 import com.android.habitapplication.ui.all_habits.AddHabitActivity
-import com.google.android.material.progressindicator.CircularProgressIndicator
+import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 
 class TodayFragment : Fragment() {
@@ -75,7 +73,9 @@ class TodayFragment : Fragment() {
     }
 
     private fun deleteHabit(habit: AddHabit) {
-        FirebaseFirestore.getInstance().collection("habits").document(habit.id)
+        val userId = FirebaseAuth.getInstance().currentUser?.uid ?: return
+        FirebaseFirestore.getInstance().collection("users").document(userId)
+            .collection("habits").document(habit.id)
             .delete()
             .addOnSuccessListener {
                 Toast.makeText(requireContext(), "Habit deleted", Toast.LENGTH_SHORT).show()

@@ -1,6 +1,6 @@
 package com.android.habitapplication
 
-import AddHabit
+import com.android.habitapplication.model.AddHabit
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
