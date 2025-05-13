@@ -1,17 +1,15 @@
 package com.android.habitapplication.ui.all_habits
 
+import AddHabit
+import IconPickerDialogFragment
 import android.app.Activity
 import android.content.Intent
 import android.os.Bundle
+import android.view.View
 import android.view.ViewGroup
-import android.widget.Button
-import android.widget.CheckBox
-import android.widget.EditText
-import android.widget.LinearLayout
-import android.widget.Toast
+import android.widget.*
 import androidx.appcompat.app.AppCompatActivity
 import com.android.habitapplication.R
-import com.android.habitapplication.model.AddHabit
 import com.google.firebase.firestore.FirebaseFirestore
 
 class AddHabitActivity : AppCompatActivity() {
@@ -24,6 +22,7 @@ class AddHabitActivity : AppCompatActivity() {
     private lateinit var addTaskBtn: Button
     private lateinit var tasksContainer: LinearLayout
     private val tasksList = mutableListOf<String>()
+    private var selectedIconResId: Int = R.drawable.image
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -48,6 +47,31 @@ class AddHabitActivity : AppCompatActivity() {
             titleEditText.setText(habitTitle)
             descEditText.setText(habitDesc)
         }
+
+        val icons = listOf(
+            R.drawable.water_cup,
+            R.drawable.yoga,
+            R.drawable.book,
+            R.drawable.lowebody_workout
+        )
+
+        val spinner: Spinner = findViewById(R.id.iconSpinner)
+        val adapter = ArrayAdapter(this, android.R.layout.simple_spinner_item, icons)
+        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
+        spinner.adapter = adapter
+
+        spinner.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
+            override fun onItemSelected(parentView: AdapterView<*>, view: View?, position: Int, id: Long) {
+                val selectedIcon = icons[position]
+                selectedIconResId = selectedIcon
+                findViewById<ImageView>(R.id.selectedIconImage).setImageResource(selectedIcon)
+            }
+
+            override fun onNothingSelected(parentView: AdapterView<*>) {
+                //
+            }
+        }
+
         if (habitId.isNotEmpty()) {
             val tasksCollection = db.collection("habits").document(habitId).collection("tasks")
             tasksCollection.get()
@@ -66,12 +90,11 @@ class AddHabitActivity : AppCompatActivity() {
 
         val saveButton: Button = findViewById(R.id.saveHabitButton)
 
-        // Add new task when the "Add Task" button is clicked
         addTaskBtn.setOnClickListener {
             val taskName = taskInput.text.toString().trim()
             if (taskName.isNotEmpty()) {
                 tasksList.add(taskName)
-                addTaskToView(taskName, "", false)  // No taskId for new tasks
+                addTaskToView(taskName, "", false)
                 taskInput.text.clear()
             }
         }
@@ -81,9 +104,15 @@ class AddHabitActivity : AppCompatActivity() {
             val desc = descEditText.text.toString()
 
             if (habitId.isEmpty()) {
-                // Adding a new habit
-                habitId = db.collection("habits").document().id  // Generate new ID
-                val newHabit = AddHabit(habitId, title, desc)
+                habitId = db.collection("habits").document().id
+
+                val newHabit = AddHabit(
+                    id = habitId,
+                    title = title,
+                    description = desc,
+                    icon = selectedIconResId.toString()
+                )
+
 
                 val habitDocRef = db.collection("habits").document(habitId)
                 habitDocRef.set(newHabit)
@@ -91,16 +120,14 @@ class AddHabitActivity : AppCompatActivity() {
                         val tasksCollection = habitDocRef.collection("tasks")
                         val batch = db.batch()
 
-                        // Add tasks for the new habit
                         tasksList.forEach { taskName ->
                             val taskMap = hashMapOf("name" to taskName, "done" to false)
                             tasksCollection.add(taskMap)
                         }
 
                         batch.commit().addOnSuccessListener {
-                            val updatedHabit = AddHabit(habitId, title, desc)
                             val resultIntent = Intent()
-                            resultIntent.putExtra("updatedHabit", updatedHabit)
+                            resultIntent.putExtra("updatedHabit", newHabit)
                             setResult(Activity.RESULT_OK, resultIntent)
                             finish()
                         }.addOnFailureListener {
@@ -111,10 +138,9 @@ class AddHabitActivity : AppCompatActivity() {
                         Toast.makeText(this, "Failed to add habit", Toast.LENGTH_SHORT).show()
                     }
             } else {
-                // Updating an existing habit
                 val habitDocRef = db.collection("habits").document(habitId)
+                val updatedHabit = AddHabit(habitId, title, desc, icon = selectedIconResId.toString())
 
-                // Fetch existing tasks from Firestore
                 val tasksCollection = habitDocRef.collection("tasks")
                 tasksCollection.get().addOnSuccessListener { snapshot ->
                     val oldTasks = snapshot.documents.map { it.id to (it.getString("name") ?: "") }.toMap()
@@ -127,20 +153,17 @@ class AddHabitActivity : AppCompatActivity() {
 
                     val batch = db.batch()
 
-                    // Delete the tasks that were removed
                     for ((docId, _) in tasksToDelete) {
                         val docRef = tasksCollection.document(docId)
                         batch.delete(docRef)
                     }
 
-                    // Add new tasks
                     for (task in tasksToAdd) {
                         val taskMap = hashMapOf("name" to task, "done" to false)
                         tasksCollection.add(taskMap)
                     }
 
                     batch.commit().addOnSuccessListener {
-                        val updatedHabit = AddHabit(habitId, title, desc)
                         habitDocRef.set(updatedHabit)
                             .addOnSuccessListener {
                                 val resultIntent = Intent()
@@ -158,6 +181,7 @@ class AddHabitActivity : AppCompatActivity() {
             }
         }
     }
+
 
     private fun addTaskToView(taskName: String, taskId: String, isChecked: Boolean) {
         val checkBox = CheckBox(this)

@@ -59,11 +59,12 @@
                     app:trackThickness="8dp" />
 
                 <ImageView
-                    android:id="@+id/center_icon"
+                    android:id="@+id/habit_Icon"
                     android:layout_width="40dp"
                     android:layout_height="40dp"
                     android:layout_gravity="center"
                     android:src="@drawable/water_cup" />
+
             </FrameLayout>
 
             <TextView
