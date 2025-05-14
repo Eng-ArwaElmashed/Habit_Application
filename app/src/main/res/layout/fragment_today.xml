@@ -20,21 +20,6 @@
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintStart_toStartOf="parent" />
 
-    <!-- Try Free Button (Top Right) -->
-    <Button
-        android:id="@+id/tryFreeButton"
-        android:layout_width="wrap_content"
-        android:layout_height="48dp"
-        android:minWidth="96dp"
-        android:text="Try Free"
-        android:textSize="14sp"
-        android:textColor="@android:color/white"
-        android:background="@drawable/rounded_button_pink_small"
-        android:layout_marginTop="16dp"
-        android:layout_marginEnd="16dp"
-        android:paddingHorizontal="16dp"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintEnd_toEndOf="parent" />
 
     <!-- Date Row -->
     <LinearLayout
