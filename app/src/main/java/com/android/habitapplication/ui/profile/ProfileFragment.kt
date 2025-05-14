@@ -36,10 +36,63 @@ class ProfileFragment : Fragment() {
         // Load user profile data first
         loadUserProfile(userId, firestore)
 
-        // Then check habit completion percentage and update streak
-        checkHabitCompletionAndUpdateStreak(userId, firestore)
+        // Check if we should update streak based on sleep time
+        checkIfShouldUpdateStreak(userId, firestore)
 
         return root
+    }
+
+    private fun checkIfShouldUpdateStreak(userId: String, firestore: FirebaseFirestore) {
+        // First get the user's sleep time
+        firestore.collection("userSleepTimes").document(userId)
+            .get()
+            .addOnSuccessListener { sleepDoc ->
+                if (sleepDoc.exists()) {
+                    val sleepHour = sleepDoc.getLong("hour") ?: 22 // Default to 10 PM if not set
+                    val sleepMinute = sleepDoc.getLong("minute") ?: 0
+
+                    val now = Calendar.getInstance()
+                    val currentHour = now.get(Calendar.HOUR_OF_DAY)
+                    val currentMinute = now.get(Calendar.MINUTE)
+
+                    // Check if we're approaching sleep time (within 2 hours before sleep time)
+                    val isNearSleepTime = isApproachingSleepTime(currentHour, currentMinute, sleepHour.toInt(), sleepMinute.toInt())
+                    
+                    if (isNearSleepTime) {
+                        Log.d(TAG, "Near sleep time, checking streak")
+                        checkHabitCompletionAndUpdateStreak(userId, firestore)
+                    } else {
+                        Log.d(TAG, "Not near sleep time yet, streak will be updated later")
+                        Toast.makeText(context, "Streak will be updated before your sleep time", Toast.LENGTH_SHORT).show()
+                    }
+                }
+            }
+    }
+
+    private fun isApproachingSleepTime(currentHour: Int, currentMinute: Int, sleepHour: Int, sleepMinute: Int): Boolean {
+        // Convert everything to minutes for easier comparison
+        val currentTimeInMinutes = currentHour * 60 + currentMinute
+        val sleepTimeInMinutes = sleepHour * 60 + sleepMinute
+        
+        // Consider the case where sleep time might be on the next day (e.g., 1 AM)
+        val adjustedSleepTime = if (sleepTimeInMinutes < 4 * 60) { // If sleep time is before 4 AM
+            sleepTimeInMinutes + 24 * 60 // Add 24 hours
+        } else {
+            sleepTimeInMinutes
+        }
+
+        val adjustedCurrentTime = if (currentHour < 4) { // If current time is before 4 AM
+            currentTimeInMinutes + 24 * 60 // Add 24 hours
+        } else {
+            currentTimeInMinutes
+        }
+
+        // Check if we're within 2 hours before sleep time
+        val twoHoursInMinutes = 2 * 60
+        val timeUntilSleep = adjustedSleepTime - adjustedCurrentTime
+
+        Log.d(TAG, "Time until sleep: $timeUntilSleep minutes")
+        return timeUntilSleep in 0..twoHoursInMinutes
     }
 
     private fun checkHabitCompletionAndUpdateStreak(userId: String, firestore: FirebaseFirestore) {
@@ -53,8 +106,19 @@ class ProfileFragment : Fragment() {
         val todayFormatted = dateFormat.format(today)
         Log.d(TAG, "Checking streak for date: $todayFormatted")
 
-        // Directly proceed to check habits without checking last update time
-        checkHabitsAndUpdateStreak(userId, firestore, todayFormatted)
+        // Check if we've already updated the streak today
+        firestore.collection("users").document(userId)
+            .get()
+            .addOnSuccessListener { userDoc ->
+                val lastStreakUpdate = userDoc.getString("last_streak_update")
+                
+                if (lastStreakUpdate != todayFormatted) {
+                    checkHabitsAndUpdateStreak(userId, firestore, todayFormatted)
+                } else {
+                    Log.d(TAG, "Streak already updated today")
+                    Toast.makeText(context, "Streak already updated for today", Toast.LENGTH_SHORT).show()
+                }
+            }
     }
 
     private fun checkHabitsAndUpdateStreak(userId: String, firestore: FirebaseFirestore, todayFormatted: String) {
