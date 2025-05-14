@@ -81,7 +81,10 @@ class ChooseHabitActivity : AppCompatActivity() {
                                 Log.d("ChooseHabit", "Setup completion saved to Firestore")
                                 Log.d("ChooseHabit", "Local setupCompleted flag set to true")
                                 
-                                startActivity(Intent(this, MainActivity::class.java))
+                                // Start MainActivity and clear the back stack
+                                val intent = Intent(this, MainActivity::class.java)
+                                intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
+                                startActivity(intent)
                                 finish()
                             }
                             .addOnFailureListener {
@@ -97,5 +100,10 @@ class ChooseHabitActivity : AppCompatActivity() {
                 Toast.makeText(this, "User not logged in", Toast.LENGTH_SHORT).show()
             }
         }
+    }
+
+    // Override back button to prevent going back to EveningSelectionActivity
+    override fun onBackPressed() {
+        // Do nothing to prevent going back
     }
 }

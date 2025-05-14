@@ -3,33 +3,27 @@ package com.android.habitapplication.ui.onboarding
 import android.content.Intent
 import android.os.Bundle
 import android.view.View
-import android.widget.Button
-import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
-import androidx.core.view.ViewCompat
-import androidx.core.view.WindowInsetsCompat
+import com.android.habitapplication.ui.onboarding.Onboarding2Activity
 import com.android.habitapplication.R
+import com.google.android.material.button.MaterialButton
 
 class Onboarding1Activity : AppCompatActivity() {
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        enableEdgeToEdge()
         setContentView(R.layout.activity_onboarding1)
-        ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main)) { v, insets ->
-            val systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
-            v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom)
-            insets
-        }
 
         supportActionBar?.hide()
         window.decorView.systemUiVisibility = View.SYSTEM_UI_FLAG_FULLSCREEN
 
-
-        val nextBtn = findViewById<Button>(R.id.next_btn)
-
-        nextBtn.setOnClickListener {
+        val nextButton = findViewById<MaterialButton>(R.id.next_btn)
+        nextButton.setOnClickListener {
+            // Navigate to next onboarding screen
             startActivity(Intent(this, Onboarding2Activity::class.java))
             finish()
         }
     }
+
+
 }

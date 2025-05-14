@@ -126,7 +126,7 @@ class EveningSelectionActivity : AppCompatActivity() {
 
                 if (now in wake until sleep) {
                     Log.d("EveningSelection", "Starting random notifications")
-                    NotificationScheduler.scheduleRepeatingNotifications(this, 2 * 60 * 1000L)
+                    NotificationScheduler.scheduleRandomNotifications(this)
                     Toast.makeText(this, "Random notifications started", Toast.LENGTH_SHORT).show()
                 } else {
                     Log.d("EveningSelection", "Outside active hours, notifications will start at wake time")
@@ -184,7 +184,7 @@ class EveningSelectionActivity : AppCompatActivity() {
                             Log.d("EveningSelection", "Wake time: $wakeHour:$wakeMinute")
                             Log.d("EveningSelection", "Sleep time: $sleepHour:$sleepMinute")
 
-                            NotificationScheduler.scheduleRepeatingNotifications(this, 2 * 60 * 1000L)
+                            NotificationScheduler.scheduleRandomNotifications(this)
                             Toast.makeText(this, "Notifications scheduled successfully", Toast.LENGTH_SHORT).show()
                         }
                     }

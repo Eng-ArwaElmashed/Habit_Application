@@ -1,42 +1,37 @@
 package com.android.habitapplication.ui.onboarding
 
-
-
 import android.content.Intent
 import android.os.Bundle
 import android.view.View
-import android.widget.Button
-import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
-import androidx.core.view.ViewCompat
-import androidx.core.view.WindowInsetsCompat
 import com.android.habitapplication.LoginActivity
-import com.android.habitapplication.MainActivity
-import com.android.habitapplication.MorningSelectionActivity
 import com.android.habitapplication.R
-import com.android.habitapplication.SignupActivity
+import com.google.android.material.button.MaterialButton
 
 class Onboarding3Activity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        enableEdgeToEdge()
         setContentView(R.layout.activity_onboarding3)
-        ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main)) { v, insets ->
-            val systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
-            v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom)
-            insets
-        }
 
         supportActionBar?.hide()
         window.decorView.systemUiVisibility = View.SYSTEM_UI_FLAG_FULLSCREEN
 
-        val nextBtn = findViewById<Button>(R.id.next_btn)
+        val nextButton = findViewById<MaterialButton>(R.id.next_btn)
+        nextButton.setOnClickListener {
+            // Mark onboarding as completed
+            getSharedPreferences("AppPrefs", MODE_PRIVATE)
+                .edit()
+                .putBoolean("onboardingCompleted", true)
+                .apply()
 
-        nextBtn.setOnClickListener {
-            val prefs = getSharedPreferences("AppPrefs", MODE_PRIVATE)
-            prefs.edit().putBoolean("onboardingCompleted", true).apply()
-            startActivity(Intent(this, SignupActivity::class.java))
+            // Navigate to login
+            startActivity(Intent(this, LoginActivity::class.java))
             finish()
         }
+    }
+
+    // Prevent going back during onboarding
+    override fun onBackPressed() {
+        // Do nothing
     }
 }

@@ -280,117 +280,23 @@ class SettingsFragment : Fragment() {
                         val cal = Calendar.getInstance()
                         val now = cal.get(Calendar.HOUR_OF_DAY) * 60 + cal.get(Calendar.MINUTE)
 
-                        // Only schedule if we're between wake and sleep times
+                        // Schedule notifications if within active hours
                         if (now in wake until sleep) {
-                            NotificationScheduler.scheduleRepeatingNotifications(requireContext(), 2 * 60 * 1000L)
-                            
-                            // Reschedule morning and evening alarms
-                            val alarmManager = requireContext().getSystemService(Context.ALARM_SERVICE) as AlarmManager
-                            
-                            // Reschedule morning alarm
-                            val morningIntent = Intent(requireContext(), AlarmReceiver::class.java).apply {
-                                action = "com.android.habitapplication.ALARM_WAKE"
-                                putExtra("type", "wake")
-                                putExtra("title", "Wake Up Time!")
-                                putExtra("message", "Time to start your day!")
-                                putExtra("channelId", "wake_channel")
-                                putExtra("notificationId", 1)
-                            }
-                            val morningPendingIntent = PendingIntent.getBroadcast(
-                                requireContext(),
-                                1,
-                                morningIntent,
-                                PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
-                            )
-                            val morningCal = Calendar.getInstance().apply {
-                                set(Calendar.HOUR_OF_DAY, prefs.getInt("wakeHour", 8))
-                                set(Calendar.MINUTE, prefs.getInt("wakeMinute", 0))
-                                set(Calendar.SECOND, 0)
-                                if (before(Calendar.getInstance())) {
-                                    add(Calendar.DAY_OF_YEAR, 1)
-                                }
-                            }
-                            
-                            // Cancel existing morning alarm
-                            alarmManager.cancel(morningPendingIntent)
-                            
-                            // Set new morning alarm
-                            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-                                alarmManager.setAlarmClock(
-                                    AlarmManager.AlarmClockInfo(morningCal.timeInMillis, morningPendingIntent),
-                                    morningPendingIntent
-                                )
-                                Log.d("SettingsFragment", "Morning alarm clock set for: ${morningCal.time}")
-                            } else {
-                                alarmManager.setRepeating(
-                                    AlarmManager.RTC_WAKEUP,
-                                    morningCal.timeInMillis,
-                                    AlarmManager.INTERVAL_DAY,
-                                    morningPendingIntent
-                                )
-                                Log.d("SettingsFragment", "Morning repeating alarm set for: ${morningCal.time}")
-                            }
-                            
-                            // Reschedule evening alarm
-                            val eveningIntent = Intent(requireContext(), AlarmReceiver::class.java).apply {
-                                action = "com.android.habitapplication.ALARM_SLEEP"
-                                putExtra("type", "sleep")
-                                putExtra("title", "Sleep Time!")
-                                putExtra("message", "Time to review your day and prepare for tomorrow!")
-                                putExtra("channelId", "sleep_channel")
-                                putExtra("notificationId", 2)
-                            }
-                            val eveningPendingIntent = PendingIntent.getBroadcast(
-                                requireContext(),
-                                2,
-                                eveningIntent,
-                                PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
-                            )
-                            val eveningCal = Calendar.getInstance().apply {
-                                set(Calendar.HOUR_OF_DAY, prefs.getInt("sleepHour", 22))
-                                set(Calendar.MINUTE, prefs.getInt("sleepMinute", 0))
-                                set(Calendar.SECOND, 0)
-                                if (before(Calendar.getInstance())) {
-                                    add(Calendar.DAY_OF_YEAR, 1)
-                                }
-                            }
-                            
-                            // Cancel existing evening alarm
-                            alarmManager.cancel(eveningPendingIntent)
-                            
-                            // Set new evening alarm
-                            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-                                alarmManager.setAlarmClock(
-                                    AlarmManager.AlarmClockInfo(eveningCal.timeInMillis, eveningPendingIntent),
-                                    eveningPendingIntent
-                                )
-                                Log.d("SettingsFragment", "Evening alarm clock set for: ${eveningCal.time}")
-                            } else {
-                                alarmManager.setRepeating(
-                                    AlarmManager.RTC_WAKEUP,
-                                    eveningCal.timeInMillis,
-                                    AlarmManager.INTERVAL_DAY,
-                                    eveningPendingIntent
-                                )
-                                Log.d("SettingsFragment", "Evening repeating alarm set for: ${eveningCal.time}")
-                            }
-
-                            Toast.makeText(requireContext(), "Vacation mode disabled: All notifications resumed", Toast.LENGTH_SHORT).show()
-            } else {
-                            Toast.makeText(requireContext(), "Vacation mode disabled: Notifications will resume at wake time", Toast.LENGTH_SHORT).show()
+                            NotificationScheduler.scheduleRandomNotifications(requireContext())
+                            Toast.makeText(requireContext(), "Notifications rescheduled with new times", Toast.LENGTH_SHORT).show()
+                        } else {
+                            Toast.makeText(requireContext(), "Notifications will start at next wake time", Toast.LENGTH_SHORT).show()
                         }
                     }
-            }
+                }
         }
 
         binding.rateUsBtn.setOnClickListener {
             val packageName = requireContext().packageName
             try {
-                // افتح التطبيق في Google Play app
                 val intent = Intent(Intent.ACTION_VIEW, Uri.parse("market://details?id=$packageName"))
                 startActivity(intent)
             } catch (e: android.content.ActivityNotFoundException) {
-                // لو Play Store app مش موجود، افتح في المتصفح
                 val intent = Intent(Intent.ACTION_VIEW, Uri.parse("https://play.google.com/store/apps/details?id=$packageName"))
                 startActivity(intent)
             }

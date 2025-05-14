@@ -42,7 +42,7 @@ class MorningSelectionActivity : AppCompatActivity() {
 
         getStartedButton.setOnClickListener {
             setAlarm()
-            startActivity(Intent(this, EveningSelectionActivity::class.java))
+            saveTimeAndNavigate()
         }
     }
 
@@ -119,7 +119,7 @@ class MorningSelectionActivity : AppCompatActivity() {
 
                 if (now in wake until sleep) {
                     Log.d("MorningSelection", "Starting random notifications")
-                    NotificationScheduler.scheduleRepeatingNotifications(this, 2 * 60 * 1000L)
+                    NotificationScheduler.scheduleRandomNotifications(this)
                     Toast.makeText(this, "Random notifications started", Toast.LENGTH_SHORT).show()
                 } else {
                     Log.d("MorningSelection", "Outside active hours, notifications will start at wake time")
@@ -149,5 +149,19 @@ class MorningSelectionActivity : AppCompatActivity() {
             manager.createNotificationChannel(channel)
             Log.d("MorningSelection", "Notification channel created with high importance")
         }
+    }
+
+    private fun saveTimeAndNavigate() {
+        // Save the selected time
+        val prefs = getSharedPreferences("user_times", MODE_PRIVATE)
+        prefs.edit().apply {
+            putInt("wakeHour", timePicker.hour)
+            putInt("wakeMinute", timePicker.minute)
+            apply()
+        }
+
+        // Navigate to EveningSelectionActivity
+        startActivity(Intent(this, EveningSelectionActivity::class.java))
+        finish()
     }
 }
