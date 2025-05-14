@@ -133,7 +133,9 @@ class SignupActivity : AppCompatActivity() {
                                 "email" to email,
                                 "total_hours" to 0,
                                 "tasks_completed" to 0,
-                                "longest_streak" to 0
+                                "longest_streak" to 0,
+                                "current_streak" to 0,
+                                "last_streak_update" to ""
                             )
                             db.collection("users").document(userId).set(userMap)
                                 .addOnSuccessListener {
