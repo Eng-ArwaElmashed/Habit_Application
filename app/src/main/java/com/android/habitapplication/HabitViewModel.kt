@@ -23,72 +23,73 @@ class HabitViewModel : ViewModel() {
     fun loadHabitsForDate(selectedDate: Calendar) {
         val userId = getUserId() ?: return
         val habitsCollection = db.collection("users").document(userId).collection("habits")
-        val tempList = mutableListOf<AddHabit>()
 
-        // Format for storing dates in Firestore
-        val dateFormat = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault())
-        
-        // Get the selected date
-        val selectedDateStr = dateFormat.format(selectedDate.time)
-        val selectedDateStart = selectedDate.clone() as Calendar
-        val selectedDateEnd = selectedDate.clone() as Calendar
-        
-        // Set time to start and end of day
-        selectedDateStart.set(Calendar.HOUR_OF_DAY, 0)
-        selectedDateStart.set(Calendar.MINUTE, 0)
-        selectedDateStart.set(Calendar.SECOND, 0)
-        selectedDateEnd.set(Calendar.HOUR_OF_DAY, 23)
-        selectedDateEnd.set(Calendar.MINUTE, 59)
-        selectedDateEnd.set(Calendar.SECOND, 59)
+        val taskCompletionsDateFormat = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault())
+        val selectedDateForCompletionsStr = taskCompletionsDateFormat.format(selectedDate.time)
 
-        habitsCollection
-            .whereGreaterThanOrEqualTo("selectedDate", selectedDateStart.timeInMillis)
-            .whereLessThanOrEqualTo("selectedDate", selectedDateEnd.timeInMillis)
-            .get()
-            .addOnSuccessListener { result ->
-                val totalHabits = result.size()
-                var processedHabits = 0
+        val dayOfWeek = selectedDate.get(Calendar.DAY_OF_WEEK)
 
-                if (totalHabits == 0) {
+        habitsCollection.get()
+            .addOnSuccessListener { habitsSnapshot ->
+                val allHabits = habitsSnapshot.documents.mapNotNull {
+                    val habit = it.toObject(AddHabit::class.java)
+                    habit?.id = it.id
+                    habit
+                }
+
+                val filteredHabits = allHabits.filter { habit ->
+                    val dayIndex = dayOfWeek - 1
+                    if (dayIndex >= 0 && dayIndex < habit.repeatedDays.size) {
+                        habit.repeatedDays[dayIndex]
+                    } else {
+                        false
+                    }
+                }
+
+                if (filteredHabits.isEmpty()) {
                     _habitList.postValue(emptyList())
                     return@addOnSuccessListener
                 }
 
-                for (document in result) {
-                    val habit = document.toObject(AddHabit::class.java)
-                    habit.id = document.id
+                val finalHabitsToShow = mutableListOf<AddHabit>()
+                var processedHabitsCount = 0
 
-                    // Get the tasks for this habit
+                filteredHabits.forEach { habit ->
                     val tasksCollection = habitsCollection.document(habit.id).collection("tasks")
                     tasksCollection.get()
-                        .addOnSuccessListener { tasks ->
-                            val totalTasks = tasks.size()
-                            // Count completed tasks for the selected date only
-                            val completedTasks = tasks.count { task ->
-                                val completions = task.get("completions") as? Map<String, Boolean>
-                                completions?.get(selectedDateStr) == true
-                            }
+                        .addOnSuccessListener { tasksSnapshot ->
+                            val totalTasks = tasksSnapshot?.size() ?: 0
+                            val completedTasks = tasksSnapshot?.count { taskDoc ->
+                                val completions = taskDoc.get("completions") as? Map<String, Boolean>
+                                completions?.get(selectedDateForCompletionsStr) == true
+                            } ?: 0
 
                             habit.totalTasks = totalTasks
                             habit.completedTasks = completedTasks
-                            tempList.add(habit)
-
-                            processedHabits++
-                            if (processedHabits == totalHabits) {
-                                _habitList.postValue(tempList)
+                            habit.progress = if (totalTasks > 0) (completedTasks * 100 / totalTasks) else 0
+                            
+                            finalHabitsToShow.add(habit)
+                            processedHabitsCount++
+                            if (processedHabitsCount == filteredHabits.size) {
+                                _habitList.postValue(finalHabitsToShow.sortedBy { it.title })
                             }
                         }
                         .addOnFailureListener { exception ->
-                            Log.w("HabitViewModel", "Error getting tasks: ", exception)
-                            processedHabits++
-                            if (processedHabits == totalHabits) {
-                                _habitList.postValue(tempList)
+                            Log.w("HabitViewModel", "Error getting tasks for habit ${habit.id}: ", exception)
+                            habit.totalTasks = 0
+                            habit.completedTasks = 0
+                            habit.progress = 0
+                            finalHabitsToShow.add(habit)
+
+                            processedHabitsCount++
+                            if (processedHabitsCount == filteredHabits.size) {
+                                _habitList.postValue(finalHabitsToShow.sortedBy { it.title })
                             }
                         }
                 }
             }
             .addOnFailureListener { exception ->
-                Log.w("HabitViewModel", "Error getting habits: ", exception)
+                Log.w("HabitViewModel", "Error getting all habits: ", exception)
                 _habitList.postValue(emptyList())
             }
     }
@@ -99,26 +100,25 @@ class HabitViewModel : ViewModel() {
             .collection("habits").document(habitId)
             .collection("tasks").document(taskId)
 
-        // Get the selected date in yyyy-MM-dd format
         val dateFormat = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault())
-        val selectedDateStr = dateFormat.format(calendar.time)
+        val selectedDateStr = dateFormat.format(calendar.time) 
 
-        // Update the completion status for the selected date
-        taskRef.get().addOnSuccessListener { document ->
-            val completions = (document.get("completions") as? Map<String, Boolean>)?.toMutableMap() 
+        taskRef.get().addOnSuccessListener { documentSnapshot ->
+            val completions = (documentSnapshot.get("completions") as? Map<String, Boolean>)?.toMutableMap()
                 ?: mutableMapOf()
-            
+
             completions[selectedDateStr] = newStatus
 
             taskRef.update("completions", completions)
                 .addOnSuccessListener {
-                    Log.d("HabitViewModel", "Task updated successfully for date: $selectedDateStr")
-                    // Reload habits for the current date
-                    loadHabitsForDate(calendar)
+                    Log.d("HabitViewModel", "Task $taskId status updated to $newStatus for date: $selectedDateStr")
+                    loadHabitsForDate(calendar) 
                 }
                 .addOnFailureListener { exception ->
-                    Log.w("HabitViewModel", "Error updating task: ", exception)
+                    Log.w("HabitViewModel", "Error updating task $taskId: ", exception)
                 }
+        }.addOnFailureListener {
+             Log.w("HabitViewModel", "Error fetching task $taskId for update: ", it)
         }
     }
 

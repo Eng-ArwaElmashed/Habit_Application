@@ -13,6 +13,7 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.GridLayoutManager
 import com.android.habitapplication.HabitAdapter
 import com.android.habitapplication.HabitViewModel
+import com.android.habitapplication.R
 import com.android.habitapplication.databinding.FragmentTodayBinding
 import com.android.habitapplication.model.AddHabit
 import com.android.habitapplication.ui.all_habits.AddHabitActivity
@@ -20,6 +21,9 @@ import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 import java.text.SimpleDateFormat
 import java.util.*
+import android.content.res.ColorStateList
+import androidx.core.content.ContextCompat
+import com.google.android.material.button.MaterialButton
 
 class TodayFragment : Fragment() {
 
@@ -34,16 +38,21 @@ class TodayFragment : Fragment() {
     private val resultLauncher = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
         if (result.resultCode == Activity.RESULT_OK) {
             val updatedHabit = result.data?.getSerializableExtra("updatedHabit") as? AddHabit
+            // val editedDateMillis = result.data?.getLongExtra("selectedDate", System.currentTimeMillis()) 
+            //     ?: System.currentTimeMillis() // This line is removed/commented
+
             updatedHabit?.let {
-                // Reset calendar to today's date
+                // Reset calendar to today's date (original behavior)
                 calendar.timeInMillis = System.currentTimeMillis()
-                habitViewModel.setCurrentDate(calendar)
-                setupDateDisplay()
-                setupDayButtons() // Update button states for today
-                loadHabitsForCurrentDay()
+                habitViewModel.setCurrentDate(calendar) 
+                setupDateDisplay() 
+                setupDayButtons() 
+                loadHabitsForCurrentDay() 
             }
         }
     }
+
+    private lateinit var dayButtonsList: List<MaterialButton>
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -58,9 +67,22 @@ class TodayFragment : Fragment() {
 
         habitViewModel = ViewModelProvider(this).get(HabitViewModel::class.java)
         habitViewModel.setCurrentDate(calendar) // Initialize with current date
+        
+        // Initialize day buttons list
+        dayButtonsList = listOf(
+            binding.SunBtn,
+            binding.MonBtn,
+            binding.TueBtn,
+            binding.WedBtn,
+            binding.ThuBtn,
+            binding.FriBtn,
+            binding.SatBtn
+        )
+        
         setupDateDisplay()
         setupRecyclerView()
-        
+        setupDayButtons()
+
         habitViewModel.habitList.observe(viewLifecycleOwner) { habits ->
             adapter.submitList(habits)
         }
@@ -71,8 +93,6 @@ class TodayFragment : Fragment() {
             val intent = Intent(requireContext(), AddHabitActivity::class.java)
             resultLauncher.launch(intent)
         }
-
-        setupDayButtons()
     }
 
     private fun setupDateDisplay() {
@@ -80,55 +100,51 @@ class TodayFragment : Fragment() {
     }
 
     private fun setupDayButtons() {
-        val currentDay = dayFormat.format(calendar.time)
+        // Get color and dimension resources
+        val mainPinkColor = ContextCompat.getColor(requireContext(), R.color.main_pink)
+        val lightPinkColor = ContextCompat.getColor(requireContext(), R.color.light_pink)
+        val strokeWidth = resources.getDimensionPixelSize(R.dimen.day_button_stroke_width)
+        val mainPinkColorStateList = ColorStateList.valueOf(mainPinkColor)
+        val lightPinkColorStateList = ColorStateList.valueOf(lightPinkColor)
+
+        val currentDayOfWeek = calendar.get(Calendar.DAY_OF_WEEK) // Calendar.SUNDAY = 1, ... SATURDAY = 7
+
+        dayButtonsList.forEachIndexed { index, button ->
+            // Set common properties
+            button.strokeWidth = strokeWidth
+            button.strokeColor = mainPinkColorStateList
+
+            // Calendar.DAY_OF_WEEK is 1-indexed (Sun=1), our list is 0-indexed (Sun=0)
+            if (currentDayOfWeek == (index + 1)) {
+                button.backgroundTintList = mainPinkColorStateList
+                button.isSelected = true // Keep for consistency if any style relies on it
+            } else {
+                button.backgroundTintList = lightPinkColorStateList
+                button.isSelected = false
+            }
+
+            // Set click listeners to update the selected day and reload
+            button.setOnClickListener { 
+                // Determine which day this button represents (Calendar.SUNDAY, MONDAY, etc.)
+                updateSelectedDay(index + 1) // index + 1 will match Calendar.DAY_OF_WEEK constants
+            }
+        }
         
-        // Reset all buttons to unselected state
-        binding.apply {
-            SunBtn.isSelected = false
-            MonBtn.isSelected = false
-            TueBtn.isSelected = false
-            WedBtn.isSelected = false
-            ThuBtn.isSelected = false
-            FriBtn.isSelected = false
-            SatBtn.isSelected = false
+        // Keep existing forward/backward button logic
+        binding.forwardBtn.setOnClickListener {
+            calendar.add(Calendar.WEEK_OF_YEAR, 1)
+            habitViewModel.setCurrentDate(calendar)
+            setupDateDisplay()
+            setupDayButtons() // Refresh day button states
+            loadHabitsForCurrentDay()
+        }
 
-            // Set the current day button as selected
-            when (currentDay) {
-                "Sun" -> SunBtn.isSelected = true
-                "Mon" -> MonBtn.isSelected = true
-                "Tue" -> TueBtn.isSelected = true
-                "Wed" -> WedBtn.isSelected = true
-                "Thu" -> ThuBtn.isSelected = true
-                "Fri" -> FriBtn.isSelected = true
-                "Sat" -> SatBtn.isSelected = true
-            }
-
-            // Set click listeners for day selection
-            SunBtn.setOnClickListener { updateSelectedDay(Calendar.SUNDAY) }
-            MonBtn.setOnClickListener { updateSelectedDay(Calendar.MONDAY) }
-            TueBtn.setOnClickListener { updateSelectedDay(Calendar.TUESDAY) }
-            WedBtn.setOnClickListener { updateSelectedDay(Calendar.WEDNESDAY) }
-            ThuBtn.setOnClickListener { updateSelectedDay(Calendar.THURSDAY) }
-            FriBtn.setOnClickListener { updateSelectedDay(Calendar.FRIDAY) }
-            SatBtn.setOnClickListener { updateSelectedDay(Calendar.SATURDAY) }
-
-            // Forward button to next week
-            forwardBtn.setOnClickListener {
-                calendar.add(Calendar.WEEK_OF_YEAR, 1)
-                habitViewModel.setCurrentDate(calendar)
-                setupDateDisplay()
-                setupDayButtons()
-                loadHabitsForCurrentDay()
-            }
-
-            // Backward button to previous week
-            backwardBtn.setOnClickListener {
-                calendar.add(Calendar.WEEK_OF_YEAR, -1)
-                habitViewModel.setCurrentDate(calendar)
-                setupDateDisplay()
-                setupDayButtons()
-                loadHabitsForCurrentDay()
-            }
+        binding.backwardBtn.setOnClickListener {
+            calendar.add(Calendar.WEEK_OF_YEAR, -1)
+            habitViewModel.setCurrentDate(calendar)
+            setupDateDisplay()
+            setupDayButtons() // Refresh day button states
+            loadHabitsForCurrentDay()
         }
     }
 

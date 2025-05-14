@@ -7,12 +7,12 @@
         <item name="android:layout_marginHorizontal">2dp</item>
         <item name="android:insetTop">0dp</item>
         <item name="android:insetBottom">0dp</item>
+        <item name="cornerRadius">20dp</item>
         <item name="android:insetLeft">0dp</item>
         <item name="android:insetRight">0dp</item>
         <item name="android:padding">0dp</item>
         <item name="android:textSize">14sp</item>
         <item name="android:textColor">@color/day_button_text_color</item>
-        <item name="android:background">@drawable/day_button_selector</item>
         <item name="android:gravity">center</item>
         <item name="android:stateListAnimator">@null</item>
     </style>
