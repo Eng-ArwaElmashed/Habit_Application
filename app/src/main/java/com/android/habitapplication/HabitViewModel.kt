@@ -20,20 +20,31 @@ class HabitViewModel : ViewModel() {
         return FirebaseAuth.getInstance().currentUser?.uid
     }
 
-    fun loadHabitsForDay(day: String) {
+    fun loadHabitsForDate(selectedDate: Calendar) {
         val userId = getUserId() ?: return
         val habitsCollection = db.collection("users").document(userId).collection("habits")
         val tempList = mutableListOf<AddHabit>()
 
         // Format for storing dates in Firestore
         val dateFormat = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault())
-        val dayFormat = SimpleDateFormat("EEE", Locale.getDefault())
         
-        // Get the selected day's date
-        val selectedDate = calendar.time
-        val selectedDateStr = dateFormat.format(selectedDate)
+        // Get the selected date
+        val selectedDateStr = dateFormat.format(selectedDate.time)
+        val selectedDateStart = selectedDate.clone() as Calendar
+        val selectedDateEnd = selectedDate.clone() as Calendar
+        
+        // Set time to start and end of day
+        selectedDateStart.set(Calendar.HOUR_OF_DAY, 0)
+        selectedDateStart.set(Calendar.MINUTE, 0)
+        selectedDateStart.set(Calendar.SECOND, 0)
+        selectedDateEnd.set(Calendar.HOUR_OF_DAY, 23)
+        selectedDateEnd.set(Calendar.MINUTE, 59)
+        selectedDateEnd.set(Calendar.SECOND, 59)
 
-        habitsCollection.get()
+        habitsCollection
+            .whereGreaterThanOrEqualTo("selectedDate", selectedDateStart.timeInMillis)
+            .whereLessThanOrEqualTo("selectedDate", selectedDateEnd.timeInMillis)
+            .get()
             .addOnSuccessListener { result ->
                 val totalHabits = result.size()
                 var processedHabits = 0
@@ -47,44 +58,33 @@ class HabitViewModel : ViewModel() {
                     val habit = document.toObject(AddHabit::class.java)
                     habit.id = document.id
 
-                    // Check if this habit is for the selected day
-                    val habitDate = Date(habit.selectedDate)
-                    val habitDay = dayFormat.format(habitDate)
-
-                    if (habitDay == day) {
-                        // Get the tasks for this habit
-                        val tasksCollection = habitsCollection.document(habit.id).collection("tasks")
-                        tasksCollection.get()
-                            .addOnSuccessListener { tasks ->
-                                val totalTasks = tasks.size()
-                                // Count completed tasks for the selected date only
-                                val completedTasks = tasks.count { task ->
-                                    val completions = task.get("completions") as? Map<String, Boolean>
-                                    completions?.get(selectedDateStr) == true
-                                }
-
-                                habit.totalTasks = totalTasks
-                                habit.completedTasks = completedTasks
-                                tempList.add(habit)
-
-                                processedHabits++
-                                if (processedHabits == totalHabits) {
-                                    _habitList.postValue(tempList)
-                                }
+                    // Get the tasks for this habit
+                    val tasksCollection = habitsCollection.document(habit.id).collection("tasks")
+                    tasksCollection.get()
+                        .addOnSuccessListener { tasks ->
+                            val totalTasks = tasks.size()
+                            // Count completed tasks for the selected date only
+                            val completedTasks = tasks.count { task ->
+                                val completions = task.get("completions") as? Map<String, Boolean>
+                                completions?.get(selectedDateStr) == true
                             }
-                            .addOnFailureListener { exception ->
-                                Log.w("HabitViewModel", "Error getting tasks: ", exception)
-                                processedHabits++
-                                if (processedHabits == totalHabits) {
-                                    _habitList.postValue(tempList)
-                                }
+
+                            habit.totalTasks = totalTasks
+                            habit.completedTasks = completedTasks
+                            tempList.add(habit)
+
+                            processedHabits++
+                            if (processedHabits == totalHabits) {
+                                _habitList.postValue(tempList)
                             }
-                    } else {
-                        processedHabits++
-                        if (processedHabits == totalHabits) {
-                            _habitList.postValue(tempList)
                         }
-                    }
+                        .addOnFailureListener { exception ->
+                            Log.w("HabitViewModel", "Error getting tasks: ", exception)
+                            processedHabits++
+                            if (processedHabits == totalHabits) {
+                                _habitList.postValue(tempList)
+                            }
+                        }
                 }
             }
             .addOnFailureListener { exception ->
@@ -113,8 +113,8 @@ class HabitViewModel : ViewModel() {
             taskRef.update("completions", completions)
                 .addOnSuccessListener {
                     Log.d("HabitViewModel", "Task updated successfully for date: $selectedDateStr")
-                    // Reload habits for the current day
-                    loadHabitsForDay(SimpleDateFormat("EEE", Locale.getDefault()).format(calendar.time))
+                    // Reload habits for the current date
+                    loadHabitsForDate(calendar)
                 }
                 .addOnFailureListener { exception ->
                     Log.w("HabitViewModel", "Error updating task: ", exception)
@@ -122,7 +122,7 @@ class HabitViewModel : ViewModel() {
         }
     }
 
-    // Set the current calendar date (called from TodayFragment when day changes)
+    // Set the current calendar date
     fun setCurrentDate(date: Calendar) {
         calendar.timeInMillis = date.timeInMillis
     }

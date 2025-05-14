@@ -11,5 +11,5 @@ data class AddHabit(
     var totalTasks: Int = 0,
     val icon: String = "",
     var completedDates: Int = 0,
-    val selectedDate: Long = System.currentTimeMillis() // Single date when the habit should occur
+    val selectedDate: Long = System.currentTimeMillis() // Specific date for the habit
 ) : Serializable

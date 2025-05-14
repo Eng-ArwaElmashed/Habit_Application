@@ -58,7 +58,10 @@ class HabitAdapter(
 
         // Update progress text and indicator
         holder.progressText.text = "$progress%"
-        holder.progressIndicator.progress = progress
+        holder.progressIndicator.apply {
+            setProgress(progress, true) // Animate the progress change
+            max = 100
+        }
 
         // Set habit icon
         val iconResId = holder.itemView.context.resources.getIdentifier(

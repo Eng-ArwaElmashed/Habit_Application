@@ -88,9 +88,11 @@ class AllHabitsFragment : Fragment() {
 
     private fun editHabit(habit: AddHabit) {
         val intent = Intent(requireContext(), AddHabitActivity::class.java)
-        intent.putExtra("habitId", habit.id)
+        intent.putExtra("habit_id", habit.id)
         intent.putExtra("habitTitle", habit.title)
         intent.putExtra("habitDesc", habit.description)
+        intent.putExtra("habitIcon", habit.icon)
+        intent.putExtra("selectedDate", habit.selectedDate)
         resultLauncher.launch(intent)
     }
 

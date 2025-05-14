@@ -33,13 +33,6 @@
             android:layout_marginTop="12dp"
             android:layout_marginBottom="12dp">
 
-            <!-- Selected Icon -->
-            <ImageView
-                android:id="@+id/selectedIconImage"
-                android:layout_width="48dp"
-                android:layout_height="48dp"
-                android:layout_marginEnd="16dp"
-                android:src="@drawable/image" />
 
             <!-- Spinner (or button to open icon picker) -->
             <Spinner
@@ -92,28 +85,31 @@
                 android:id="@+id/taskInput"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:layout_weight="7"
+                android:layout_weight="8"
                 android:hint="Task"
                 android:padding="8dp"
                 android:layout_marginEnd="8dp" />
 
-            <Button
+            <ImageButton
                 android:id="@+id/addTaskBtn"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="2"
-                android:text="Add"
-                android:textSize="16sp"
-                android:layout_marginEnd="8dp" />
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:src="@drawable/ic_add"
+                android:background="?attr/selectableItemBackgroundBorderless"
+                android:padding="8dp"
+                android:scaleType="fitCenter"
+                android:layout_marginEnd="8dp"
+                android:contentDescription="Add task" />
 
-            <Button
+            <ImageButton
                 android:id="@+id/resetBtn"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:text="🗑"
-                android:textSize="18sp"
-                android:backgroundTint="#FF5252" />
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:src="@drawable/ic_reset"
+                android:background="?attr/selectableItemBackgroundBorderless"
+                android:padding="8dp"
+                android:scaleType="fitCenter"
+                android:contentDescription="Reset tasks" />
         </LinearLayout>
 
         <!-- Tasks Container -->
@@ -124,6 +120,18 @@
             android:orientation="vertical"
             android:layout_marginTop="16dp"
             android:minHeight="150dp" />
+
+        <!-- Progress Text -->
+        <TextView
+            android:id="@+id/progressTextView"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            android:layout_marginBottom="16dp"
+            android:textAlignment="center"
+            android:textSize="16sp"
+            android:textStyle="bold"
+            android:text="Progress: 0% (0/0 tasks)" />
 
         <!-- Save Habit Button -->
         <Button

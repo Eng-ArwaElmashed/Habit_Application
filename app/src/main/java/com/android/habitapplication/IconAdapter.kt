@@ -1,31 +1,23 @@
-import android.view.LayoutInflater
+import android.content.Context
 import android.view.View
 import android.view.ViewGroup
+import android.widget.BaseAdapter
 import android.widget.ImageView
-import androidx.recyclerview.widget.RecyclerView
-import com.android.habitapplication.R
 
-class IconAdapter(
-    private val icons: List<Int>,
-    private val onIconSelected: (Int) -> Unit
-) : RecyclerView.Adapter<IconAdapter.IconViewHolder>() {
+class IconAdapter(private val context: Context, private val iconNames: List<String>) : BaseAdapter() {
 
-    inner class IconViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
-        val iconImage: ImageView = itemView.findViewById(R.id.image)
+    override fun getCount(): Int = iconNames.size
+
+    override fun getItem(position: Int): Any = iconNames[position]
+
+    override fun getItemId(position: Int): Long = position.toLong()
+
+    override fun getView(position: Int, convertView: View?, parent: ViewGroup?): View {
+        val imageView = ImageView(context)
+        val iconResId = context.resources.getIdentifier(iconNames[position], "drawable", context.packageName)
+        imageView.setImageResource(iconResId)
+        imageView.layoutParams = ViewGroup.LayoutParams(100, 100)
+        imageView.scaleType = ImageView.ScaleType.CENTER_CROP
+        return imageView
     }
-
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): IconViewHolder {
-        val view = LayoutInflater.from(parent.context).inflate(R.layout.icon_picker, parent, false)
-        return IconViewHolder(view)
-    }
-
-    override fun onBindViewHolder(holder: IconViewHolder, position: Int) {
-        val resId = icons[position]
-        holder.iconImage.setImageResource(resId)
-        holder.itemView.setOnClickListener {
-            onIconSelected(resId)
-        }
-    }
-
-    override fun getItemCount() = icons.size
-} 
+}

@@ -148,8 +148,7 @@ class TodayFragment : Fragment() {
     }
 
     private fun loadHabitsForCurrentDay() {
-        val currentDay = dayFormat.format(calendar.time)
-        habitViewModel.loadHabitsForDay(currentDay)
+        habitViewModel.loadHabitsForDate(calendar)
     }
 
     private fun setupRecyclerView() {
@@ -180,9 +179,11 @@ class TodayFragment : Fragment() {
 
     private fun editHabit(habit: AddHabit) {
         val intent = Intent(requireContext(), AddHabitActivity::class.java)
-        intent.putExtra("habitId", habit.id)
+        intent.putExtra("habit_id", habit.id)
         intent.putExtra("habitTitle", habit.title)
         intent.putExtra("habitDesc", habit.description)
+        intent.putExtra("habitIcon", habit.icon)
+        intent.putExtra("selectedDate", calendar.timeInMillis)
         resultLauncher.launch(intent)
     }
 
