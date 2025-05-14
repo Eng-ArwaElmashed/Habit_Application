@@ -41,7 +41,7 @@ class AlarmReceiver : BroadcastReceiver() {
 
     override fun onReceive(context: Context, intent: Intent) {
         Log.d("AlarmReceiver", "onReceive called with type: ${intent.getStringExtra("type")}")
-        
+
         // Check vacation mode first
         val vacationPref = context.getSharedPreferences("AppSettings", Context.MODE_PRIVATE)
         if (vacationPref.getBoolean("isVacationModeOn", false)) {
@@ -178,9 +178,9 @@ class AlarmReceiver : BroadcastReceiver() {
             set(Calendar.SECOND, 0)
             set(Calendar.MILLISECOND, 0)
         }
-        
+
         Log.d("AlarmReceiver", "Scheduling random notifications to start at: ${calendar.time}")
-        
+
         // Create a delayed intent for random notifications
         val intent = Intent(context, NotificationReceiver::class.java).apply {
             action = NotificationReceiver.ACTION_RANDOM_NOTIFICATION
@@ -191,7 +191,7 @@ class AlarmReceiver : BroadcastReceiver() {
             intent,
             PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
         )
-        
+
         val alarmManager = context.getSystemService(Context.ALARM_SERVICE) as AlarmManager
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
             alarmManager.setExactAndAllowWhileIdle(
@@ -228,14 +228,14 @@ class AlarmReceiver : BroadcastReceiver() {
     private fun showNotification(context: Context, notification: Notification) {
         Log.d("AlarmReceiver", "Attempting to show notification: ${notification.title}")
         val notificationManager = NotificationManagerCompat.from(context)
-        
+
         // Determine channel ID based on notification type
         val channelId = when {
             notification.title.contains("Wake Up") -> "wake_channel"
             notification.title.contains("Sleep") -> "sleep_channel"
             else -> "random_channel"
         }
-        
+
         val builder = NotificationCompat.Builder(context, channelId)
             .setSmallIcon(notification.imageResId)
             .setContentTitle(notification.title)

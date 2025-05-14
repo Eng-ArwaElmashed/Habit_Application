@@ -106,7 +106,7 @@ class LoginActivity : AppCompatActivity() {
                     val user = auth.currentUser
                     if (user != null && user.isEmailVerified) {
                         Toast.makeText(this, "Login Successful!", Toast.LENGTH_SHORT).show()
-                        handleLoginSuccess(user.uid)
+                        checkSetupStatus(user.uid)
                     } else {
                         Toast.makeText(this, "Check your email for verification", Toast.LENGTH_SHORT).show()
                     }
@@ -165,7 +165,7 @@ class LoginActivity : AppCompatActivity() {
                     val user: FirebaseUser? = auth.currentUser
                     Toast.makeText(this, "Welcome, ${user?.displayName}", Toast.LENGTH_SHORT).show()
                     if (user != null) {
-                        handleLoginSuccess(user.uid)
+                        checkSetupStatus(user.uid)
                     }
                 } else {
                     Toast.makeText(this, "Firebase Auth failed: ${task.exception?.message}", Toast.LENGTH_SHORT).show()
@@ -173,10 +173,64 @@ class LoginActivity : AppCompatActivity() {
             }
     }
 
-    private fun handleLoginSuccess(userId: String) {
-        // After successful login, always go to MorningSelectionActivity for setup
-        startActivity(Intent(this, MorningSelectionActivity::class.java))
-        finish()
+    private fun checkSetupStatus(userId: String) {
+        val prefs = getSharedPreferences("AppPrefs", MODE_PRIVATE)
+        val isSetupDone = prefs.getBoolean("setupCompleted", false)
+
+        Log.d("LoginActivity", "Checking setup status:")
+        Log.d("LoginActivity", "Local isSetupDone: $isSetupDone")
+
+        // First check if setup is marked as complete in Firestore
+        db.collection("userSetup").document(userId)
+            .get()
+            .addOnSuccessListener { setupDoc ->
+                val isSetupCompleteInFirestore = setupDoc.getBoolean("setupCompleted") ?: false
+                Log.d("LoginActivity", "Firestore setup status: $isSetupCompleteInFirestore")
+
+                if (isSetupCompleteInFirestore) {
+                    // If setup is complete in Firestore, ensure local preference is also set
+                    if (!isSetupDone) {
+                        prefs.edit().putBoolean("setupCompleted", true).apply()
+                        Log.d("LoginActivity", "Updated local setupCompleted flag to true")
+                    }
+
+                    // Verify wake and sleep times exist
+                    db.collection("userWakeTimes").document(userId)
+                        .get()
+                        .addOnSuccessListener { wakeDoc ->
+                            db.collection("userSleepTimes").document(userId)
+                                .get()
+                                .addOnSuccessListener { sleepDoc ->
+                                    if (wakeDoc.exists() && sleepDoc.exists()) {
+                                        Log.d("LoginActivity", "All setup complete, going to MainActivity")
+                                        startActivity(Intent(this, MainActivity::class.java))
+                                    } else {
+                                        Log.d("LoginActivity", "Missing wake/sleep times, going to MorningSelectionActivity")
+                                        startActivity(Intent(this, MorningSelectionActivity::class.java))
+                                    }
+                                    finish()
+                                }
+                                .addOnFailureListener {
+                                    Log.d("LoginActivity", "Error checking sleep time, going to MorningSelectionActivity")
+                                    startActivity(Intent(this, MorningSelectionActivity::class.java))
+                                    finish()
+                                }
+                        }
+                        .addOnFailureListener {
+                            Log.d("LoginActivity", "Error checking wake time, going to MorningSelectionActivity")
+                            startActivity(Intent(this, MorningSelectionActivity::class.java))
+                            finish()
+                        }
+                } else {
+                    Log.d("LoginActivity", "Setup not complete in Firestore, going to MorningSelectionActivity")
+                    startActivity(Intent(this, MorningSelectionActivity::class.java))
+                    finish()
+                }
+            }
+            .addOnFailureListener {
+                Log.d("LoginActivity", "Error checking setup status, going to MorningSelectionActivity")
+                startActivity(Intent(this, MorningSelectionActivity::class.java))
+                finish()
+            }
     }
 }
-

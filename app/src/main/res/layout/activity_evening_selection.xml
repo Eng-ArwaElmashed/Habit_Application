@@ -17,7 +17,7 @@
         android:text="When do you want to reflect on your day?"
         android:textAlignment="center"
         android:textColor="#3F414E"
-        android:textSize="30dp"
+        android:textSize="30sp"
         app:layout_constraintBottom_toTopOf="@id/night_background_iv"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"

@@ -14,7 +14,6 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.drawerlayout.widget.DrawerLayout
-import androidx.navigation.NavController
 import androidx.navigation.findNavController
 import androidx.navigation.ui.AppBarConfiguration
 import androidx.navigation.ui.navigateUp
@@ -37,74 +36,19 @@ class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        binding = ActivityMainBinding.inflate(layoutInflater)
-        setContentView(binding.root)
-
-        // Set up the toolbar
-        setSupportActionBar(binding.appBarMain.toolbar)
-        supportActionBar?.setDisplayShowTitleEnabled(false)
-
-        val drawerLayout: DrawerLayout = binding.drawerLayout
-        val navView: NavigationView = binding.navView
-        val navController = findNavController(R.id.nav_host_fragment_content_main)
-
-        // Top level destinations
-        appBarConfiguration = AppBarConfiguration(
-            setOf(
-                R.id.nav_profile,
-                R.id.nav_today,
-                R.id.nav_all_habits,
-                R.id.nav_notification,
-                R.id.nav_settings,
-            ), drawerLayout
+        // Check if notifications are scheduled
+        val alarmManager = getSystemService(Context.ALARM_SERVICE) as AlarmManager
+        val intent = Intent(this, NotificationReceiver::class.java).apply {
+            action = NotificationReceiver.ACTION_RANDOM_NOTIFICATION
+        }
+        val pendingIntent = PendingIntent.getBroadcast(
+            this,
+            101,
+            intent,
+            PendingIntent.FLAG_NO_CREATE or PendingIntent.FLAG_IMMUTABLE
         )
 
-        setupActionBarWithNavController(navController, appBarConfiguration)
-        navView.setupWithNavController(navController)
-
-        // Set up notification channels and check scheduling
-        setupNotifications()
-        
-        // Set up navigation UI
-        setupNavigationUI(navController)
-    }
-
-    private fun setupNavigationUI(navController: NavController) {
-        val appBarLayout = binding.appBarMain.toolbar
-        val toolbarTitle = appBarLayout.findViewById<TextView>(R.id.toolbar_title)
-        toolbarTitle.text = "Your Dynamic Title"
-        
-        navController.addOnDestinationChangedListener { _, destination, _ ->
-            val colorRes = when (destination.id) {
-                R.id.nav_settings -> R.color.light_pink
-                R.id.nav_profile -> R.color.main_pink
-                R.id.nav_today -> R.color.light_pink
-                R.id.nav_all_habits -> R.color.light_pink
-                R.id.nav_notification -> R.color.light_pink
-                else -> R.color.light_pink
-            }
-            
-            toolbarTitle.text = when (destination.id) {
-                R.id.nav_profile -> "Profile"
-                R.id.nav_today -> "Today"
-                R.id.nav_all_habits -> "All Habits"
-                R.id.nav_notification -> "Notifications"
-                R.id.nav_settings -> "Settings"
-                else -> "Habit App"
-            }
-
-            appBarLayout.setBackgroundColor(ContextCompat.getColor(this, colorRes))
-        }
-    }
-
-    private fun setupNotifications() {
-        // Create notification channels first
-        createNotificationChannels()
-        
-        // Check notification permissions
-        checkNotificationPermission()
-
-        // Get current time and user preferences
+        // Check if we're within active hours and should have notifications
         val prefs = getSharedPreferences("user_times", Context.MODE_PRIVATE)
         val wakeHour = prefs.getInt("wakeHour", 8)
         val wakeMinute = prefs.getInt("wakeMinute", 0)
@@ -116,25 +60,25 @@ class MainActivity : AppCompatActivity() {
         val wake = wakeHour * 60 + wakeMinute
         val sleep = sleepHour * 60 + sleepMinute
 
-        // Check if we're within active hours
         if (now in wake until sleep) {
-            // Schedule notifications if we're in active hours
-            NotificationScheduler.scheduleRandomNotifications(this)
-            Log.d("MainActivity", "Scheduled notifications during active hours")
-        } else {
-            // If outside active hours, schedule for next wake time
-            cal.apply {
-                add(Calendar.DAY_OF_YEAR, 1)
-                set(Calendar.HOUR_OF_DAY, wakeHour)
-                set(Calendar.MINUTE, wakeMinute)
-                set(Calendar.SECOND, 0)
-                set(Calendar.MILLISECOND, 0)
+            if (pendingIntent == null) {
+                Log.d("MainActivity", "Within active hours but no notifications scheduled, starting them now")
+                NotificationScheduler.scheduleRepeatingNotifications(this, 2 * 60 * 1000L)
+            } else {
+                Log.d("MainActivity", "Notifications are currently scheduled")
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+                    val alarmInfo = alarmManager.getNextAlarmClock()
+                    Log.d("MainActivity", "Next alarm scheduled for: ${alarmInfo?.triggerTime}")
+                }
             }
-            Log.d("MainActivity", "Outside active hours, notifications will start at next wake time")
+        } else {
+            Log.d("MainActivity", "Outside active hours (${wakeHour}:${wakeMinute} - ${sleepHour}:${sleepMinute})")
+            if (pendingIntent != null) {
+                NotificationScheduler.cancelNotifications(this)
+            }
         }
-    }
 
-    private fun createNotificationChannels() {
+        // Create all notification channels
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             val channels = listOf(
                 NotificationChannel(
@@ -168,11 +112,67 @@ class MainActivity : AppCompatActivity() {
                     setShowBadge(true)
                 }
             )
-            
+
             val manager = getSystemService(NotificationManager::class.java)
             channels.forEach { manager.createNotificationChannel(it) }
             Log.d("MainActivity", "Created all notification channels")
         }
+
+        binding = ActivityMainBinding.inflate(layoutInflater)
+        setContentView(binding.root)
+
+        setSupportActionBar(binding.appBarMain.toolbar)
+        supportActionBar?.setDisplayShowTitleEnabled(false)
+
+        val drawerLayout: DrawerLayout = binding.drawerLayout
+        val navView: NavigationView = binding.navView
+        val navController = findNavController(R.id.nav_host_fragment_content_main)
+
+        // Top level destinations
+        appBarConfiguration = AppBarConfiguration(
+            setOf(
+                R.id.nav_profile,
+                R.id.nav_today,
+                R.id.nav_all_habits,
+                R.id.nav_notification,
+                R.id.nav_settings,
+            ), drawerLayout
+        )
+
+        setupActionBarWithNavController(navController, appBarConfiguration)
+        navView.setupWithNavController(navController)
+
+        // 🔄 Change AppBar color based on destination
+        val appBarLayout = binding.appBarMain.toolbar
+        val toolbarTitle = appBarLayout.findViewById<TextView>(R.id.toolbar_title)
+        toolbarTitle.text = "Your Dynamic Title"
+        navController.addOnDestinationChangedListener { _, destination, _ ->
+            val colorRes = when (destination.id) {
+                R.id.nav_settings -> R.color.light_pink
+                R.id.nav_profile -> R.color.main_pink
+                R.id.nav_today -> R.color.light_pink
+
+
+                R.id.nav_all_habits -> R.color.light_pink
+                R.id.nav_notification -> R.color.light_pink
+
+                else -> R.color.light_pink
+            }
+            toolbarTitle.text = when (destination.id) {
+                R.id.nav_profile -> "Profile"
+                R.id.nav_today-> "Today"
+                R.id.nav_all_habits-> "All Habits"
+                R.id.nav_notification-> "Notifications"
+                R.id.nav_settings-> "Settings"
+
+
+                else -> "Habit App"
+            }
+
+            appBarLayout.setBackgroundColor(ContextCompat.getColor(this, colorRes))
+        }
+
+        checkNotificationPermission()
     }
 
     override fun onCreateOptionsMenu(menu: Menu): Boolean {

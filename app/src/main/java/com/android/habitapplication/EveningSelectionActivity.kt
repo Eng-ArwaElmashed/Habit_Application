@@ -55,7 +55,7 @@ class EveningSelectionActivity : AppCompatActivity() {
 
     private fun setAlarm() {
         val user = FirebaseAuth.getInstance().currentUser ?: return
-        
+
         calendar = Calendar.getInstance().apply {
             set(Calendar.HOUR_OF_DAY, timePicker.hour)
             set(Calendar.MINUTE, timePicker.minute)
@@ -126,7 +126,7 @@ class EveningSelectionActivity : AppCompatActivity() {
 
                 if (now in wake until sleep) {
                     Log.d("EveningSelection", "Starting random notifications")
-                    NotificationScheduler.scheduleRandomNotifications(this)
+                    NotificationScheduler.scheduleRepeatingNotifications(this, 2 * 60 * 1000L)
                     Toast.makeText(this, "Random notifications started", Toast.LENGTH_SHORT).show()
                 } else {
                     Log.d("EveningSelection", "Outside active hours, notifications will start at wake time")
@@ -184,11 +184,10 @@ class EveningSelectionActivity : AppCompatActivity() {
                             Log.d("EveningSelection", "Wake time: $wakeHour:$wakeMinute")
                             Log.d("EveningSelection", "Sleep time: $sleepHour:$sleepMinute")
 
-                            NotificationScheduler.scheduleRandomNotifications(this)
+                            NotificationScheduler.scheduleRepeatingNotifications(this, 2 * 60 * 1000L)
                             Toast.makeText(this, "Notifications scheduled successfully", Toast.LENGTH_SHORT).show()
                         }
                     }
             }
     }
 }
-

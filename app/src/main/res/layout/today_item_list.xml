@@ -12,9 +12,10 @@
         android:layout_height="match_parent">
 
         <ImageButton
+            android:contentDescription="."
             android:id="@+id/edit_btn"
-            android:layout_width="40dp"
-            android:layout_height="40dp"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
             android:background="?attr/selectableItemBackgroundBorderless"
             android:backgroundTint="@color/main_pink"
             android:src="@drawable/edit"
@@ -22,9 +23,10 @@
             app:layout_constraintTop_toTopOf="parent" />
 
         <ImageButton
+            android:contentDescription="."
             android:id="@+id/delete_btn"
-            android:layout_width="40dp"
-            android:layout_height="40dp"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
             android:background="?attr/selectableItemBackgroundBorderless"
             android:backgroundTint="@color/main_pink"
             android:src="@drawable/baseline_delete_24"

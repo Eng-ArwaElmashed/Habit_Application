@@ -42,13 +42,13 @@ class MorningSelectionActivity : AppCompatActivity() {
 
         getStartedButton.setOnClickListener {
             setAlarm()
-            saveTimeAndNavigate()
+            startActivity(Intent(this, EveningSelectionActivity::class.java))
         }
     }
 
     private fun setAlarm() {
         val user = FirebaseAuth.getInstance().currentUser ?: return
-        
+
         calendar = Calendar.getInstance().apply {
             set(Calendar.HOUR_OF_DAY, timePicker.hour)
             set(Calendar.MINUTE, timePicker.minute)
@@ -119,7 +119,7 @@ class MorningSelectionActivity : AppCompatActivity() {
 
                 if (now in wake until sleep) {
                     Log.d("MorningSelection", "Starting random notifications")
-                    NotificationScheduler.scheduleRandomNotifications(this)
+                    NotificationScheduler.scheduleRepeatingNotifications(this, 2 * 60 * 1000L)
                     Toast.makeText(this, "Random notifications started", Toast.LENGTH_SHORT).show()
                 } else {
                     Log.d("MorningSelection", "Outside active hours, notifications will start at wake time")
@@ -149,19 +149,5 @@ class MorningSelectionActivity : AppCompatActivity() {
             manager.createNotificationChannel(channel)
             Log.d("MorningSelection", "Notification channel created with high importance")
         }
-    }
-
-    private fun saveTimeAndNavigate() {
-        // Save the selected time
-        val prefs = getSharedPreferences("user_times", MODE_PRIVATE)
-        prefs.edit().apply {
-            putInt("wakeHour", timePicker.hour)
-            putInt("wakeMinute", timePicker.minute)
-            apply()
-        }
-
-        // Navigate to EveningSelectionActivity
-        startActivity(Intent(this, EveningSelectionActivity::class.java))
-        finish()
     }
 }
