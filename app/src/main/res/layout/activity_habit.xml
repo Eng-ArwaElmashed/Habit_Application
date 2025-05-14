@@ -30,6 +30,7 @@
         app:iconTint="@color/white"
         android:stateListAnimator="@null"
         app:iconTintMode="multiply"
+        android:text="."
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
     <ImageView

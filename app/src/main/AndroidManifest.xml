@@ -21,7 +21,7 @@
         <activity
             android:name=".ui.splash.LauncherActivity"
             android:exported="true"
-            android:theme="@style/Theme.HabitApplication.NoActionBar">
+            android:theme="@style/Theme.HabitApplication.Splash">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />

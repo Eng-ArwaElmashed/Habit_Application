@@ -6,6 +6,7 @@ import android.view.View
 import androidx.appcompat.app.AppCompatActivity
 import com.android.habitapplication.LoginActivity
 import com.android.habitapplication.R
+import com.android.habitapplication.SignupActivity
 import com.google.android.material.button.MaterialButton
 
 class Onboarding3Activity : AppCompatActivity() {
@@ -25,7 +26,7 @@ class Onboarding3Activity : AppCompatActivity() {
                 .apply()
 
             // Navigate to login
-            startActivity(Intent(this, LoginActivity::class.java))
+            startActivity(Intent(this, SignupActivity::class.java))
             finish()
         }
     }

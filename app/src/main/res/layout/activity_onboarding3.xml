@@ -57,6 +57,7 @@
             android:backgroundTint="@color/white"
             app:icon="@drawable/next_button"
             app:iconTint="@color/white"
+            android:text="."
             android:stateListAnimator="@null"
             app:iconTintMode="multiply" />
 

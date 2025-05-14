@@ -26,6 +26,7 @@
             android:fontFamily="@font/rubik_medium"
             android:paddingTop="20dp"
             android:paddingBottom="20dp"
+            android:textColor="@color/gray"
             android:text="Profile"
             android:textAlignment="textStart"
             android:textSize="20sp" />
@@ -38,6 +39,7 @@
             android:fontFamily="@font/rubik_medium"
             android:padding="20dp"
             android:text="Change Wakeup Time"
+            android:textColor="@color/gray"
             android:textAlignment="textStart"
             android:textSize="20sp" />
 
@@ -50,7 +52,8 @@
             android:padding="20dp"
             android:text="Change Sleep Time"
             android:textAlignment="textStart"
-            android:textSize="20sp" />
+            android:textSize="20sp"
+            android:textColor="@color/gray"/>
 
         <com.google.android.material.switchmaterial.SwitchMaterial
             android:id="@+id/vacation_switch"
@@ -75,6 +78,7 @@
             android:text="Rate Us"
             android:textAlignment="textStart"
             android:textAllCaps="false"
+            android:textColor="@color/gray"
             android:textSize="20sp"  />
         <Button
             android:id="@+id/logout_btn"
@@ -85,6 +89,7 @@
             android:text="Log out"
             android:textAlignment="textStart"
             android:textAllCaps="false"
+            android:textColor="@color/gray"
             android:textSize="20sp"  />
 
         <Button
@@ -96,6 +101,7 @@
             android:text="Share App"
             android:textAlignment="textStart"
             android:textAllCaps="false"
+            android:textColor="@color/gray"
             android:textSize="20sp"  />
 
     </LinearLayout>

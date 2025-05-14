@@ -5,6 +5,7 @@ plugins {
 
 }
 
+
 android {
     namespace = "com.android.habitapplication"
     compileSdk = 35

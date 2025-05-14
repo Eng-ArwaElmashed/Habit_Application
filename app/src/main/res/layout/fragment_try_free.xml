@@ -227,11 +227,11 @@
                 android:id="@+id/most_tv"
                 android:layout_width="129dp"
                 android:layout_height="23dp"
-                android:background="#4A4A4A"
+                android:background="#673AB7"
                 android:fontFamily="@font/rubik_bold"
                 android:text="Most Popular"
                 android:textAlignment="center"
-                android:textColor="#573353"
+                android:textColor="#FFFFFF"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent" />
 
