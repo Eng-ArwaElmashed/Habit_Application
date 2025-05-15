@@ -1,0 +1,56 @@
+Index: app/src/main/res/layout/activity_notification.xml
+===================================================================
+diff --git a/app/src/main/res/layout/activity_notification.xml b/app/src/main/res/layout/activity_notification.xml
+deleted file mode 100644
+--- a/app/src/main/res/layout/activity_notification.xml	(revision b39fc58f8041e8a144257a34d6113e1304b6e24a)
++++ /dev/null	(revision b39fc58f8041e8a144257a34d6113e1304b6e24a)
+@@ -1,22 +0,0 @@
+-<?xml version="1.0" encoding="utf-8"?>
+-<androidx.constraintlayout.widget.ConstraintLayout
+-    xmlns:android="http://schemas.android.com/apk/res/android"
+-    xmlns:app="http://schemas.android.com/apk/res-auto"
+-    xmlns:tools="http://schemas.android.com/tools"
+-    android:layout_width="match_parent"
+-    android:layout_height="match_parent"
+-    tools:context=".NotificationActivity">
+-
+-    <TextView
+-        android:layout_width="wrap_content"
+-        android:layout_height="wrap_content"
+-        android:text="Welcome to \nNotification Activity"
+-        android:textSize="36sp"
+-        android:textAlignment="center"
+-        android:textColor="@color/design_default_color_on_primary"
+-        app:layout_constraintTop_toTopOf="parent"
+-        app:layout_constraintBottom_toBottomOf="parent"
+-        app:layout_constraintStart_toStartOf="parent"
+-        app:layout_constraintEnd_toEndOf="parent"/>
+-
+-</androidx.constraintlayout.widget.ConstraintLayout>
+\ No newline at end of file
+Index: .idea/gradle.xml
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+><?xml version=\"1.0\" encoding=\"UTF-8\"?>\r\n<project version=\"4\">\r\n  <component name=\"GradleMigrationSettings\" migrationVersion=\"1\" />\r\n  <component name=\"GradleSettings\">\r\n    <option name=\"linkedExternalProjectsSettings\">\r\n      <GradleProjectSettings>\r\n        <option name=\"externalProjectPath\" value=\"$PROJECT_DIR$\" />\r\n        <option name=\"gradleJvm\" value=\"#GRADLE_LOCAL_JAVA_HOME\" />\r\n        <option name=\"modules\">\r\n          <set>\r\n            <option value=\"$PROJECT_DIR$\" />\r\n            <option value=\"$PROJECT_DIR$/app\" />\r\n          </set>\r\n        </option>\r\n        <option name=\"resolveExternalAnnotations\" value=\"false\" />\r\n      </GradleProjectSettings>\r\n    </option>\r\n  </component>\r\n</project>
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/.idea/gradle.xml b/.idea/gradle.xml
+--- a/.idea/gradle.xml	(revision b39fc58f8041e8a144257a34d6113e1304b6e24a)
++++ b/.idea/gradle.xml	(date 1746791592804)
+@@ -4,6 +4,7 @@
+   <component name="GradleSettings">
+     <option name="linkedExternalProjectsSettings">
+       <GradleProjectSettings>
++        <option name="testRunner" value="CHOOSE_PER_TEST" />
+         <option name="externalProjectPath" value="$PROJECT_DIR$" />
+         <option name="gradleJvm" value="#GRADLE_LOCAL_JAVA_HOME" />
+         <option name="modules">
+@@ -12,7 +13,6 @@
+             <option value="$PROJECT_DIR$/app" />
+           </set>
+         </option>
+-        <option name="resolveExternalAnnotations" value="false" />
+       </GradleProjectSettings>
+     </option>
+   </component>

@@ -1,0 +1,109 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/light_pink"
+    tools:context=".ui.settings.SettingsFragment">
+
+    <LinearLayout
+        android:id="@+id/settings_container"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="16dp"
+        android:gravity="center"
+        android:orientation="vertical"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <Button
+            android:id="@+id/profile_btn"
+            android:textAllCaps="false"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:fontFamily="@font/rubik_medium"
+            android:paddingTop="20dp"
+            android:paddingBottom="20dp"
+            android:textColor="@color/gray"
+            android:text="Profile"
+            android:textAlignment="textStart"
+            android:textSize="20sp" />
+
+        <Button
+            android:id="@+id/morning_time_btn"
+            android:textAllCaps="false"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:fontFamily="@font/rubik_medium"
+            android:padding="20dp"
+            android:text="Change Wakeup Time"
+            android:textColor="@color/gray"
+            android:textAlignment="textStart"
+            android:textSize="20sp" />
+
+        <Button
+            android:id="@+id/evening_time_btn"
+            android:textAllCaps="false"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:fontFamily="@font/rubik_medium"
+            android:padding="20dp"
+            android:text="Change Sleep Time"
+            android:textAlignment="textStart"
+            android:textSize="20sp"
+            android:textColor="@color/gray"/>
+
+        <com.google.android.material.switchmaterial.SwitchMaterial
+            android:id="@+id/vacation_switch"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="5dp"
+            android:layout_marginBottom="5dp"
+            android:background="@color/main_pink"
+            android:fontFamily="@font/rubik_medium"
+            android:padding="20dp"
+            android:text="Vacation mode"
+            android:textAlignment="textStart"
+            android:textColor="@color/gray"
+            android:textSize="20sp" />
+
+        <Button
+            android:id="@+id/rate_us_btn"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:fontFamily="@font/rubik_medium"
+            android:padding="20dp"
+            android:text="Rate Us"
+            android:textAlignment="textStart"
+            android:textAllCaps="false"
+            android:textColor="@color/gray"
+            android:textSize="20sp"  />
+        <Button
+            android:id="@+id/logout_btn"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:fontFamily="@font/rubik_medium"
+            android:padding="20dp"
+            android:text="Log out"
+            android:textAlignment="textStart"
+            android:textAllCaps="false"
+            android:textColor="@color/gray"
+            android:textSize="20sp"  />
+
+        <Button
+            android:id="@+id/share_app_btn"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:fontFamily="@font/rubik_medium"
+            android:padding="20dp"
+            android:text="Share App"
+            android:textAlignment="textStart"
+            android:textAllCaps="false"
+            android:textColor="@color/gray"
+            android:textSize="20sp"  />
+
+    </LinearLayout>
+
+</androidx.constraintlayout.widget.ConstraintLayout>

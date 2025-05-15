@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/mobile_navigation"
+    app:startDestination="@+id/nav_today">
+
+
+
+    <fragment
+        android:id="@+id/nav_today"
+        android:name="com.android.habitapplication.ui.today.TodayFragment"
+        android:label="Today"
+        tools:layout="@layout/fragment_today" />
+
+    <fragment
+        android:id="@+id/nav_all_habits"
+        android:name="com.android.habitapplication.ui.all_habits.AllHabitsFragment"
+        android:label="All Habits"
+        tools:layout="@layout/fragment_all_habits" />
+    <fragment
+        android:id="@+id/nav_notification"
+        android:name="com.android.habitapplication.ui.notifications.NotificationsFragment"
+        android:label="Notifications"
+        tools:layout="@layout/fragment_notifications" />
+    <fragment
+        android:id="@+id/nav_settings"
+        android:name="com.android.habitapplication.ui.settings.SettingsFragment"
+        android:label="Settings"
+        tools:layout="@layout/fragment_settings" />
+
+    <fragment
+        android:id="@+id/nav_profile"
+        android:name="com.android.habitapplication.ui.profile.ProfileFragment"
+        android:label="Profile"
+        tools:layout="@layout/fragment_profile" />
+
+</navigation>

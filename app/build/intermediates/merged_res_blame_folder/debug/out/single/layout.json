@@ -1,0 +1,150 @@
+[
+    {
+        "merged": "com.android.habitapplication.app-mergeDebugResources-60:/layout/activity_main_splash.xml",
+        "source": "com.android.habitapplication.app-main-63:/layout/activity_main_splash.xml"
+    },
+    {
+        "merged": "com.android.habitapplication.app-mergeDebugResources-60:/layout/activity_onboarding2.xml",
+        "source": "com.android.habitapplication.app-main-63:/layout/activity_onboarding2.xml"
+    },
+    {
+        "merged": "com.android.habitapplication.app-mergeDebugResources-60:/layout/activity_splash.xml",
+        "source": "com.android.habitapplication.app-main-63:/layout/activity_splash.xml"
+    },
+    {
+        "merged": "com.android.habitapplication.app-mergeDebugResources-60:/layout/content_main.xml",
+        "source": "com.android.habitapplication.app-main-63:/layout/content_main.xml"
+    },
+    {
+        "merged": "com.android.habitapplication.app-mergeDebugResources-60:/layout/fragment_today.xml",
+        "source": "com.android.habitapplication.app-main-63:/layout/fragment_today.xml"
+    },
+    {
+        "merged": "com.android.habitapplication.app-mergeDebugResources-60:/layout/activity_habit.xml",
+        "source": "com.android.habitapplication.app-main-63:/layout/activity_habit.xml"
+    },
+    {
+        "merged": "com.android.habitapplication.app-mergeDebugResources-60:/layout/challengecard.xml",
+        "source": "com.android.habitapplication.app-main-63:/layout/challengecard.xml"
+    },
+    {
+        "merged": "com.android.habitapplication.app-mergeDebugResources-60:/layout/activity_morning_selection.xml",
+        "source": "com.android.habitapplication.app-main-63:/layout/activity_morning_selection.xml"
+    },
+    {
+        "merged": "com.android.habitapplication.app-mergeDebugResources-60:/layout/activity_procrastinate.xml",
+        "source": "com.android.habitapplication.app-main-63:/layout/activity_procrastinate.xml"
+    },
+    {
+        "merged": "com.android.habitapplication.app-mergeDebugResources-60:/layout/activity_onboarding1.xml",
+        "source": "com.android.habitapplication.app-main-63:/layout/activity_onboarding1.xml"
+    },
+    {
+        "merged": "com.android.habitapplication.app-mergeDebugResources-60:/layout/item_habit_card.xml",
+        "source": "com.android.habitapplication.app-main-63:/layout/item_habit_card.xml"
+    },
+    {
+        "merged": "com.android.habitapplication.app-mergeDebugResources-60:/layout/activity_login.xml",
+        "source": "com.android.habitapplication.app-main-63:/layout/activity_login.xml"
+    },
+    {
+        "merged": "com.android.habitapplication.app-mergeDebugResources-60:/layout/fragment_profile.xml",
+        "source": "com.android.habitapplication.app-main-63:/layout/fragment_profile.xml"
+    },
+    {
+        "merged": "com.android.habitapplication.app-mergeDebugResources-60:/layout/activity_challange_detailes.xml",
+        "source": "com.android.habitapplication.app-main-63:/layout/activity_challange_detailes.xml"
+    },
+    {
+        "merged": "com.android.habitapplication.app-mergeDebugResources-60:/layout/notification_item_list.xml",
+        "source": "com.android.habitapplication.app-main-63:/layout/notification_item_list.xml"
+    },
+    {
+        "merged": "com.android.habitapplication.app-mergeDebugResources-60:/layout/fragment_challenges.xml",
+        "source": "com.android.habitapplication.app-main-63:/layout/fragment_challenges.xml"
+    },
+    {
+        "merged": "com.android.habitapplication.app-mergeDebugResources-60:/layout/habit_item_list.xml",
+        "source": "com.android.habitapplication.app-main-63:/layout/habit_item_list.xml"
+    },
+    {
+        "merged": "com.android.habitapplication.app-mergeDebugResources-60:/layout/activity_choose_habit.xml",
+        "source": "com.android.habitapplication.app-main-63:/layout/activity_choose_habit.xml"
+    },
+    {
+        "merged": "com.android.habitapplication.app-mergeDebugResources-60:/layout/activity_add_habit.xml",
+        "source": "com.android.habitapplication.app-main-63:/layout/activity_add_habit.xml"
+    },
+    {
+        "merged": "com.android.habitapplication.app-mergeDebugResources-60:/layout/activity_onboarding3.xml",
+        "source": "com.android.habitapplication.app-main-63:/layout/activity_onboarding3.xml"
+    },
+    {
+        "merged": "com.android.habitapplication.app-mergeDebugResources-60:/layout/fragment_splashpage.xml",
+        "source": "com.android.habitapplication.app-main-63:/layout/fragment_splashpage.xml"
+    },
+    {
+        "merged": "com.android.habitapplication.app-mergeDebugResources-60:/layout/activity_signup.xml",
+        "source": "com.android.habitapplication.app-main-63:/layout/activity_signup.xml"
+    },
+    {
+        "merged": "com.android.habitapplication.app-mergeDebugResources-60:/layout/activity_main.xml",
+        "source": "com.android.habitapplication.app-main-63:/layout/activity_main.xml"
+    },
+    {
+        "merged": "com.android.habitapplication.app-mergeDebugResources-60:/layout/habit_card_item.xml",
+        "source": "com.android.habitapplication.app-main-63:/layout/habit_card_item.xml"
+    },
+    {
+        "merged": "com.android.habitapplication.app-mergeDebugResources-60:/layout/app_bar_main.xml",
+        "source": "com.android.habitapplication.app-main-63:/layout/app_bar_main.xml"
+    },
+    {
+        "merged": "com.android.habitapplication.app-mergeDebugResources-60:/layout/fragment_notifications.xml",
+        "source": "com.android.habitapplication.app-main-63:/layout/fragment_notifications.xml"
+    },
+    {
+        "merged": "com.android.habitapplication.app-mergeDebugResources-60:/layout/fragment_try_free.xml",
+        "source": "com.android.habitapplication.app-main-63:/layout/fragment_try_free.xml"
+    },
+    {
+        "merged": "com.android.habitapplication.app-mergeDebugResources-60:/layout/activity_welcome.xml",
+        "source": "com.android.habitapplication.app-main-63:/layout/activity_welcome.xml"
+    },
+    {
+        "merged": "com.android.habitapplication.app-mergeDebugResources-60:/layout/fragment_settings.xml",
+        "source": "com.android.habitapplication.app-main-63:/layout/fragment_settings.xml"
+    },
+    {
+        "merged": "com.android.habitapplication.app-mergeDebugResources-60:/layout/nav_header_main.xml",
+        "source": "com.android.habitapplication.app-main-63:/layout/nav_header_main.xml"
+    },
+    {
+        "merged": "com.android.habitapplication.app-mergeDebugResources-60:/layout/activity_challenge_congrates.xml",
+        "source": "com.android.habitapplication.app-main-63:/layout/activity_challenge_congrates.xml"
+    },
+    {
+        "merged": "com.android.habitapplication.app-mergeDebugResources-60:/layout/activity_evening_selection.xml",
+        "source": "com.android.habitapplication.app-main-63:/layout/activity_evening_selection.xml"
+    },
+    {
+        "merged": "com.android.habitapplication.app-mergeDebugResources-60:/layout/fragment_your_states.xml",
+        "source": "com.android.habitapplication.app-main-63:/layout/fragment_your_states.xml"
+    },
+    {
+        "merged": "com.android.habitapplication.app-mergeDebugResources-60:/layout/today_item_list.xml",
+        "source": "com.android.habitapplication.app-main-63:/layout/today_item_list.xml"
+    },
+    {
+        "merged": "com.android.habitapplication.app-mergeDebugResources-60:/layout/activity_procrastinate2.xml",
+        "source": "com.android.habitapplication.app-main-63:/layout/activity_procrastinate2.xml"
+    },
+    {
+        "merged": "com.android.habitapplication.app-mergeDebugResources-60:/layout/fragment_all_habits.xml",
+        "source": "com.android.habitapplication.app-main-63:/layout/fragment_all_habits.xml"
+    },
+    {
+        "merged": "com.android.habitapplication.app-mergeDebugResources-60:/layout/icon_picker.xml",
+        "source": "com.android.habitapplication.app-main-63:/layout/icon_picker.xml"
+    }
+]

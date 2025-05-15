@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/main"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:layout_margin="25dp"
+    tools:context=".ui.onboarding.Onboarding1Activity">
+
+    <ImageView
+        android:id="@+id/onboardingPhoto1"
+        android:layout_width="387dp"
+        android:layout_height="242dp"
+        android:layout_marginTop="16dp"
+        android:layout_marginBottom="16dp"
+        android:layout_weight="1"
+        android:contentDescription="Onboarding Image 1"
+        android:scaleType="fitCenter"
+        android:src="@drawable/yoga1" />
+
+    <TextView
+        android:id="@+id/onboardingTitle"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        android:layout_marginBottom="16dp"
+        android:gravity="start"
+        android:text="Morning yoga"
+        android:textColor="@color/black"
+        android:textSize="20sp"
+        android:textStyle="bold" />
+
+    <TextView
+        android:id="@+id/onboardingText"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="48dp"
+        android:text="Let's start a healthy lifestyle with us, we can determine your diet every day. healthy eating is fun"
+        android:textColor="@color/black"
+        android:textSize="16sp" />
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1" />
+
+    <FrameLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="bottom|end">
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/next_btn"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:backgroundTint="@color/white"
+            app:icon="@drawable/next_button"
+            app:iconTint="@color/white"
+            android:text="."
+            android:stateListAnimator="@null"
+            app:iconTintMode="multiply" />
+
+    </FrameLayout>
+
+</LinearLayout>

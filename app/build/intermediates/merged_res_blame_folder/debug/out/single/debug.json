@@ -1,0 +1,590 @@
+[
+    {
+        "merged": "com.android.habitapplication.app-merged_res-61:/drawable_walking_vector.xml.flat",
+        "source": "com.android.habitapplication.app-main-63:/drawable/walking_vector.xml"
+    },
+    {
+        "merged": "com.android.habitapplication.app-merged_res-61:/drawable_ic_launcher_background.xml.flat",
+        "source": "com.android.habitapplication.app-main-63:/drawable/ic_launcher_background.xml"
+    },
+    {
+        "merged": "com.android.habitapplication.app-merged_res-61:/drawable_blue_shadow.xml.flat",
+        "source": "com.android.habitapplication.app-main-63:/drawable/blue_shadow.xml"
+    },
+    {
+        "merged": "com.android.habitapplication.app-merged_res-61:/drawable_side_nav_bar.xml.flat",
+        "source": "com.android.habitapplication.app-main-63:/drawable/side_nav_bar.xml"
+    },
+    {
+        "merged": "com.android.habitapplication.app-merged_res-61:/drawable_rounded_button_pink.xml.flat",
+        "source": "com.android.habitapplication.app-main-63:/drawable/rounded_button_pink.xml"
+    },
+    {
+        "merged": "com.android.habitapplication.app-merged_res-61:/layout_activity_morning_selection.xml.flat",
+        "source": "com.android.habitapplication.app-main-63:/layout/activity_morning_selection.xml"
+    },
+    {
+        "merged": "com.android.habitapplication.app-merged_res-61:/drawable_onboarding2.jpg.flat",
+        "source": "com.android.habitapplication.app-main-63:/drawable/onboarding2.jpg"
+    },
+    {
+        "merged": "com.android.habitapplication.app-merged_res-61:/mipmap-xxxhdpi_ic_launcher.webp.flat",
+        "source": "com.android.habitapplication.app-main-63:/mipmap-xxxhdpi/ic_launcher.webp"
+    },
+    {
+        "merged": "com.android.habitapplication.app-merged_res-61:/drawable_moon.xml.flat",
+        "source": "com.android.habitapplication.app-main-63:/drawable/moon.xml"
+    },
+    {
+        "merged": "com.android.habitapplication.app-merged_res-61:/drawable_teepee_swirly.png.flat",
+        "source": "com.android.habitapplication.app-main-63:/drawable/teepee_swirly.png"
+    },
+    {
+        "merged": "com.android.habitapplication.app-merged_res-61:/drawable_ic_water_glass.xml.flat",
+        "source": "com.android.habitapplication.app-main-63:/drawable/ic_water_glass.xml"
+    },
+    {
+        "merged": "com.android.habitapplication.app-merged_res-61:/drawable_halfsun_sahdow.xml.flat",
+        "source": "com.android.habitapplication.app-main-63:/drawable/halfsun_sahdow.xml"
+    },
+    {
+        "merged": "com.android.habitapplication.app-merged_res-61:/layout_activity_main_splash.xml.flat",
+        "source": "com.android.habitapplication.app-main-63:/layout/activity_main_splash.xml"
+    },
+    {
+        "merged": "com.android.habitapplication.app-merged_res-61:/layout_activity_onboarding3.xml.flat",
+        "source": "com.android.habitapplication.app-main-63:/layout/activity_onboarding3.xml"
+    },
+    {
+        "merged": "com.android.habitapplication.app-merged_res-61:/mipmap-xxhdpi_ic_launcher_round.webp.flat",
+        "source": "com.android.habitapplication.app-main-63:/mipmap-xxhdpi/ic_launcher_round.webp"
+    },
+    {
+        "merged": "com.android.habitapplication.app-merged_res-61:/layout_activity_procrastinate2.xml.flat",
+        "source": "com.android.habitapplication.app-main-63:/layout/activity_procrastinate2.xml"
+    },
+    {
+        "merged": "com.android.habitapplication.app-merged_res-61:/layout_activity_challange_detailes.xml.flat",
+        "source": "com.android.habitapplication.app-main-63:/layout/activity_challange_detailes.xml"
+    },
+    {
+        "merged": "com.android.habitapplication.app-merged_res-61:/font_rubik_semibold.xml.flat",
+        "source": "com.android.habitapplication.app-main-63:/font/rubik_semibold.xml"
+    },
+    {
+        "merged": "com.android.habitapplication.app-merged_res-61:/drawable_rounded_spinner_background.xml.flat",
+        "source": "com.android.habitapplication.app-main-63:/drawable/rounded_spinner_background.xml"
+    },
+    {
+        "merged": "com.android.habitapplication.app-merged_res-61:/drawable_small_drinking_water.xml.flat",
+        "source": "com.android.habitapplication.app-main-63:/drawable/small_drinking_water.xml"
+    },
+    {
+        "merged": "com.android.habitapplication.app-merged_res-61:/layout_fragment_today.xml.flat",
+        "source": "com.android.habitapplication.app-main-63:/layout/fragment_today.xml"
+    },
+    {
+        "merged": "com.android.habitapplication.app-merged_res-61:/layout_fragment_all_habits.xml.flat",
+        "source": "com.android.habitapplication.app-main-63:/layout/fragment_all_habits.xml"
+    },
+    {
+        "merged": "com.android.habitapplication.app-merged_res-61:/layout_nav_header_main.xml.flat",
+        "source": "com.android.habitapplication.app-main-63:/layout/nav_header_main.xml"
+    },
+    {
+        "merged": "com.android.habitapplication.app-merged_res-61:/color_day_button_text_color.xml.flat",
+        "source": "com.android.habitapplication.app-main-63:/color/day_button_text_color.xml"
+    },
+    {
+        "merged": "com.android.habitapplication.app-merged_res-61:/drawable_purple_cloud.xml.flat",
+        "source": "com.android.habitapplication.app-main-63:/drawable/purple_cloud.xml"
+    },
+    {
+        "merged": "com.android.habitapplication.app-merged_res-61:/drawable_water_cup.xml.flat",
+        "source": "com.android.habitapplication.app-main-63:/drawable/water_cup.xml"
+    },
+    {
+        "merged": "com.android.habitapplication.app-merged_res-61:/drawable_back_btn.xml.flat",
+        "source": "com.android.habitapplication.app-main-63:/drawable/back_btn.xml"
+    },
+    {
+        "merged": "com.android.habitapplication.app-merged_res-61:/drawable_onboarding1.jpg.flat",
+        "source": "com.android.habitapplication.app-main-63:/drawable/onboarding1.jpg"
+    },
+    {
+        "merged": "com.android.habitapplication.app-merged_res-61:/layout_activity_splash.xml.flat",
+        "source": "com.android.habitapplication.app-main-63:/layout/activity_splash.xml"
+    },
+    {
+        "merged": "com.android.habitapplication.app-merged_res-61:/menu_activity_main_drawer.xml.flat",
+        "source": "com.android.habitapplication.app-main-63:/menu/activity_main_drawer.xml"
+    },
+    {
+        "merged": "com.android.habitapplication.app-merged_res-61:/drawable_ic_menu_camera.xml.flat",
+        "source": "com.android.habitapplication.app-main-63:/drawable/ic_menu_camera.xml"
+    },
+    {
+        "merged": "com.android.habitapplication.app-merged_res-61:/drawable_baseline_lock_24.xml.flat",
+        "source": "com.android.habitapplication.app-main-63:/drawable/baseline_lock_24.xml"
+    },
+    {
+        "merged": "com.android.habitapplication.app-merged_res-61:/drawable_sun.xml.flat",
+        "source": "com.android.habitapplication.app-main-63:/drawable/sun.xml"
+    },
+    {
+        "merged": "com.android.habitapplication.app-merged_res-61:/drawable_trees.xml.flat",
+        "source": "com.android.habitapplication.app-main-63:/drawable/trees.xml"
+    },
+    {
+        "merged": "com.android.habitapplication.app-merged_res-61:/layout_activity_login.xml.flat",
+        "source": "com.android.habitapplication.app-main-63:/layout/activity_login.xml"
+    },
+    {
+        "merged": "com.android.habitapplication.app-merged_res-61:/layout_content_main.xml.flat",
+        "source": "com.android.habitapplication.app-main-63:/layout/content_main.xml"
+    },
+    {
+        "merged": "com.android.habitapplication.app-merged_res-61:/drawable_book.xml.flat",
+        "source": "com.android.habitapplication.app-main-63:/drawable/book.xml"
+    },
+    {
+        "merged": "com.android.habitapplication.app-merged_res-61:/drawable_sun_cropped.xml.flat",
+        "source": "com.android.habitapplication.app-main-63:/drawable/sun_cropped.xml"
+    },
+    {
+        "merged": "com.android.habitapplication.app-merged_res-61:/mipmap-anydpi-v26_ic_launcher.xml.flat",
+        "source": "com.android.habitapplication.app-main-63:/mipmap-anydpi-v26/ic_launcher.xml"
+    },
+    {
+        "merged": "com.android.habitapplication.app-merged_res-61:/drawable_ic_menu_slideshow.xml.flat",
+        "source": "com.android.habitapplication.app-main-63:/drawable/ic_menu_slideshow.xml"
+    },
+    {
+        "merged": "com.android.habitapplication.app-merged_res-61:/drawable_google.png.flat",
+        "source": "com.android.habitapplication.app-main-63:/drawable/google.png"
+    },
+    {
+        "merged": "com.android.habitapplication.app-merged_res-61:/layout_activity_habit.xml.flat",
+        "source": "com.android.habitapplication.app-main-63:/layout/activity_habit.xml"
+    },
+    {
+        "merged": "com.android.habitapplication.app-merged_res-61:/mipmap-mdpi_ic_launcher_round.webp.flat",
+        "source": "com.android.habitapplication.app-main-63:/mipmap-mdpi/ic_launcher_round.webp"
+    },
+    {
+        "merged": "com.android.habitapplication.app-merged_res-61:/xml_backup_rules.xml.flat",
+        "source": "com.android.habitapplication.app-main-63:/xml/backup_rules.xml"
+    },
+    {
+        "merged": "com.android.habitapplication.app-merged_res-61:/drawable_ic_cycling.xml.flat",
+        "source": "com.android.habitapplication.app-main-63:/drawable/ic_cycling.xml"
+    },
+    {
+        "merged": "com.android.habitapplication.app-merged_res-61:/drawable_day_button_selector.xml.flat",
+        "source": "com.android.habitapplication.app-main-63:/drawable/day_button_selector.xml"
+    },
+    {
+        "merged": "com.android.habitapplication.app-merged_res-61:/drawable_ic_baseline_email_24.xml.flat",
+        "source": "com.android.habitapplication.app-main-63:/drawable/ic_baseline_email_24.xml"
+    },
+    {
+        "merged": "com.android.habitapplication.app-merged_res-61:/drawable_next_button.xml.flat",
+        "source": "com.android.habitapplication.app-main-63:/drawable/next_button.xml"
+    },
+    {
+        "merged": "com.android.habitapplication.app-merged_res-61:/mipmap-xhdpi_ic_launcher_round.webp.flat",
+        "source": "com.android.habitapplication.app-main-63:/mipmap-xhdpi/ic_launcher_round.webp"
+    },
+    {
+        "merged": "com.android.habitapplication.app-merged_res-61:/drawable_morning_walk.xml.flat",
+        "source": "com.android.habitapplication.app-main-63:/drawable/morning_walk.xml"
+    },
+    {
+        "merged": "com.android.habitapplication.app-merged_res-61:/font_rubik.xml.flat",
+        "source": "com.android.habitapplication.app-main-63:/font/rubik.xml"
+    },
+    {
+        "merged": "com.android.habitapplication.app-merged_res-61:/layout_fragment_try_free.xml.flat",
+        "source": "com.android.habitapplication.app-main-63:/layout/fragment_try_free.xml"
+    },
+    {
+        "merged": "com.android.habitapplication.app-merged_res-61:/drawable_nights.xml.flat",
+        "source": "com.android.habitapplication.app-main-63:/drawable/nights.xml"
+    },
+    {
+        "merged": "com.android.habitapplication.app-merged_res-61:/drawable_stop.xml.flat",
+        "source": "com.android.habitapplication.app-main-63:/drawable/stop.xml"
+    },
+    {
+        "merged": "com.android.habitapplication.app-merged_res-61:/drawable_ic_water_glass_filled.xml.flat",
+        "source": "com.android.habitapplication.app-main-63:/drawable/ic_water_glass_filled.xml"
+    },
+    {
+        "merged": "com.android.habitapplication.app-merged_res-61:/layout_today_item_list.xml.flat",
+        "source": "com.android.habitapplication.app-main-63:/layout/today_item_list.xml"
+    },
+    {
+        "merged": "com.android.habitapplication.app-merged_res-61:/xml_data_extraction_rules.xml.flat",
+        "source": "com.android.habitapplication.app-main-63:/xml/data_extraction_rules.xml"
+    },
+    {
+        "merged": "com.android.habitapplication.app-merged_res-61:/drawable_snooze.xml.flat",
+        "source": "com.android.habitapplication.app-main-63:/drawable/snooze.xml"
+    },
+    {
+        "merged": "com.android.habitapplication.app-merged_res-61:/drawable_cycling_vector_small.xml.flat",
+        "source": "com.android.habitapplication.app-main-63:/drawable/cycling_vector_small.xml"
+    },
+    {
+        "merged": "com.android.habitapplication.app-merged_res-61:/layout_activity_evening_selection.xml.flat",
+        "source": "com.android.habitapplication.app-main-63:/layout/activity_evening_selection.xml"
+    },
+    {
+        "merged": "com.android.habitapplication.app-merged_res-61:/drawable_habit_circle_bg.xml.flat",
+        "source": "com.android.habitapplication.app-main-63:/drawable/habit_circle_bg.xml"
+    },
+    {
+        "merged": "com.android.habitapplication.app-merged_res-61:/mipmap-xxxhdpi_ic_launcher_foreground.webp.flat",
+        "source": "com.android.habitapplication.app-main-63:/mipmap-xxxhdpi/ic_launcher_foreground.webp"
+    },
+    {
+        "merged": "com.android.habitapplication.app-merged_res-61:/drawable_edit.xml.flat",
+        "source": "com.android.habitapplication.app-main-63:/drawable/edit.xml"
+    },
+    {
+        "merged": "com.android.habitapplication.app-merged_res-61:/layout_activity_choose_habit.xml.flat",
+        "source": "com.android.habitapplication.app-main-63:/layout/activity_choose_habit.xml"
+    },
+    {
+        "merged": "com.android.habitapplication.app-merged_res-61:/layout_app_bar_main.xml.flat",
+        "source": "com.android.habitapplication.app-main-63:/layout/app_bar_main.xml"
+    },
+    {
+        "merged": "com.android.habitapplication.app-merged_res-61:/mipmap-mdpi_ic_launcher_foreground.webp.flat",
+        "source": "com.android.habitapplication.app-main-63:/mipmap-mdpi/ic_launcher_foreground.webp"
+    },
+    {
+        "merged": "com.android.habitapplication.app-merged_res-61:/mipmap-hdpi_ic_launcher.webp.flat",
+        "source": "com.android.habitapplication.app-main-63:/mipmap-hdpi/ic_launcher.webp"
+    },
+    {
+        "merged": "com.android.habitapplication.app-merged_res-61:/drawable_ic_arrowback.xml.flat",
+        "source": "com.android.habitapplication.app-main-63:/drawable/ic_arrowback.xml"
+    },
+    {
+        "merged": "com.android.habitapplication.app-merged_res-61:/drawable_ic_notification.xml.flat",
+        "source": "com.android.habitapplication.app-main-63:/drawable/ic_notification.xml"
+    },
+    {
+        "merged": "com.android.habitapplication.app-merged_res-61:/drawable_image.xml.flat",
+        "source": "com.android.habitapplication.app-main-63:/drawable/image.xml"
+    },
+    {
+        "merged": "com.android.habitapplication.app-merged_res-61:/layout_activity_onboarding2.xml.flat",
+        "source": "com.android.habitapplication.app-main-63:/layout/activity_onboarding2.xml"
+    },
+    {
+        "merged": "com.android.habitapplication.app-merged_res-61:/drawable_logo.jpeg.flat",
+        "source": "com.android.habitapplication.app-main-63:/drawable/logo.jpeg"
+    },
+    {
+        "merged": "com.android.habitapplication.app-merged_res-61:/drawable_running.png.flat",
+        "source": "com.android.habitapplication.app-main-63:/drawable/running.png"
+    },
+    {
+        "merged": "com.android.habitapplication.app-merged_res-61:/layout_fragment_your_states.xml.flat",
+        "source": "com.android.habitapplication.app-main-63:/layout/fragment_your_states.xml"
+    },
+    {
+        "merged": "com.android.habitapplication.app-merged_res-61:/mipmap-xhdpi_ic_launcher.webp.flat",
+        "source": "com.android.habitapplication.app-main-63:/mipmap-xhdpi/ic_launcher.webp"
+    },
+    {
+        "merged": "com.android.habitapplication.app-merged_res-61:/drawable_googleicon.xml.flat",
+        "source": "com.android.habitapplication.app-main-63:/drawable/googleicon.xml"
+    },
+    {
+        "merged": "com.android.habitapplication.app-merged_res-61:/layout_activity_challenge_congrates.xml.flat",
+        "source": "com.android.habitapplication.app-main-63:/layout/activity_challenge_congrates.xml"
+    },
+    {
+        "merged": "com.android.habitapplication.app-merged_res-61:/layout_activity_add_habit.xml.flat",
+        "source": "com.android.habitapplication.app-main-63:/layout/activity_add_habit.xml"
+    },
+    {
+        "merged": "com.android.habitapplication.app-merged_res-61:/layout_item_habit_card.xml.flat",
+        "source": "com.android.habitapplication.app-main-63:/layout/item_habit_card.xml"
+    },
+    {
+        "merged": "com.android.habitapplication.app-merged_res-61:/drawable_rounded_button_white.xml.flat",
+        "source": "com.android.habitapplication.app-main-63:/drawable/rounded_button_white.xml"
+    },
+    {
+        "merged": "com.android.habitapplication.app-merged_res-61:/layout_activity_signup.xml.flat",
+        "source": "com.android.habitapplication.app-main-63:/layout/activity_signup.xml"
+    },
+    {
+        "merged": "com.android.habitapplication.app-merged_res-61:/drawable_baseline_delete_24.xml.flat",
+        "source": "com.android.habitapplication.app-main-63:/drawable/baseline_delete_24.xml"
+    },
+    {
+        "merged": "com.android.habitapplication.app-merged_res-61:/mipmap-hdpi_ic_launcher_round.webp.flat",
+        "source": "com.android.habitapplication.app-main-63:/mipmap-hdpi/ic_launcher_round.webp"
+    },
+    {
+        "merged": "com.android.habitapplication.app-merged_res-61:/drawable_ic_circular_progress.xml.flat",
+        "source": "com.android.habitapplication.app-main-63:/drawable/ic_circular_progress.xml"
+    },
+    {
+        "merged": "com.android.habitapplication.app-merged_res-61:/drawable_ic_baseline_eye_24.xml.flat",
+        "source": "com.android.habitapplication.app-main-63:/drawable/ic_baseline_eye_24.xml"
+    },
+    {
+        "merged": "com.android.habitapplication.app-merged_res-61:/mipmap-xhdpi_ic_launcher_foreground.webp.flat",
+        "source": "com.android.habitapplication.app-main-63:/mipmap-xhdpi/ic_launcher_foreground.webp"
+    },
+    {
+        "merged": "com.android.habitapplication.app-merged_res-61:/mipmap-xxxhdpi_ic_launcher_round.webp.flat",
+        "source": "com.android.habitapplication.app-main-63:/mipmap-xxxhdpi/ic_launcher_round.webp"
+    },
+    {
+        "merged": "com.android.habitapplication.app-merged_res-61:/drawable_longest_streak.xml.flat",
+        "source": "com.android.habitapplication.app-main-63:/drawable/longest_streak.xml"
+    },
+    {
+        "merged": "com.android.habitapplication.app-merged_res-61:/drawable_create.xml.flat",
+        "source": "com.android.habitapplication.app-main-63:/drawable/create.xml"
+    },
+    {
+        "merged": "com.android.habitapplication.app-merged_res-61:/drawable_lowebody_workout.xml.flat",
+        "source": "com.android.habitapplication.app-main-63:/drawable/lowebody_workout.xml"
+    },
+    {
+        "merged": "com.android.habitapplication.app-merged_res-61:/drawable_rounded_button_pink_small.xml.flat",
+        "source": "com.android.habitapplication.app-main-63:/drawable/rounded_button_pink_small.xml"
+    },
+    {
+        "merged": "com.android.habitapplication.app-merged_res-61:/drawable_ic_arrow_right_pink.xml.flat",
+        "source": "com.android.habitapplication.app-main-63:/drawable/ic_arrow_right_pink.xml"
+    },
+    {
+        "merged": "com.android.habitapplication.app-merged_res-61:/drawable_splash.jpg.flat",
+        "source": "com.android.habitapplication.app-main-63:/drawable/splash.jpg"
+    },
+    {
+        "merged": "com.android.habitapplication.app-merged_res-61:/drawable_task_completed.xml.flat",
+        "source": "com.android.habitapplication.app-main-63:/drawable/task_completed.xml"
+    },
+    {
+        "merged": "com.android.habitapplication.app-merged_res-61:/drawable_half_sun.xml.flat",
+        "source": "com.android.habitapplication.app-main-63:/drawable/half_sun.xml"
+    },
+    {
+        "merged": "com.android.habitapplication.app-merged_res-61:/drawable_ic_launcher_foreground.xml.flat",
+        "source": "com.android.habitapplication.app-main-63:/drawable/ic_launcher_foreground.xml"
+    },
+    {
+        "merged": "com.android.habitapplication.app-merged_res-61:/layout_challengecard.xml.flat",
+        "source": "com.android.habitapplication.app-main-63:/layout/challengecard.xml"
+    },
+    {
+        "merged": "com.android.habitapplication.app-merged_res-61:/layout_habit_card_item.xml.flat",
+        "source": "com.android.habitapplication.app-main-63:/layout/habit_card_item.xml"
+    },
+    {
+        "merged": "com.android.habitapplication.app-merged_res-61:/drawable_day_button_selector_light_pink.xml.flat",
+        "source": "com.android.habitapplication.app-main-63:/drawable/day_button_selector_light_pink.xml"
+    },
+    {
+        "merged": "com.android.habitapplication.app-merged_res-61:/layout_fragment_notifications.xml.flat",
+        "source": "com.android.habitapplication.app-main-63:/layout/fragment_notifications.xml"
+    },
+    {
+        "merged": "com.android.habitapplication.app-merged_res-61:/drawable_small_cloud.xml.flat",
+        "source": "com.android.habitapplication.app-main-63:/drawable/small_cloud.xml"
+    },
+    {
+        "merged": "com.android.habitapplication.app-merged_res-61:/drawable_rounded_edittext.xml.flat",
+        "source": "com.android.habitapplication.app-main-63:/drawable/rounded_edittext.xml"
+    },
+    {
+        "merged": "com.android.habitapplication.app-merged_res-61:/drawable_ic_circular_progress_small.xml.flat",
+        "source": "com.android.habitapplication.app-main-63:/drawable/ic_circular_progress_small.xml"
+    },
+    {
+        "merged": "com.android.habitapplication.app-merged_res-61:/drawable_ic_facebook_icon.xml.flat",
+        "source": "com.android.habitapplication.app-main-63:/drawable/ic_facebook_icon.xml"
+    },
+    {
+        "merged": "com.android.habitapplication.app-merged_res-61:/layout_notification_item_list.xml.flat",
+        "source": "com.android.habitapplication.app-main-63:/layout/notification_item_list.xml"
+    },
+    {
+        "merged": "com.android.habitapplication.app-merged_res-61:/drawable_night_background_cropped.xml.flat",
+        "source": "com.android.habitapplication.app-main-63:/drawable/night_background_cropped.xml"
+    },
+    {
+        "merged": "com.android.habitapplication.app-merged_res-61:/layout_activity_procrastinate.xml.flat",
+        "source": "com.android.habitapplication.app-main-63:/layout/activity_procrastinate.xml"
+    },
+    {
+        "merged": "com.android.habitapplication.app-merged_res-61:/drawable_congrates.xml.flat",
+        "source": "com.android.habitapplication.app-main-63:/drawable/congrates.xml"
+    },
+    {
+        "merged": "com.android.habitapplication.app-merged_res-61:/drawable_star.xml.flat",
+        "source": "com.android.habitapplication.app-main-63:/drawable/star.xml"
+    },
+    {
+        "merged": "com.android.habitapplication.app-merged_res-61:/layout_habit_item_list.xml.flat",
+        "source": "com.android.habitapplication.app-main-63:/layout/habit_item_list.xml"
+    },
+    {
+        "merged": "com.android.habitapplication.app-merged_res-61:/menu_main.xml.flat",
+        "source": "com.android.habitapplication.app-main-63:/menu/main.xml"
+    },
+    {
+        "merged": "com.android.habitapplication.app-merged_res-61:/drawable_clock.xml.flat",
+        "source": "com.android.habitapplication.app-main-63:/drawable/clock.xml"
+    },
+    {
+        "merged": "com.android.habitapplication.app-merged_res-61:/mipmap-mdpi_ic_launcher.webp.flat",
+        "source": "com.android.habitapplication.app-main-63:/mipmap-mdpi/ic_launcher.webp"
+    },
+    {
+        "merged": "com.android.habitapplication.app-merged_res-61:/drawable_ic_menu_gallery.xml.flat",
+        "source": "com.android.habitapplication.app-main-63:/drawable/ic_menu_gallery.xml"
+    },
+    {
+        "merged": "com.android.habitapplication.app-merged_res-61:/drawable_person.xml.flat",
+        "source": "com.android.habitapplication.app-main-63:/drawable/person.xml"
+    },
+    {
+        "merged": "com.android.habitapplication.app-merged_res-61:/layout_fragment_profile.xml.flat",
+        "source": "com.android.habitapplication.app-main-63:/layout/fragment_profile.xml"
+    },
+    {
+        "merged": "com.android.habitapplication.app-merged_res-61:/drawable_cloud.xml.flat",
+        "source": "com.android.habitapplication.app-main-63:/drawable/cloud.xml"
+    },
+    {
+        "merged": "com.android.habitapplication.app-merged_res-61:/drawable_ic_list.xml.flat",
+        "source": "com.android.habitapplication.app-main-63:/drawable/ic_list.xml"
+    },
+    {
+        "merged": "com.android.habitapplication.app-merged_res-61:/layout_activity_welcome.xml.flat",
+        "source": "com.android.habitapplication.app-main-63:/layout/activity_welcome.xml"
+    },
+    {
+        "merged": "com.android.habitapplication.app-merged_res-61:/layout_activity_onboarding1.xml.flat",
+        "source": "com.android.habitapplication.app-main-63:/layout/activity_onboarding1.xml"
+    },
+    {
+        "merged": "com.android.habitapplication.app-merged_res-61:/drawable_yoga1.png.flat",
+        "source": "com.android.habitapplication.app-main-63:/drawable/yoga1.png"
+    },
+    {
+        "merged": "com.android.habitapplication.app-merged_res-61:/layout_activity_main.xml.flat",
+        "source": "com.android.habitapplication.app-main-63:/layout/activity_main.xml"
+    },
+    {
+        "merged": "com.android.habitapplication.app-merged_res-61:/drawable_tree.xml.flat",
+        "source": "com.android.habitapplication.app-main-63:/drawable/tree.xml"
+    },
+    {
+        "merged": "com.android.habitapplication.app-merged_res-61:/font_rubik_bold.xml.flat",
+        "source": "com.android.habitapplication.app-main-63:/font/rubik_bold.xml"
+    },
+    {
+        "merged": "com.android.habitapplication.app-merged_res-61:/layout_fragment_challenges.xml.flat",
+        "source": "com.android.habitapplication.app-main-63:/layout/fragment_challenges.xml"
+    },
+    {
+        "merged": "com.android.habitapplication.app-merged_res-61:/navigation_mobile_navigation.xml.flat",
+        "source": "com.android.habitapplication.app-main-63:/navigation/mobile_navigation.xml"
+    },
+    {
+        "merged": "com.android.habitapplication.app-merged_res-61:/drawable_check_mark.xml.flat",
+        "source": "com.android.habitapplication.app-main-63:/drawable/check_mark.xml"
+    },
+    {
+        "merged": "com.android.habitapplication.app-merged_res-61:/drawable_baseline_visibility_off_24.xml.flat",
+        "source": "com.android.habitapplication.app-main-63:/drawable/baseline_visibility_off_24.xml"
+    },
+    {
+        "merged": "com.android.habitapplication.app-merged_res-61:/drawable_night_background.xml.flat",
+        "source": "com.android.habitapplication.app-main-63:/drawable/night_background.xml"
+    },
+    {
+        "merged": "com.android.habitapplication.app-merged_res-61:/layout_fragment_splashpage.xml.flat",
+        "source": "com.android.habitapplication.app-main-63:/layout/fragment_splashpage.xml"
+    },
+    {
+        "merged": "com.android.habitapplication.app-merged_res-61:/layout_fragment_settings.xml.flat",
+        "source": "com.android.habitapplication.app-main-63:/layout/fragment_settings.xml"
+    },
+    {
+        "merged": "com.android.habitapplication.app-merged_res-61:/mipmap-xxhdpi_ic_launcher.webp.flat",
+        "source": "com.android.habitapplication.app-main-63:/mipmap-xxhdpi/ic_launcher.webp"
+    },
+    {
+        "merged": "com.android.habitapplication.app-merged_res-61:/layout_icon_picker.xml.flat",
+        "source": "com.android.habitapplication.app-main-63:/layout/icon_picker.xml"
+    },
+    {
+        "merged": "com.android.habitapplication.app-merged_res-61:/drawable_cycling_vector.xml.flat",
+        "source": "com.android.habitapplication.app-main-63:/drawable/cycling_vector.xml"
+    },
+    {
+        "merged": "com.android.habitapplication.app-merged_res-61:/mipmap-hdpi_ic_launcher_foreground.webp.flat",
+        "source": "com.android.habitapplication.app-main-63:/mipmap-hdpi/ic_launcher_foreground.webp"
+    },
+    {
+        "merged": "com.android.habitapplication.app-merged_res-61:/drawable_rounded_background.xml.flat",
+        "source": "com.android.habitapplication.app-main-63:/drawable/rounded_background.xml"
+    },
+    {
+        "merged": "com.android.habitapplication.app-merged_res-61:/drawable_ic_reset.xml.flat",
+        "source": "com.android.habitapplication.app-main-63:/drawable/ic_reset.xml"
+    },
+    {
+        "merged": "com.android.habitapplication.app-merged_res-61:/drawable_welcome2.png.flat",
+        "source": "com.android.habitapplication.app-main-63:/drawable/welcome2.png"
+    },
+    {
+        "merged": "com.android.habitapplication.app-merged_res-61:/mipmap-xxhdpi_ic_launcher_foreground.webp.flat",
+        "source": "com.android.habitapplication.app-main-63:/mipmap-xxhdpi/ic_launcher_foreground.webp"
+    },
+    {
+        "merged": "com.android.habitapplication.app-merged_res-61:/font_rubik_medium.xml.flat",
+        "source": "com.android.habitapplication.app-main-63:/font/rubik_medium.xml"
+    },
+    {
+        "merged": "com.android.habitapplication.app-merged_res-61:/drawable_ic_add.xml.flat",
+        "source": "com.android.habitapplication.app-main-63:/drawable/ic_add.xml"
+    },
+    {
+        "merged": "com.android.habitapplication.app-merged_res-61:/drawable_progress.xml.flat",
+        "source": "com.android.habitapplication.app-main-63:/drawable/progress.xml"
+    },
+    {
+        "merged": "com.android.habitapplication.app-merged_res-61:/drawable_large_drinking_water.xml.flat",
+        "source": "com.android.habitapplication.app-main-63:/drawable/large_drinking_water.xml"
+    },
+    {
+        "merged": "com.android.habitapplication.app-merged_res-61:/drawable_onboarding3.jpg.flat",
+        "source": "com.android.habitapplication.app-main-63:/drawable/onboarding3.jpg"
+    },
+    {
+        "merged": "com.android.habitapplication.app-merged_res-61:/mipmap-anydpi-v26_ic_launcher_round.xml.flat",
+        "source": "com.android.habitapplication.app-main-63:/mipmap-anydpi-v26/ic_launcher_round.xml"
+    },
+    {
+        "merged": "com.android.habitapplication.app-merged_res-61:/font_rubik_light.xml.flat",
+        "source": "com.android.habitapplication.app-main-63:/font/rubik_light.xml"
+    },
+    {
+        "merged": "com.android.habitapplication.app-merged_res-61:/drawable_yoga.xml.flat",
+        "source": "com.android.habitapplication.app-main-63:/drawable/yoga.xml"
+    }
+]

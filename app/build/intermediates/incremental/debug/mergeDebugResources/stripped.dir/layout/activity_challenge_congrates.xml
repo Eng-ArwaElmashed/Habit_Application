@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/main"
+    android:layout_width="match_parent"
+    android:background="@color/main_pink"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    tools:context=".ChallengeCongratesActivity">
+
+    <TextView
+        android:id="@+id/congrats_tv"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:fontFamily="@font/rubik_medium"
+        android:text="Congrats"
+        android:layout_gravity="center"
+        android:textAlignment="center"
+        android:textSize="24sp"
+        android:layout_margin="50dp"
+        android:textColor="#4A4A4A"/>
+    <ImageView
+        android:id="@+id/congrats_iv"
+        android:layout_gravity="center"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:src="@drawable/congrates"
+        android:layout_margin="50dp"/>
+
+    <TextView
+        android:id="@+id/challenge_start_tv"
+        android:layout_gravity="center"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Great your challenge has start"
+        android:fontFamily="@font/rubik_medium"
+        android:textSize="24sp"
+        android:textColor="#4A4A4A"
+        android:padding="16dp"/>
+</LinearLayout>

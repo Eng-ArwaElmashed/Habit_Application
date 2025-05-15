@@ -1,0 +1,256 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/main"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".HabitActivity">
+
+
+    <TextView
+        android:id="@+id/title_tv"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/main_pink"
+        android:fontFamily="@font/rubik_semibold"
+        android:text="SET YOUR GOALS"
+        android:textAlignment="center"
+        android:textColor="@color/gray"
+        android:textSize="30sp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@id/back_btn"
+        app:layout_constraintTop_toTopOf="parent" />
+    <!-- Top illustration -->
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/back_btn"
+        android:layout_width="56dp"
+        android:layout_height="56dp"
+        app:icon="@drawable/back_btn"
+        app:iconTint="@color/white"
+        android:stateListAnimator="@null"
+        app:iconTintMode="multiply"
+        android:text="."
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+    <ImageView
+        android:id="@+id/banner_image"
+        android:layout_width="match_parent"
+        android:stateListAnimator="@null"
+        android:layout_height="wrap_content"
+        android:background="@color/main_pink"
+        android:src="@drawable/large_drinking_water"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/title_tv" />
+
+    <!-- Subheading -->
+    <TextView
+        android:id="@+id/sub_tv"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="18dp"
+        android:fontFamily="@font/rubik_semibold"
+        android:text="Set your goals"
+        android:textColor="#3F414E"
+        android:layout_margin="16dp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/banner_image" />
+
+    <!-- Goal Input -->
+    <androidx.cardview.widget.CardView
+        android:id="@+id/goal_card"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_margin="24dp"
+        app:cardBackgroundColor="#FFBDBD"
+        app:cardCornerRadius="16dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/sub_tv"
+        app:layout_constraintBottom_toTopOf="@id/frequency_group">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center_vertical"
+            android:orientation="horizontal"
+            android:padding="16dp">
+
+            <TextView
+                android:id="@+id/goal_value"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="5"
+                android:textSize="18sp"
+                android:textStyle="bold" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="  Glasses"
+                android:textSize="16sp" />
+        </LinearLayout>
+    </androidx.cardview.widget.CardView>
+
+    <!-- Frequency buttons -->
+    <LinearLayout
+        android:id="@+id/frequency_group"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginHorizontal="16dp"
+        android:layout_marginTop="4dp"
+        android:gravity="center"
+        android:orientation="horizontal"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintBottom_toTopOf="@id/repeat_label"
+        app:layout_constraintTop_toBottomOf="@id/goal_card">
+
+        <com.google.android.material.button.MaterialButton
+            style="@style/Widget.MaterialComponents.Button.OutlinedButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="8dp"
+            android:backgroundTint="@color/main_pink"
+            android:textColor="@color/gray"
+            app:cornerRadius="16dp"
+            android:text="Daily" />
+
+        <com.google.android.material.button.MaterialButton
+            style="@style/Widget.MaterialComponents.Button.OutlinedButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:backgroundTint="@color/main_pink"
+            android:textColor="@color/gray"
+            app:cornerRadius="16dp"
+            android:layout_marginEnd="8dp"
+            android:text="Weekly" />
+
+        <com.google.android.material.button.MaterialButton
+            style="@style/Widget.MaterialComponents.Button.OutlinedButton"
+            android:layout_width="wrap_content"
+            android:backgroundTint="@color/main_pink"
+            android:textColor="@color/gray"
+            app:cornerRadius="16dp"
+            android:layout_height="wrap_content"
+            android:text="Monthly" />
+    </LinearLayout>
+
+    <!-- Repeat Label -->
+    <TextView
+        android:id="@+id/repeat_label"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_margin="24dp"
+        android:text="Repeat everyday"
+        android:textColor="#3F414E"
+        android:textStyle="bold"
+        app:layout_constraintBottom_toTopOf="@id/days_container"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/frequency_group" />
+
+    <!-- Day selector -->
+    <LinearLayout
+        android:id="@+id/days_container"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="12dp"
+        android:layout_marginBottom="24dp"
+        android:gravity="center"
+        android:orientation="horizontal"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+       app:layout_constraintBottom_toTopOf="@id/select_end_btn"
+        app:layout_constraintTop_toBottomOf="@id/repeat_label">
+
+        <!-- Example day button -->
+        <com.google.android.material.button.MaterialButton
+            style="@style/Widget.MaterialComponents.Button.OutlinedButton"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:layout_marginEnd="4dp"
+            app:cornerRadius="100dp"
+            android:textColor="@color/gray"
+            android:backgroundTint="@color/main_pink"
+            android:text="S" />
+        <com.google.android.material.button.MaterialButton
+            style="@style/Widget.MaterialComponents.Button.OutlinedButton"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:layout_marginEnd="4dp"
+            app:cornerRadius="100dp"
+            android:textColor="@color/gray"
+            android:backgroundTint="@color/main_pink"
+            android:text="M" />
+        <com.google.android.material.button.MaterialButton
+            style="@style/Widget.MaterialComponents.Button.OutlinedButton"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:layout_marginEnd="4dp"
+            app:cornerRadius="100dp"
+            android:textColor="@color/gray"
+            android:backgroundTint="@color/main_pink"
+            android:text="T" />
+        <com.google.android.material.button.MaterialButton
+            style="@style/Widget.MaterialComponents.Button.OutlinedButton"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:layout_marginEnd="4dp"
+            app:cornerRadius="100dp"
+            android:textColor="@color/gray"
+            android:backgroundTint="@color/main_pink"
+            android:text="W" />
+        <com.google.android.material.button.MaterialButton
+            style="@style/Widget.MaterialComponents.Button.OutlinedButton"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:layout_marginEnd="4dp"
+            app:cornerRadius="100dp"
+            android:textColor="@color/gray"
+            android:backgroundTint="@color/main_pink"
+            android:text="F" />
+        <com.google.android.material.button.MaterialButton
+            style="@style/Widget.MaterialComponents.Button.OutlinedButton"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:layout_marginEnd="4dp"
+            app:cornerRadius="100dp"
+            android:textColor="@color/gray"
+            android:backgroundTint="@color/main_pink"
+            android:text="S" />
+        <!-- Repeat for M T W T F S -->
+
+    </LinearLayout>
+
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/select_end_btn"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="25dp"
+        android:backgroundTint="@color/main_pink"
+        android:text="Select End Date"
+        android:textColor="#3F414E"
+        android:textStyle="bold"
+        app:cornerRadius="50dp"
+        app:layout_constraintBottom_toTopOf="@id/continue_btn"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
+
+    <!-- Continue button -->
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/continue_btn"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_margin="25dp"
+        android:backgroundTint="@color/main_pink"
+        android:text="CONTINUE"
+        android:textColor="#3F414E"
+        android:textStyle="bold"
+        app:cornerRadius="50dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
+
+
+</androidx.constraintlayout.widget.ConstraintLayout>

@@ -1,0 +1,94 @@
+<androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="160dp"
+    android:layout_height="250dp"
+    android:layout_margin="10dp"
+    android:backgroundTint="@color/main_pink"
+    app:cardCornerRadius="22dp"
+    app:cardElevation="6dp">
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <ImageButton
+            android:contentDescription="."
+            android:id="@+id/edit_btn"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:background="?attr/selectableItemBackgroundBorderless"
+            android:backgroundTint="@color/main_pink"
+            android:src="@drawable/edit"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <ImageButton
+            android:contentDescription="."
+            android:id="@+id/delete_btn"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:background="?attr/selectableItemBackgroundBorderless"
+            android:backgroundTint="@color/main_pink"
+            android:src="@drawable/baseline_delete_24"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <!-- Content Center -->
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:gravity="center"
+            android:orientation="vertical"
+            android:padding="16dp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/delete_btn">
+
+            <FrameLayout
+                android:layout_width="100dp"
+                android:layout_height="100dp"
+                android:layout_gravity="center">
+
+                <com.google.android.material.progressindicator.CircularProgressIndicator
+                    android:id="@+id/habit_progress_indicator"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:progress="0"
+                    android:max="100"
+                    app:indicatorColor="@color/black"
+                    app:indicatorSize="90dp"
+                    app:trackColor="@color/white"
+                    app:trackThickness="8dp" />
+
+                <ImageView
+                    android:id="@+id/habit_Icon"
+                    android:layout_width="40dp"
+                    android:layout_height="40dp"
+                    android:layout_gravity="center"
+                    android:src="@drawable/water_cup" />
+
+            </FrameLayout>
+
+            <TextView
+                android:id="@+id/habit_title"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="12dp"
+                android:text="Drinking water"
+                android:textColor="@color/gray"
+                android:textSize="16sp"
+                android:textStyle="bold" />
+
+            <TextView
+                android:id="@+id/habit_progress_text"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="4dp"
+                android:text="75%"
+                android:textColor="@color/gray"
+                android:textSize="14sp" />
+        </LinearLayout>
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</androidx.cardview.widget.CardView>

@@ -1,0 +1,174 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/main"
+    android:layout_width="match_parent"
+    android:background="@color/light_pink"
+    android:layout_height="match_parent"
+    tools:context=".ProcrastinateActivity2">
+
+    <TextView
+        android:id="@+id/procrastinate2_tv"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:fontFamily="@font/rubik_semibold"
+        android:padding="20dp"
+        android:layout_marginTop="100dp"
+        android:textAlignment="center"
+        android:text="What do you hope to achieve with Main Habit?"
+        android:textColor="#3F414E"
+        android:textSize="30dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/yes_btn"
+        style="@style/Button"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="I want to build good habits"
+        app:cornerRadius="10dp"
+        app:layout_constraintBottom_toTopOf="@+id/no_btn"
+        app:layout_constraintStart_toStartOf="parent" />
+
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/no_btn"
+        style="@style/Button"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="I want to be organized"
+        app:layout_constraintBottom_toTopOf="@+id/not_ready_btn"
+        app:layout_constraintStart_toStartOf="parent" />
+
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/not_ready_btn"
+        style="@style/Button"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Not ready to answer"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
+
+    <ImageView
+        android:id="@+id/blue_shadow"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:elevation="10dp"
+        android:src="@drawable/blue_shadow"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent" />
+
+    <ImageView
+        android:id="@+id/sun_iv"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:elevation="10dp"
+        android:src="@drawable/half_sun"
+        app:layout_constraintEnd_toEndOf="@+id/yes_btn"
+        app:layout_constraintTop_toTopOf="@id/yes_btn" />
+
+    <ImageView
+        android:id="@+id/sunshadow_iv"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="3dp"
+        android:elevation="20dp"
+        android:src="@drawable/halfsun_sahdow"
+        app:layout_constraintEnd_toEndOf="@+id/yes_btn"
+        app:layout_constraintTop_toTopOf="@id/yes_btn" />
+
+
+    <ImageView
+        android:id="@+id/cloud1"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:elevation="10dp"
+        android:src="@drawable/purple_cloud"
+        app:layout_constraintEnd_toStartOf="@+id/sunshadow_iv"
+        app:layout_constraintTop_toBottomOf="@id/sun_iv" />
+
+    <ImageView
+        android:id="@+id/cloud2"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="15dp"
+        android:elevation="10dp"
+        android:padding="10dp"
+        android:src="@drawable/purple_cloud"
+        app:layout_constraintStart_toEndOf="@+id/cloud1"
+        app:layout_constraintTop_toBottomOf="@id/cloud1" />
+
+    <ImageView
+        android:id="@+id/trees_iv"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_margin="20dp"
+        android:elevation="10dp"
+        android:src="@drawable/trees"
+        app:layout_constraintEnd_toEndOf="@id/no_btn"
+        app:layout_constraintTop_toTopOf="@+id/no_btn" />
+
+    <ImageView
+        android:id="@+id/cloud3"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:elevation="10dp"
+        android:src="@drawable/purple_cloud"
+        app:layout_constraintBottom_toTopOf="@+id/trees_iv"
+        app:layout_constraintEnd_toStartOf="@+id/trees_iv" />
+
+    <ImageView
+        android:id="@+id/cloud4"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:elevation="10dp"
+        android:src="@drawable/purple_cloud"
+        app:layout_constraintBottom_toBottomOf="@+id/trees_iv"
+        app:layout_constraintEnd_toEndOf="@+id/trees_iv" />
+
+    <ImageView
+        android:id="@+id/cloud5"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:elevation="10dp"
+        android:paddingBottom="10dp"
+        android:src="@drawable/purple_cloud"
+        app:layout_constraintBottom_toTopOf="@+id/cloud4"
+        app:layout_constraintStart_toEndOf="@+id/cloud4" />
+
+    <ImageView
+        android:id="@+id/cloud6"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:elevation="10dp"
+        android:layout_margin="35dp"
+        android:src="@drawable/purple_cloud"
+        app:layout_constraintStart_toStartOf="@+id/blue_shadow"
+        app:layout_constraintTop_toTopOf="@+id/not_ready_btn" />
+
+
+    <ImageView
+        android:id="@+id/cloud7"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="4dp"
+        android:elevation="10dp"
+        android:layout_margin="16dp"
+        android:src="@drawable/purple_cloud"
+        app:layout_constraintBottom_toBottomOf="@+id/cloud6"
+        app:layout_constraintStart_toStartOf="@+id/cloud6" />
+
+    <ImageView
+        android:id="@+id/cloud8"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:elevation="10dp"
+        android:src="@drawable/purple_cloud"
+        android:layout_marginStart="20dp"
+        app:layout_constraintStart_toEndOf="@+id/cloud7"
+        app:layout_constraintBottom_toBottomOf="@+id/cloud6" />
+
+
+</androidx.constraintlayout.widget.ConstraintLayout>

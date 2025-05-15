@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_marginBottom="16dp"
+    app:cardBackgroundColor="@android:color/white"
+    app:cardCornerRadius="12dp"
+    app:cardElevation="4dp">
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:padding="16dp">
+
+        <TextView
+            android:id="@+id/challengeTitle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentStart="true"
+            android:layout_alignParentTop="true"
+            android:layout_marginEnd="10dp"
+            android:layout_toStartOf="@+id/progressIndicator"
+            android:text="Happy Morning Challenge"
+            android:textColor="@android:color/black"
+            android:textSize="16sp"
+            android:textStyle="bold" />
+
+        <TextView
+            android:id="@+id/challengeDays"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/challengeTitle"
+            android:layout_alignParentStart="true"
+            android:layout_toStartOf="@+id/progressIndicator"
+            android:layout_marginTop="16dp"
+            android:text="7 Days Challenge"
+            android:textColor="@android:color/black"
+            android:textSize="12sp" />
+
+        <Button
+            android:id="@+id/joinButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/challengeDays"
+            android:layout_alignParentStart="true"
+            android:layout_marginTop="15dp"
+            android:background="@drawable/rounded_button_pink"
+            android:paddingHorizontal="16dp"
+            android:text="Join Now"
+            android:textColor="#FF69B4"
+            android:textSize="12sp" />
+
+        <ImageView
+            android:id="@+id/progressIndicator"
+            android:layout_width="70dp"
+            android:layout_height="70dp"
+            android:layout_alignParentTop="true"
+            android:layout_alignParentEnd="true"
+            android:src="@drawable/ic_circular_progress" />
+
+    </RelativeLayout>
+
+</androidx.cardview.widget.CardView>
